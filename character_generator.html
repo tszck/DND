@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate New Character</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #23272a; color: #fff; }
+      .form-box { background: #2c2f33; padding: 24px; border-radius: 10px; max-width: 400px; margin: 40px auto; }
+      label { display: block; margin-top: 12px; }
+      input, select { width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: none; }
+      button { margin-top: 16px; padding: 10px 20px; background: #7289da; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+    </style>
+</head>
+<body>
+  <div class="form-box">
+    <h2>Generate New Character</h2>
+    <form id="genForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+      <label for="race">Race:</label>
+      <select id="race" name="race">
+        <option>Human</option>
+        <option>Elf</option>
+        <option>Dwarf</option>
+        <option>Halfling</option>
+        <option>Dragonborn</option>
+        <option>Gnome</option>
+        <option>Half-Elf</option>
+        <option>Half-Orc</option>
+        <option>Tiefling</option>
+      </select>
+      <label for="class">Class:</label>
+      <select id="class" name="class">
+        <option>Fighter</option>
+        <option>Rogue</option>
+        <option>Wizard</option>
+        <option>Cleric</option>
+        <option>Barbarian</option>
+        <option>Bard</option>
+        <option>Druid</option>
+        <option>Monk</option>
+        <option>Paladin</option>
+        <option>Ranger</option>
+        <option>Sorcerer</option>
+        <option>Warlock</option>
+      </select>
+      <label for="background">Background:</label>
+      <select id="background" name="background">
+        <option>Acolyte</option>
+        <option>Charlatan</option>
+        <option>Criminal</option>
+        <option>Entertainer</option>
+        <option>Folk Hero</option>
+        <option>Guild Artisan</option>
+        <option>Hermit</option>
+        <option>Noble</option>
+        <option>Outlander</option>
+        <option>Sage</option>
+        <option>Sailor</option>
+        <option>Soldier</option>
+        <option>Urchin</option>
+      </select>
+      <label for="alignment">Alignment:</label>
+      <select id="alignment" name="alignment">
+        <option>Lawful Good</option>
+        <option>Neutral Good</option>
+        <option>Chaotic Good</option>
+        <option>Lawful Neutral</option>
+        <option>True Neutral</option>
+        <option>Chaotic Neutral</option>
+        <option>Lawful Evil</option>
+        <option>Neutral Evil</option>
+        <option>Chaotic Evil</option>
+      </select>
+      <label for="level">Level:</label>
+      <input type="number" id="level" name="level" min="1" max="20" value="1" required>
+      <button type="submit">Generate</button>
+    </form>
+    <button id="downloadBtn" style="display:none;">Download Character JSON</button>
+  </div>
+  <script>
+    let generatedBlob = null;
+    function randomStat() { return Math.floor(Math.random() * 10) + 8; }
+    document.getElementById('genForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const race = document.getElementById('race').value;
+      const charClass = document.getElementById('class').value;
+      const background = document.getElementById('background').value;
+      const alignment = document.getElementById('alignment').value;
+      const level = parseInt(document.getElementById('level').value);
+      const character = {
+        name,
+        race,
+        class: charClass,
+        background,
+        alignment,
+        level,
+        strength: randomStat(),
+        dexterity: randomStat(),
+        constitution: randomStat(),
+        intelligence: randomStat(),
+        wisdom: randomStat(),
+        charisma: randomStat(),
+        items: [
+          { name: "Longsword", count: Math.floor(Math.random()*2) },
+          { name: "Health Potion", count: Math.floor(Math.random()*3) }
+        ],
+        equipment: [
+          { name: "Shield", count: Math.floor(Math.random()*2) },
+          { name: "Leather Armor", count: Math.floor(Math.random()*2) },
+          { name: "Backpack", count: 1 },
+          { name: "Bedroll", count: 1 },
+          { name: "Mess kit", count: 1 },
+          { name: "Rope (50 ft)", count: Math.floor(Math.random()*2) },
+          { name: "Rations (10 days)", count: Math.floor(Math.random()*3) },
+          { name: "Waterskin", count: 1 },
+          { name: "Torch (10)", count: Math.floor(Math.random()*4) },
+          { name: "Tinderbox", count: 1 }
+        ],
+        skills: [
+          { name: "Athletics", count: Math.floor(Math.random()*2) },
+          { name: "Perception", count: Math.floor(Math.random()*2) },
+          { name: "Stealth", count: Math.floor(Math.random()*2) },
+          { name: "Arcana", count: Math.floor(Math.random()*2) }
+        ],
+        spells: [
+          { name: "Fireball", count: Math.floor(Math.random()*2) },
+          { name: "Cure Wounds", count: Math.floor(Math.random()*2) },
+          { name: "Mage Armor", count: Math.floor(Math.random()*2) }
+        ]
+      };
+      generatedBlob = new Blob([JSON.stringify(character, null, 2)], {type: 'application/json'});
+      document.getElementById('downloadBtn').style.display = 'inline-block';
+    });
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+      if (generatedBlob) {
+        const name = document.getElementById('name').value.trim();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(generatedBlob);
+        a.download = `${name}.json`;
+        a.click();
+      }
+    });
+  </script>
+</body>
+</html>
