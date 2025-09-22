@@ -1,0 +1,22 @@
+{
+  "items": [
+    {"name": "Longsword", "type": "Weapon", "damage": "1d8 slashing", "properties": ["Versatile"]},
+    {"name": "Shield", "type": "Armor", "ac_bonus": 2},
+    {"name": "Health Potion", "type": "Consumable", "effect": "Heals 2d4+2 HP"},
+    {"name": "Leather Armor", "type": "Armor", "ac": 11, "dex_bonus": true}
+  ],
+  "gears": [
+    {"name": "Explorer's Pack", "contents": ["Backpack", "Bedroll", "Mess kit", "Rope (50 ft)", "Rations (10 days)", "Waterskin", "Torch (10)", "Tinderbox"]}
+  ],
+  "skills": [
+    {"name": "Athletics", "ability": "Strength"},
+    {"name": "Perception", "ability": "Wisdom"},
+    {"name": "Stealth", "ability": "Dexterity"},
+    {"name": "Arcana", "ability": "Intelligence"}
+  ],
+  "spells": [
+    {"name": "Fireball", "level": 3, "school": "Evocation", "description": "A bright streak flashes from your pointing finger to a point you choose, then blossoms with a low roar into an explosion of flame."},
+    {"name": "Cure Wounds", "level": 1, "school": "Evocation", "description": "A creature you touch regains a number of hit points equal to 1d8 + your spellcasting ability modifier."},
+    {"name": "Mage Armor", "level": 1, "school": "Abjuration", "description": "You touch a willing creature who isn't wearing armor, and a protective magical force surrounds it until the spell ends."}
+  ]
+}
