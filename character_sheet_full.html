@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Starter RPG Character Sheet (Google Sheets)</title>
+  <link rel="stylesheet" href="rpg_style.css">
+</head>
+<body>
+<header class="nav">
+  <h1>Starter RPG</h1>
+  <nav>
+    <a href="character_sheet_full.html">Character Sheet</a>
+    <a href="player_guide.html">Player Guide</a>
+  </nav>
+</header>
+
+<div class="grid">
+  <section class="card">
+    <h2>Google Sheets Connection</h2>
+    <div class="row">
+      <div><label>Google Sheet ID</label><input id="sheetId" type="text" placeholder="1A2B3C... (from the sheet URL)"></div>
+      <div><label>Apps Script Webhook URL (optional, for SAVE)</label><input id="webhookUrl" type="text" placeholder="https://script.google.com/macros/s/.../exec"></div>
+    </div>
+    <div class="row">
+      <button onclick="saveSettings()">Save Settings</button>
+      <button onclick="loadAll()">Load from Sheet</button>
+      <button onclick="saveToSheet()">Save to Sheet</button>
+    </div>
+    <p class="muted">Publish each tab: File → Share → Publish to web → Entire Document. This page fetches each tab by name.</p>
+  </section>
+
+  <section class="card">
+    <h2>Identity & Core</h2>
+    <div class="row">
+      <div><label>Name</label><input id="name" type="text"></div>
+      <div><label>Level</label><input id="level" type="number" value="1"></div>
+      <div><label>Gold</label><input id="gold" type="number" value="0"></div>
+    </div>
+    <div class="row">
+      <div><label>MGT</label><input class="score" data-abil="MGT" type="number" value="10"></div>
+      <div><label>AGI</label><input class="score" data-abil="AGI" type="number" value="10"></div>
+      <div><label>MND</label><input class="score" data-abil="MND" type="number" value="10"></div>
+      <div><label>PRE</label><input class="score" data-abil="PRE" type="number" value="10"></div>
+      <div><label>GRT</label><input class="score" data-abil="GRT" type="number" value="10"></div>
+    </div>
+    <div class="row">
+      <div><label>HP Max</label><input id="hpMax" type="number" value="0"></div>
+      <div><label>HP Current</label><input id="hp" type="number" value="0"></div>
+      <div><label>Speed</label><input id="speed" type="number" value="30"></div>
+      <div><label>AC</label><input id="ac" type="number" value="10"></div>
+    </div>
+    <div>
+      <label>Notes</label>
+      <textarea id="notes"></textarea>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Armor & Shield</h2>
+    <div class="row">
+      <div><label>Armor</label><select id="armorSelect"></select></div>
+      <div><label>Shield</label><select id="shieldSelect"></select></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Skills</h2>
+    <table id="skillsTable">
+      <thead><tr><th>Skill</th><th>Ability</th><th>Trained</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Weapons</h2>
+    <div class="row">
+      <div><label>Add Weapon</label><select id="weaponSelect"></select></div>
+      <button onclick="addSelectedWeapon()">Add</button>
+    </div>
+    <table id="weaponsTable">
+      <thead><tr><th>Name</th><th>Attack Bonus</th><th>Damage</th><th>Notes</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Spells</h2>
+    <div class="row">
+      <div><label>Add Spell</label><select id="spellSelect"></select></div>
+      <button onclick="addSelectedSpell()">Add</button>
+    </div>
+    <table id="spellsTable">
+      <thead><tr><th>Name</th><th>Level</th><th>Range</th><th>Effect</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Inventory</h2>
+    <div class="row">
+      <div><label>Add Item</label><select id="itemSelect"></select></div>
+      <div><label>Qty</label><input id="itemQty" type="number" value="1"></div>
+      <button onclick="addSelectedItem()">Add</button>
+    </div>
+    <table id="invTable">
+      <thead><tr><th>Item</th><th>Qty</th><th>Weight</th><th>Notes</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Feats</h2>
+    <div class="row">
+      <div><label>Add Feat</label><input id="featName" type="text" placeholder="Feat name"></div>
+      <div><label>Text</label><input id="featText" type="text" placeholder="Feat description"></div>
+      <button onclick="addFeat()">Add</button>
+    </div>
+    <div id="featList"></div>
+  </section>
+
+  <section class="card">
+    <h2>Dice</h2>
+    <div class="row">
+      <button onclick="clickDie(4)">d4</button><button onclick="clickDie(6)">d6</button><button onclick="clickDie(8)">d8</button><button onclick="clickDie(10)">d10</button><button onclick="clickDie(12)">d12</button><button onclick="clickDie(20)">d20</button><button onclick="clickDie(100)">d100</button>
+    </div>
+    <div class="row">
+      <div><input id="diceN" type="number" value="1"></div><div class="mono">d</div><div><input id="diceX" type="number" value="20"></div><div class="mono">+</div><div><input id="diceMod" type="number" value="0"></div><button onclick="rollCustom()">Roll</button>
+    </div>
+    <div class="log mono" id="log"></div>
+  </section>
+
+  <section class="card">
+    <h2>Save / Load</h2>
+    <div class="row">
+      <button onclick="saveLocal()">Save to Browser</button>
+      <button onclick="loadLocal()">Load from Browser</button>
+      <button onclick="clearLocal()">Clear Save</button>
+    </div>
+  </section>
+</div>
+
+<script>
+// ------------- Utilities & Dice -------------
+const byId = (id)=>document.getElementById(id);
+const modFromScore = (score)=> Math.floor((Number(score||0)-10)/2);
+const log = (msg)=>{ const el=byId('log'); const t=new Date().toLocaleTimeString(); el.innerHTML = `[${t}] ${msg}<br>` + el.innerHTML; };
+function rollDie(x){ return 1+Math.floor(Math.random()*x); }
+function roll(n,x,m=0){ const rs=Array.from({length:Number(n)},()=>rollDie(Number(x))); const total=rs.reduce((a,b)=>a+b,0)+Number(m); return {total, rolls:rs, mod:Number(m)}; }
+function clickDie(x){ const r=roll(1,x,0); log(`1d${x} → [${r.rolls.join(', ')}] = <b>${r.total}</b>`); }
+function rollCustom(){ const n=byId('diceN').value, x=byId('diceX').value, m=byId('diceMod').value; const r=roll(n,x,m); log(`${n}d${x}+${m} → [${r.rolls.join(', ')}] ${(m>=0?'+':'')}${m} = <b>${r.total}</b>`); }
+
+// ------------- Settings -------------
+const KEY_SETTINGS = "starterRPG.settings.v1";
+function saveSettings(){
+  const s = { sheetId: byId('sheetId').value.trim(), webhookUrl: byId('webhookUrl').value.trim() };
+  localStorage.setItem(KEY_SETTINGS, JSON.stringify(s));
+  alert("Settings saved.");
+}
+function loadSettings(){
+  const raw = localStorage.getItem(KEY_SETTINGS); if(!raw) return;
+  try { const s = JSON.parse(raw); byId('sheetId').value = s.sheetId||''; byId('webhookUrl').value = s.webhookUrl||''; } catch(e){}
+}
+
+// ------------- Fetch GViz per sheet -------------
+function gvizUrl(sheetId, sheetName){
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+}
+async function fetchSheet(sheetId, sheetName){
+  const res = await fetch(gvizUrl(sheetId, sheetName));
+  const text = await res.text();
+  const json = JSON.parse(text.substring(47, text.length-2));
+  return json.table;
+}
+
+// ------------- Loaders -------------
+async function loadCharacterKV(sheetId){
+  const table = await fetchSheet(sheetId, "Character");
+  const data = {};
+  (table.rows||[]).forEach(r=>{
+    const k = r.c?.[0]?.v; const v = r.c?.[1]?.v;
+    if(k!=null) data[k] = v;
+  });
+  byId('name').value = data["Name"]||"";
+  byId('level').value = data["Level"]||1;
+  byId('gold').value = data["Gold"]||0;
+  ["MGT","AGI","MND","PRE","GRT"].forEach(a=>{
+    const el = document.querySelector(\`input.score[data-abil="\${a}"]\`);
+    if(el) el.value = data[a] ?? 10;
+  });
+  byId('hpMax').value = data["HP Max"]||0;
+  byId('hp').value = data["HP Current"]||0;
+  byId('speed').value = data["Speed"]||30;
+  byId('ac').value = data["AC"]||10;
+  byId('notes').value = data["Notes"]||"";
+  // set armor/shield later after dropdowns are loaded
+  return { armor: data["Armor"]||"None", shield: data["Shield"]||"None" };
+}
+
+async function loadSkills(sheetId){
+  const table = await fetchSheet(sheetId, "Skills");
+  const tbody = byId('skillsTable').querySelector('tbody'); tbody.innerHTML='';
+  (table.rows||[]).forEach(r=>{
+    const sk = r.c?.[0]?.v; const abil = r.c?.[1]?.v; const trn = !!(r.c?.[2]?.v);
+    if(!sk) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = \`<td>\${sk}</td><td>\${abil||''}</td><td><input type="checkbox" class="skillTrained" data-skill="\${sk}" \${trn?'checked':''}></td>\`;
+    tbody.appendChild(tr);
+  });
+}
+
+async function loadInventory(sheetId){
+  const table = await fetchSheet(sheetId, "Inventory");
+  const tb = byId('invTable').querySelector('tbody'); tb.innerHTML='';
+  (table.rows||[]).forEach(r=>{
+    const name=r.c?.[0]?.v, qty=r.c?.[1]?.v||1, wt=r.c?.[2]?.v||0, notes=r.c?.[3]?.v||'';
+    if(!name) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = \`<td>\${name}</td><td>\${qty}</td><td>\${wt}</td><td>\${notes}</td><td><button onclick="this.closest('tr').remove()">✕</button></td>\`;
+    tb.appendChild(tr);
+  });
+}
+
+async function loadWeapons(sheetId){
+  const table = await fetchSheet(sheetId, "Weapons");
+  const tb = byId('weaponsTable').querySelector('tbody'); tb.innerHTML='';
+  (table.rows||[]).forEach(r=>{
+    const name=r.c?.[0]?.v, atk=r.c?.[1]?.v||'', dmg=r.c?.[2]?.v||'', notes=r.c?.[3]?.v||'';
+    if(!name) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = \`<td>\${name}</td><td class="mono">\${atk}</td><td class="mono">\${dmg}</td><td>\${notes}</td><td><button onclick="this.closest('tr').remove()">✕</button></td>\`;
+    tb.appendChild(tr);
+  });
+}
+
+async function loadSpells(sheetId){
+  const table = await fetchSheet(sheetId, "Spells");
+  const tb = byId('spellsTable').querySelector('tbody'); tb.innerHTML='';
+  (table.rows||[]).forEach(r=>{
+    const name=r.c?.[0]?.v, lvl=r.c?.[1]?.v||0, rng=r.c?.[2]?.v||'', eff=r.c?.[3]?.v||'';
+    if(!name) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = \`<td>\${name}</td><td>\${lvl}</td><td>\${rng}</td><td>\${eff}</td><td><button onclick="this.closest('tr').remove()">✕</button></td>\`;
+    tb.appendChild(tr);
+  });
+}
+
+async function loadFeats(sheetId){
+  const table = await fetchSheet(sheetId, "Feats");
+  const box = byId('featList'); box.innerHTML='';
+  (table.rows||[]).forEach(r=>{
+    const name=r.c?.[0]?.v, text=r.c?.[1]?.v||'';
+    if(!name) return;
+    const div = document.createElement('div');
+    div.className='chip';
+    div.innerHTML = \`<b>\${name}</b>: \${text} <button onclick="this.parentElement.remove()">✕</button>\`;
+    box.appendChild(div);
+  });
+}
+
+// Reference lists
+async function loadArmorList(sheetId){
+  const table = await fetchSheet(sheetId, "Data_Armor");
+  const armorSel = byId('armorSelect'); const shieldSel = byId('shieldSelect');
+  armorSel.innerHTML=''; shieldSel.innerHTML='';
+  const armors = []; const shields = [{Name:'None', Category:'Shield', AC:0, MaxAgi:null, Stealth:'', Weight:0, IsShield:True}];
+  (table.rows||[]).forEach(r=>{
+    const row = {Name:r.c?.[0]?.v, Category:r.c?.[1]?.v, AC:r.c?.[2]?.v, MaxAgi:r.c?.[3]?.v, Stealth:r.c?.[4]?.v, Weight:r.c?.[5]?.v, IsShield:!!(r.c?.[6]?.v)};
+    if(!row.Name) return;
+    if(row.IsShield) shields.push(row); else armors.push(row);
+  });
+  armors.forEach((a,i)=>{ const opt=document.createElement('option'); opt.value=a.Name; opt.textContent=`${a.Name} (${a.Category})`; armorSel.appendChild(opt); });
+  shields.forEach((s,i)=>{ const opt=document.createElement('option'); opt.value=s.Name; opt.textContent=s.Name; shieldSel.appendChild(opt); });
+  return {armors, shields};
+}
+
+async function loadWeaponsList(sheetId){
+  const table = await fetchSheet(sheetId, "Data_Weapons");
+  const sel = byId('weaponSelect'); sel.innerHTML='';
+  const list=[];
+  (table.rows||[]).forEach(r=>{
+    const row={Name:r.c?.[0]?.v, Damage:r.c?.[1]?.v, Props:r.c?.[2]?.v, Weight:r.c?.[3]?.v};
+    if(!row.Name) return;
+    list.push(row);
+  });
+  list.forEach(w=>{ const opt=document.createElement('option'); opt.value=w.Name; opt.textContent=`${w.Name} [${w.Damage}]`; sel.appendChild(opt); });
+  return list;
+}
+
+async function loadItemsList(sheetId){
+  const table = await fetchSheet(sheetId, "Data_Items");
+  const sel = byId('itemSelect'); sel.innerHTML='';
+  const list=[];
+  (table.rows||[]).forEach(r=>{
+    const row={Name:r.c?.[0]?.v, Type:r.c?.[1]?.v, Weight:r.c?.[2]?.v, Cost:r.c?.[3]?.v, Notes:r.c?.[4]?.v};
+    if(!row.Name) return; list.push(row);
+  });
+  list.forEach(it=>{ const opt=document.createElement('option'); opt.value=it.Name; opt.textContent=`${it.Name} (wt ${it.Weight||0})`; sel.appendChild(opt); });
+  return list;
+}
+
+async function loadSpellsList(sheetId){
+  const table = await fetchSheet(sheetId, "Data_Spells");
+  const sel = byId('spellSelect'); sel.innerHTML='';
+  const list=[];
+  (table.rows||[]).forEach(r=>{
+    const row={Name:r.c?.[0]?.v, Level:r.c?.[1]?.v, School:r.c?.[2]?.v, CastingTime:r.c?.[3]?.v, Range:r.c?.[4]?.v, Duration:r.c?.[5]?.v, Effect:r.c?.[6]?.v};
+    if(!row.Name) return; list.push(row);
+  });
+  list.forEach(sp=>{ const opt=document.createElement('option'); opt.value=sp.Name; opt.textContent=`${sp.Name} (L${sp.Level})`; sel.appendChild(opt); });
+  return list;
+}
+
+// ------------- Adders -------------
+function addSelectedWeapon(){
+  const name = byId('weaponSelect').value;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${name}</td><td class="mono"></td><td class="mono"></td><td></td><td><button onclick="this.closest('tr').remove()">✕</button></td>`;
+  byId('weaponsTable').querySelector('tbody').appendChild(tr);
+}
+function addSelectedSpell(){
+  const name = byId('spellSelect').value;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${name}</td><td></td><td></td><td></td><td><button onclick="this.closest('tr').remove()">✕</button></td>`;
+  byId('spellsTable').querySelector('tbody').appendChild(tr);
+}
+function addSelectedItem(){
+  const name = byId('itemSelect').value;
+  const qty = Number(byId('itemQty').value||1);
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${name}</td><td>${qty}</td><td></td><td></td><td><button onclick="this.closest('tr').remove()">✕</button></td>`;
+  byId('invTable').querySelector('tbody').appendChild(tr);
+}
+function addFeat(){
+  const name = byId('featName').value.trim(); const text = byId('featText').value.trim();
+  if(!name) return;
+  const div=document.createElement('div'); div.className='chip'; div.innerHTML = `<b>${name}</b>: ${text} <button onclick="this.parentElement.remove()">✕</button>`;
+  byId('featList').appendChild(div);
+  byId('featName').value=''; byId('featText').value='';
+}
+
+// ------------- Save/Load Local -------------
+const KEY_LOCAL="starterRPG.full.v1";
+function readState(){
+  // Skills
+  const skills = Array.from(byId('skillsTable').querySelectorAll('tbody tr')).map(tr=>{
+    const t=tr.querySelectorAll('td'); return {Skill:t[0].textContent, Ability:t[1].textContent, Trained: tr.querySelector('input').checked};
+  });
+  // Inventory
+  const inventory = Array.from(byId('invTable').querySelectorAll('tbody tr')).map(tr=>{
+    const t=tr.querySelectorAll('td'); return {Item:t[0].textContent, Qty:Number(t[1].textContent||1), Weight:Number(t[2].textContent||0), Notes:t[3].textContent};
+  });
+  // Weapons
+  const weapons = Array.from(byId('weaponsTable').querySelectorAll('tbody tr')).map(tr=>{
+    const t=tr.querySelectorAll('td'); return {Name:t[0].textContent, AttackBonus:t[1].textContent, Damage:t[2].textContent, Notes:t[3].textContent};
+  });
+  // Spells
+  const spells = Array.from(byId('spellsTable').querySelectorAll('tbody tr')).map(tr=>{
+    const t=tr.querySelectorAll('td'); return {Name:t[0].textContent, Level:t[1].textContent, Range:t[2].textContent, Effect:t[3].textContent};
+  });
+  // Feats
+  const feats = Array.from(byId('featList').querySelectorAll('.chip')).map(div=>div.textContent.replace('✕','').trim());
+
+  return {
+    Name: byId('name').value, Level: Number(byId('level').value||1),
+    Gold: Number(byId('gold').value||0),
+    MGT: Number(document.querySelector('input.score[data-abil="MGT"]').value||10),
+    AGI: Number(document.querySelector('input.score[data-abil="AGI"]').value||10),
+    MND: Number(document.querySelector('input.score[data-abil="MND"]').value||10),
+    PRE: Number(document.querySelector('input.score[data-abil="PRE"]').value||10),
+    GRT: Number(document.querySelector('input.score[data-abil="GRT"]').value||10),
+    HPMax: Number(byId('hpMax').value||0),
+    HPCurrent: Number(byId('hp').value||0),
+    Speed: Number(byId('speed').value||30),
+    AC: Number(byId('ac').value||10),
+    Armor: byId('armorSelect').value, Shield: byId('shieldSelect').value,
+    Notes: byId('notes').value,
+    Skills: skills, Inventory: inventory, Weapons: weapons, Spells: spells, Feats: feats
+  };
+}
+function writeState(s){
+  byId('name').value = s.Name||'';
+  byId('level').value = s.Level||1;
+  byId('gold').value = s.Gold||0;
+  document.querySelector('input.score[data-abil="MGT"]').value = s.MGT||10;
+  document.querySelector('input.score[data-abil="AGI"]').value = s.AGI||10;
+  document.querySelector('input.score[data-abil="MND"]').value = s.MND||10;
+  document.querySelector('input.score[data-abil="PRE"]').value = s.PRE||10;
+  document.querySelector('input.score[data-abil="GRT"]').value = s.GRT||10;
+  byId('hpMax').value = s.HPMax||0;
+  byId('hp').value = s.HPCurrent||0;
+  byId('speed').value = s.Speed||30;
+  byId('ac').value = s.AC||10;
+  byId('armorSelect').value = s.Armor||'None';
+  byId('shieldSelect').value = s.Shield||'None';
+  byId('notes').value = s.Notes||'';
+
+  // Skills
+  const bodyS = byId('skillsTable').querySelector('tbody'); bodyS.innerHTML='';
+  (s.Skills||[]).forEach(row=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${row.Skill}</td><td>${row.Ability||''}</td><td><input type="checkbox" class="skillTrained" ${row.Trained?'checked':''}></td>`;
+    bodyS.appendChild(tr);
+  });
+
+  // Weapons
+  const bodyW = byId('weaponsTable').querySelector('tbody'); bodyW.innerHTML='';
+  (s.Weapons||[]).forEach(w=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${w.Name}</td><td class="mono">${w.AttackBonus||''}</td><td class="mono">${w.Damage||''}</td><td>${w.Notes||''}</td><td><button onclick="this.closest('tr').remove()">✕</button></td>`;
+    bodyW.appendChild(tr);
+  });
+
+  // Spells
+  const bodySp = byId('spellsTable').querySelector('tbody'); bodySp.innerHTML='';
+  (s.Spells||[]).forEach(sp=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${sp.Name}</td><td>${sp.Level||''}</td><td>${sp.Range||''}</td><td>${sp.Effect||''}</td><td><button onclick="this.closest('tr').remove()">✕</button></td>`;
+    bodySp.appendChild(tr);
+  });
+
+  // Inventory
+  const bodyI = byId('invTable').querySelector('tbody'); bodyI.innerHTML='';
+  (s.Inventory||[]).forEach(i=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${i.Item}</td><td>${i.Qty||1}</td><td>${i.Weight||0}</td><td>${i.Notes||''}</td><td><button onclick="this.closest('tr').remove()">✕</button></td>`;
+    bodyI.appendChild(tr);
+  });
+
+  // Feats
+  byId('featList').innerHTML='';
+  (s.Feats||[]).forEach(text=>{
+    const div=document.createElement('div'); div.className='chip'; div.innerHTML = `${text} <button onclick="this.parentElement.remove()">✕</button>`;
+    byId('featList').appendChild(div);
+  });
+}
+
+function saveLocal(){ localStorage.setItem(KEY_LOCAL, JSON.stringify(readState())); alert("Saved to browser."); }
+function loadLocal(){ const raw = localStorage.getItem(KEY_LOCAL); if(!raw) return alert("No save found."); writeState(JSON.parse(raw)); alert("Loaded from browser."); }
+function clearLocal(){ localStorage.removeItem(KEY_LOCAL); alert("Cleared browser save."); }
+
+// ------------- Load All from Google Sheets -------------
+async function loadAll(){
+  try{
+    const sheetId = byId('sheetId').value.trim(); if(!sheetId) return alert("Enter Google Sheet ID first.");
+    // Reference lists first
+    const armorLists = await loadArmorList(sheetId);
+    const weaponsList = await loadWeaponsList(sheetId);
+    const itemsList = await loadItemsList(sheetId);
+    const spellsList = await loadSpellsList(sheetId);
+    // Data tables
+    const {armor, shield} = await loadCharacterKV(sheetId);
+    await loadSkills(sheetId);
+    await loadWeapons(sheetId);
+    await loadSpells(sheetId);
+    await loadInventory(sheetId);
+    await loadFeats(sheetId);
+    // Set armor & shield selections if present
+    if(armor) byId('armorSelect').value = armor;
+    if(shield) byId('shieldSelect').value = shield;
+    alert("Loaded all tabs from Google Sheet.");
+  }catch(e){
+    console.error(e); alert("Failed loading from Google Sheets. Ensure the document is published and tab names match.");
+  }
+}
+
+// ------------- Save to Google Sheet (via Apps Script webhook) -------------
+async function saveToSheet(){
+  const webhook = byId('webhookUrl').value.trim();
+  if(!webhook){ return alert("Add your Apps Script Web App URL first."); }
+  const payload = readState();
+  try{
+    const res = await fetch(webhook, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    if(!res.ok){ throw new Error("HTTP "+res.status); }
+    alert("Saved to Google Sheet (via Apps Script).");
+  }catch(e){
+    console.error(e); alert("Failed to save to Google Sheet. Check the Web App URL and CORS settings.");
+  }
+}
+
+// ------------- Auto reload every 5 minutes -------------
+let autoReloadInterval=null;
+function startAutoReload(){
+  if(autoReloadInterval) clearInterval(autoReloadInterval);
+  autoReloadInterval = setInterval(()=>{
+    const s = byId('sheetId').value.trim();
+    if(s){ loadAll(); }
+  }, 5*60*1000);
+}
+window.addEventListener('DOMContentLoaded', ()=>{ loadSettings(); startAutoReload(); });
+</script>
+</body>
+</html>

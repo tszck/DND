@@ -1,0 +1,29 @@
+/* rpg_style.css - shared card-style UI with navigation */
+:root { --pad: 10px; --gap: 12px; --radius: 8px; --font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+* { box-sizing: border-box; }
+body { font-family: var(--font); margin: 0; padding: 0; background:#fafafa; color:#222; line-height: 1.5; }
+h1, h2 { margin: 0 0 8px; }
+.subtitle { text-align:center; color:#555; margin:0 0 10px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--gap); padding: 15px; }
+.card { border:1px solid #ddd; border-radius:var(--radius); padding:var(--pad); background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.05); }
+label { font-size:12px; color:#555; display:block; margin-bottom:4px; }
+input, select, textarea { width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:14px; }
+textarea { min-height:70px; }
+table { width:100%; border-collapse:collapse; }
+th, td { border-bottom:1px solid #eee; padding:6px; font-size:14px; text-align:left; }
+.row { display:flex; gap:var(--gap); flex-wrap:wrap; align-items:center; }
+.row > * { flex:1; min-width:120px; }
+button { padding:8px 10px; border-radius:6px; border:1px solid #ccc; background:#f7f7f7; cursor:pointer; }
+button:hover { filter:brightness(0.97); }
+.mono { font-family: ui-monospace, Menlo, Monaco, Consolas, monospace; }
+.pill { display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid #ddd; margin-right:6px; font-size:12px; }
+.log { background:#0b1020; color:#e6e6e6; padding:10px; border-radius:6px; height:200px; overflow:auto; }
+.dicebar button { margin-right:6px; }
+.chip { display:inline-block; padding:3px 8px; border:1px solid #ddd; border-radius:999px; margin:2px; font-size:12px; background:#f5f5f5; }
+.nav {
+  display:flex; justify-content:space-between; align-items:center;
+  background:#fff; border-bottom:1px solid #ddd; padding:10px 15px; box-shadow:0 1px 3px rgba(0,0,0,0.05);
+}
+.nav h1 { font-size:1.3em; margin:0; }
+.nav a { margin-left:15px; text-decoration:none; color:#0074d9; font-weight:bold; }
+.nav a:hover { text-decoration:underline; }
