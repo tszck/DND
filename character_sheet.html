@@ -22,37 +22,54 @@
     </tbody>
   </table>
   <script>
-    fetch('character_data.json')
-      .then(response => response.json())
-      .then(data => {
-        if (!Array.isArray(data) || data.length === 0) {
-          document.body.innerHTML += "<p>No character data found.</p>";
-          return;
-        }
-        // Dynamically build table headers from JSON keys
-        const keys = Object.keys(data[0]);
-        const headerRow = document.getElementById('header-row');
-        keys.forEach(key => {
-          const th = document.createElement('th');
-          th.textContent = key;
-          headerRow.appendChild(th);
-        });
-        // Add table rows
-        const tbody = document.querySelector('#char-table tbody');
-        data.forEach(character => {
-          const row = document.createElement('tr');
+    // Get the character name from URL parameter
+    function getCharacterNameFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('name');
+    }
+
+    const characterName = getCharacterNameFromURL();
+    if (!characterName) {
+      document.body.innerHTML += "<p style='color:red;'>No character name provided in URL.</p>";
+    } else {
+      const jsonFile = `${characterName}.json`;
+      fetch(jsonFile)
+        .then(response => {
+          if (!response.ok) throw new Error('File not found');
+          return response.json();
+        })
+        .then(data => {
+          // Wrap single object in array for compatibility
+          if (data && !Array.isArray(data)) data = [data];
+          if (!Array.isArray(data) || data.length === 0) {
+            document.body.innerHTML += "<p>No character data found.</p>";
+            return;
+          }
+          // Dynamically build table headers from JSON keys
+          const keys = Object.keys(data[0]);
+          const headerRow = document.getElementById('header-row');
           keys.forEach(key => {
-            const td = document.createElement('td');
-            td.textContent = character[key];
-            row.appendChild(td);
+            const th = document.createElement('th');
+            th.textContent = key;
+            headerRow.appendChild(th);
           });
-          tbody.appendChild(row);
+          // Add table rows
+          const tbody = document.querySelector('#char-table tbody');
+          data.forEach(character => {
+            const row = document.createElement('tr');
+            keys.forEach(key => {
+              const td = document.createElement('td');
+              td.textContent = character[key];
+              row.appendChild(td);
+            });
+            tbody.appendChild(row);
+          });
+        })
+        .catch(err => {
+          document.body.innerHTML += `<p style="color:red;">Could not load character data from ${jsonFile}.</p>`;
+          console.error(err);
         });
-      })
-      .catch(err => {
-        document.body.innerHTML += `<p style="color:red;">Could not load character data.</p>`;
-        console.error(err);
-      });
+    }
   </script>
 </body>
 </html>
