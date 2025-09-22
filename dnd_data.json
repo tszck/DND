@@ -1,12 +1,19 @@
 {
   "items": [
     {"name": "Longsword", "type": "Weapon", "damage": "1d8 slashing", "properties": ["Versatile"]},
-    {"name": "Shield", "type": "Armor", "ac_bonus": 2},
-    {"name": "Health Potion", "type": "Consumable", "effect": "Heals 2d4+2 HP"},
-    {"name": "Leather Armor", "type": "Armor", "ac": 11, "dex_bonus": true}
+    {"name": "Health Potion", "type": "Consumable", "effect": "Heals 2d4+2 HP"}
   ],
-  "gears": [
-    {"name": "Explorer's Pack", "contents": ["Backpack", "Bedroll", "Mess kit", "Rope (50 ft)", "Rations (10 days)", "Waterskin", "Torch (10)", "Tinderbox"]}
+  "equipment": [
+    {"name": "Shield", "type": "Armor", "ac_bonus": 2},
+    {"name": "Leather Armor", "type": "Armor", "ac": 11, "dex_bonus": true},
+  {"name": "Backpack", "type": "Gear"},
+  {"name": "Bedroll", "type": "Gear"},
+  {"name": "Mess kit", "type": "Gear"},
+  {"name": "Rope (50 ft)", "type": "Gear"},
+  {"name": "Rations (10 days)", "type": "Consumable"},
+  {"name": "Waterskin", "type": "Gear"},
+  {"name": "Torch (10)", "type": "Gear"},
+  {"name": "Tinderbox", "type": "Gear"}
   ],
   "skills": [
     {"name": "Athletics", "ability": "Strength"},

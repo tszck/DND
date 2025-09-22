@@ -1,1 +1,38 @@
-{"name":"Chris","class":"Warrior","level":1,"strength":10,"dexterity":10,"intelligence":10,"wisdom":10,"charisma":10}
+{
+	"name": "Chris",
+	"class": "Warrior",
+	"level": 1,
+	"strength": 10,
+	"dexterity": 10,
+	"constitution": 10,
+	"intelligence": 10,
+	"wisdom": 10,
+	"charisma": 10,
+	"items": [
+		{"name": "Longsword", "count": 1},
+		{"name": "Health Potion", "count": 2}
+	],
+	"equipment": [
+		{"name": "Shield", "count": 1},
+		{"name": "Leather Armor", "count": 1},
+		{"name": "Backpack", "count": 1},
+		{"name": "Bedroll", "count": 1},
+		{"name": "Mess kit", "count": 1},
+		{"name": "Rope (50 ft)", "count": 1},
+		{"name": "Rations (10 days)", "count": 0},
+		{"name": "Waterskin", "count": 1},
+		{"name": "Torch (10)", "count": 0},
+		{"name": "Tinderbox", "count": 1}
+	],
+	"skills": [
+		{"name": "Athletics", "count": 1},
+		{"name": "Perception", "count": 1},
+		{"name": "Stealth", "count": 1},
+		{"name": "Arcana", "count": 1}
+	],
+	"spells": [
+		{"name": "Fireball", "count": 1},
+		{"name": "Cure Wounds", "count": 1},
+		{"name": "Mage Armor", "count": 1}
+	]
+}

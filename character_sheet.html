@@ -73,25 +73,18 @@
   <div class="dashboard">
     <div class="profile">
       <img src="avatar.png" alt="Character Avatar">
-      <h2>Arin the Brave</h2>
-      <p>Level 5 Human Fighter</p>
+      <h2 id="char-name"></h2>
+      <p id="char-class"></p>
     </div>
     <div>
       <div class="stats">
         <div class="section-title">Stats</div>
-        <table>
-          <tr><th>Strength</th><td>16</td></tr>
-          <tr><th>Dexterity</th><td>14</td></tr>
-          <tr><th>Constitution</th><td>15</td></tr>
-          <tr><th>Intelligence</th><td>10</td></tr>
-          <tr><th>Wisdom</th><td>12</td></tr>
-          <tr><th>Charisma</th><td>13</td></tr>
-        </table>
+        <table id="stats-table"></table>
       </div>
       <div class="inventory">
         <div class="section-title">Items & Gear</div>
         <ul id="items-list"></ul>
-        <div class="section-title">Gear Packs</div>
+        <div class="section-title">Gear</div>
         <ul id="gears-list"></ul>
       </div>
       <div class="abilities">
@@ -103,44 +96,72 @@
     </div>
   </div>
   <script>
-    fetch('dnd_data.json')
+    // Get character name from URL or default to 'chris'
+    function getCharacterName() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('name') || 'chris';
+    }
+    const charName = getCharacterName();
+    fetch(`${charName}.json`)
       .then(response => response.json())
-      .then(data => {
+      .then(character => {
+        // Profile
+        document.getElementById('char-name').textContent = character.name || charName;
+        document.getElementById('char-class').textContent = `Level ${character.level || ''} ${character.class || ''}`;
+        // Stats
+        const statsTable = document.getElementById('stats-table');
+        const statKeys = ['strength','dexterity','constitution','intelligence','wisdom','charisma'];
+        statKeys.forEach(key => {
+          if (character[key] !== undefined) {
+            const row = document.createElement('tr');
+            const th = document.createElement('th');
+            th.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+            const td = document.createElement('td');
+            td.textContent = character[key];
+            row.appendChild(th);
+            row.appendChild(td);
+            statsTable.appendChild(row);
+          }
+        });
         // Items
         const itemsList = document.getElementById('items-list');
-        data.items.forEach(item => {
-          let details = '';
-          if (item.type === 'Weapon') details = ` (${item.damage}${item.properties ? ', ' + item.properties.join(', ') : ''})`;
-          if (item.type === 'Armor') details = item.ac ? ` (AC: ${item.ac}${item.dex_bonus ? ' + DEX' : ''})` : item.ac_bonus ? ` (+${item.ac_bonus} AC)` : '';
-          if (item.type === 'Consumable') details = ` (${item.effect})`;
-          const li = document.createElement('li');
-          li.textContent = `${item.name} [${item.type}]${details}`;
-          itemsList.appendChild(li);
+        (character.items || []).forEach(item => {
+          if (item.count > 0) {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} x${item.count}`;
+            itemsList.appendChild(li);
+          }
         });
-        // Gears
+        // Equipment
         const gearsList = document.getElementById('gears-list');
-        data.gears.forEach(gear => {
-          const li = document.createElement('li');
-          li.textContent = `${gear.name}: ${gear.contents.join(', ')}`;
-          gearsList.appendChild(li);
+        (character.equipment || []).forEach(eq => {
+          if (eq.count > 0) {
+            const li = document.createElement('li');
+            li.textContent = `${eq.name} x${eq.count}`;
+            gearsList.appendChild(li);
+          }
         });
         // Skills
         const skillsList = document.getElementById('skills-list');
-        data.skills.forEach(skill => {
-          const li = document.createElement('li');
-          li.textContent = `${skill.name} (${skill.ability})`;
-          skillsList.appendChild(li);
+        (character.skills || []).forEach(skill => {
+          if (skill.count > 0) {
+            const li = document.createElement('li');
+            li.textContent = `${skill.name} x${skill.count}`;
+            skillsList.appendChild(li);
+          }
         });
         // Spells
         const spellsList = document.getElementById('spells-list');
-        data.spells.forEach(spell => {
-          const li = document.createElement('li');
-          li.innerHTML = `<strong>${spell.name}</strong> (Level ${spell.level}, ${spell.school}): <span style="color:#ccc;">${spell.description}</span>`;
-          spellsList.appendChild(li);
+        (character.spells || []).forEach(spell => {
+          if (spell.count > 0) {
+            const li = document.createElement('li');
+            li.textContent = `${spell.name} x${spell.count}`;
+            spellsList.appendChild(li);
+          }
         });
       })
       .catch(err => {
-        document.body.innerHTML += `<p style='color:red;'>Could not load DND data.</p>`;
+        document.body.innerHTML += `<p style='color:red;'>Could not load character data for ${charName}.</p>`;
         console.error(err);
       });
   </script>
