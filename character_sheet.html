@@ -231,14 +231,14 @@
     });
 
     function renderCharacterSheet(character) {
-      document.getElementById('char-name').textContent = character.name || character.username;
-      document.getElementById('char-class').textContent = `Level ${character.level || ''} ${character.class || ''}`;
-      // Summary
-      let summary = '';
-      if (character.race) summary += `<b>Race:</b> ${character.race} `;
-      if (character.class) summary += `<b>Class:</b> ${character.class} `;
-      if (character.background) summary += `<b>Background:</b> ${character.background}`;
-      document.getElementById('char-summary').innerHTML = summary;
+  document.getElementById('char-name').textContent = character.name || character.username || '';
+  document.getElementById('char-class').textContent = `Level ${character.level ?? ''} ${character.class ?? ''}`;
+  // Summary
+  let summary = '';
+  if (character.race) summary += `<b>Race:</b> ${character.race} `;
+  if (character.class) summary += `<b>Class:</b> ${character.class} `;
+  if (character.background) summary += `<b>Background:</b> ${character.background}`;
+  document.getElementById('char-summary').innerHTML = summary;
 
       // Bonus logic
       const raceInfo = {
@@ -287,38 +287,36 @@
       statsTable.innerHTML = '';
       const statKeys = ['strength','dexterity','constitution','intelligence','wisdom','charisma'];
       statKeys.forEach(key => {
-        if (character[key] !== undefined) {
-          let base = character[key];
-          let bonus = 0;
-          let sources = [];
-          // Race bonus
-          if (character.race && raceInfo[character.race] && raceInfo[character.race].bonus && raceInfo[character.race].bonus[key]) {
-            bonus += raceInfo[character.race].bonus[key];
-            sources.push(`Race +${raceInfo[character.race].bonus[key]}`);
-          }
-          // Class bonus
-          if (character.class && classInfo[character.class] && classInfo[character.class].stat === key) {
-            bonus += 1;
-            sources.push('Class +1');
-          }
-          // Show stat with bonus breakdown
-          const row = document.createElement('tr');
-          const th = document.createElement('th');
-          th.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-          const td = document.createElement('td');
-          td.textContent = base;
-          if (bonus > 0) {
-            td.textContent += ` (+${bonus} [${sources.join(', ')}])`;
-          }
-          row.appendChild(th);
-          row.appendChild(td);
-          statsTable.appendChild(row);
+        let base = character[key] ?? 0;
+        let bonus = 0;
+        let sources = [];
+        // Race bonus
+        if (character.race && raceInfo[character.race] && raceInfo[character.race].bonus && raceInfo[character.race].bonus[key]) {
+          bonus += raceInfo[character.race].bonus[key];
+          sources.push(`Race +${raceInfo[character.race].bonus[key]}`);
         }
+        // Class bonus
+        if (character.class && classInfo[character.class] && classInfo[character.class].stat === key) {
+          bonus += 1;
+          sources.push('Class +1');
+        }
+        // Show stat with bonus breakdown
+        const row = document.createElement('tr');
+        const th = document.createElement('th');
+        th.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+        const td = document.createElement('td');
+        td.textContent = base;
+        if (bonus > 0) {
+          td.textContent += ` (+${bonus} [${sources.join(', ')}])`;
+        }
+        row.appendChild(th);
+        row.appendChild(td);
+        statsTable.appendChild(row);
       });
       // Skills (only render once, with bonus breakdown)
       const skillsList = document.getElementById('skills-list');
       skillsList.innerHTML = '';
-      (character.skills || []).forEach(skill => {
+      (Array.isArray(character.skills) ? character.skills : []).forEach(skill => {
         let bonus = 0;
         let sources = [];
         // Class bonus
@@ -331,11 +329,11 @@
           bonus += 2;
           sources.push('Background +2');
         }
-        let display = `${skill.name} x${skill.count}`;
+        let display = `${skill.name} x${skill.count ?? 0}`;
         if (bonus > 0) {
           display += ` (+${bonus} [${sources.join(', ')}])`;
         }
-        if (skill.count > 0 || bonus > 0) {
+        if ((skill.count ?? 0) > 0 || bonus > 0) {
           const li = document.createElement('li');
           li.textContent = display;
           li.setAttribute('data-type', 'skills');
@@ -346,10 +344,10 @@
       // Items
       const itemsList = document.getElementById('items-list');
       itemsList.innerHTML = '';
-      (character.items || []).forEach(item => {
-        if (item.count > 0) {
+      (Array.isArray(character.items) ? character.items : []).forEach(item => {
+        if ((item.count ?? 0) > 0) {
           const li = document.createElement('li');
-          li.textContent = `${item.name} x${item.count}`;
+          li.textContent = `${item.name} x${item.count ?? 0}`;
           li.setAttribute('data-type', 'items');
           li.setAttribute('data-name', item.name);
           itemsList.appendChild(li);
@@ -358,10 +356,10 @@
       // Equipment
       const gearsList = document.getElementById('gears-list');
       gearsList.innerHTML = '';
-      (character.equipment || []).forEach(eq => {
-        if (eq.count > 0) {
+      (Array.isArray(character.equipment) ? character.equipment : []).forEach(eq => {
+        if ((eq.count ?? 0) > 0) {
           const li = document.createElement('li');
-          li.textContent = `${eq.name} x${eq.count}`;
+          li.textContent = `${eq.name} x${eq.count ?? 0}`;
           li.setAttribute('data-type', 'equipment');
           li.setAttribute('data-name', eq.name);
           gearsList.appendChild(li);
@@ -370,10 +368,10 @@
       // Spells
       const spellsList = document.getElementById('spells-list');
       spellsList.innerHTML = '';
-      (character.spells || []).forEach(spell => {
-        if (spell.count > 0) {
+      (Array.isArray(character.spells) ? character.spells : []).forEach(spell => {
+        if ((spell.count ?? 0) > 0) {
           const li = document.createElement('li');
-          li.textContent = `${spell.name} x${spell.count}`;
+          li.textContent = `${spell.name} x${spell.count ?? 0}`;
           li.setAttribute('data-type', 'spells');
           li.setAttribute('data-name', spell.name);
           spellsList.appendChild(li);

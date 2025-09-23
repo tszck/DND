@@ -193,22 +193,22 @@
 
       const character = {
         username: name.toLowerCase(),
-        name,
-        race,
+        name: name,
+        race: race,
         class: charClass,
-  background,
-  // alignment removed
-        level,
-        strength: stats.strength,
-        dexterity: stats.dexterity,
-        constitution: stats.constitution,
-        intelligence: stats.intelligence,
-        wisdom: stats.wisdom,
-        charisma: stats.charisma,
-        items: initEntries(dndData.items),
-        equipment: initEntries(dndData.equipment),
-        skills,
-        spells: initEntries(dndData.spells)
+        background: background,
+        level: level,
+        strength: stats.strength ?? 0,
+        dexterity: stats.dexterity ?? 0,
+        constitution: stats.constitution ?? 0,
+        intelligence: stats.intelligence ?? 0,
+        wisdom: stats.wisdom ?? 0,
+        charisma: stats.charisma ?? 0,
+        items: Array.isArray(dndData.items) ? initEntries(dndData.items) : [],
+        equipment: Array.isArray(dndData.equipment) ? initEntries(dndData.equipment) : [],
+        skills: Array.isArray(skills) ? skills : [],
+        spells: Array.isArray(dndData.spells) ? initEntries(dndData.spells) : [],
+        bio: ''
       };
       // Save to Supabase
       const { data, error } = await supabase.from('characters').insert([character]);
