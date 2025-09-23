@@ -71,6 +71,22 @@
 </head>
 <body>
   <div class="dashboard">
+    <div class="section-title">Add to Character</div>
+    <form id="addForm" style="margin-bottom:24px;">
+      <label for="type">Type:</label>
+      <select id="type" name="type">
+        <option value="items">Item</option>
+        <option value="equipment">Equipment</option>
+        <option value="skills">Skill</option>
+        <option value="spells">Spell</option>
+      </select>
+      <label for="suggestion">Name:</label>
+      <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
+      <datalist id="suggestions"></datalist>
+      <label for="count">Count:</label>
+      <input type="number" id="count" name="count" min="1" value="1" required>
+      <button type="submit">Add</button>
+    </form>
     <div class="profile">
       <img src="avatar.png" alt="Character Avatar">
       <h2 id="char-name"></h2>
@@ -97,6 +113,70 @@
   </div>
   <div id="sheet-data" style="margin:32px 0;"></div>
   <script>
+    // Suggestions infrastructure
+    let sheetSuggestions = { items: [], equipment: [], skills: [], spells: [] };
+    async function fetchSuggestions() {
+      const url = "https://script.google.com/macros/s/AKfycbzzraQxVtCn6r_VhL_BitUXUxFqrQp7q0ShBv6hRTXSfkIL0jdzxq-wnzhZWAxcxUOkTA/exec";
+      const res = await fetch(url);
+      const data = await res.json();
+      // Assume first row is header
+      const header = data[0];
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        header.forEach((col, idx) => {
+          if (col.endsWith('_count') && row[idx] !== undefined) {
+            const type = col.includes('Spell') ? 'spells' : col.includes('Skill') ? 'skills' : col.includes('Armor') || col.includes('Shield') || col.includes('Backpack') || col.includes('Bedroll') || col.includes('Mess kit') || col.includes('Rope') || col.includes('Rations') || col.includes('Waterskin') || col.includes('Torch') || col.includes('Tinderbox') ? 'equipment' : 'items';
+            const name = col.replace('_count','').replace(/\(.*\)/,'').replace(/_/g,' ');
+            if (!sheetSuggestions[type].includes(name)) sheetSuggestions[type].push(name);
+          }
+        });
+      }
+    }
+    fetchSuggestions().then(() => {
+      updateSuggestionsList('items');
+    });
+    document.getElementById('type').addEventListener('change', function() {
+      updateSuggestionsList(this.value);
+    });
+    function updateSuggestionsList(type) {
+      const datalist = document.getElementById('suggestions');
+      datalist.innerHTML = '';
+      sheetSuggestions[type].forEach(s => {
+        const option = document.createElement('option');
+        option.value = s;
+        datalist.appendChild(option);
+      });
+    }
+    // Manual add logic
+    document.getElementById('addForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const type = document.getElementById('type').value;
+      const name = document.getElementById('suggestion').value.trim();
+      const count = parseInt(document.getElementById('count').value);
+      if (!name || !count) return;
+      // Add to UI
+      let ul;
+      if (type === 'items') ul = document.getElementById('items-list');
+      else if (type === 'equipment') ul = document.getElementById('gears-list');
+      else if (type === 'skills') ul = document.getElementById('skills-list');
+      else if (type === 'spells') ul = document.getElementById('spells-list');
+      // Check if already exists
+      let found = false;
+      ul.querySelectorAll('li').forEach(li => {
+        if (li.textContent.startsWith(name + ' x')) {
+          let parts = li.textContent.split(' x');
+          li.textContent = `${name} x${parseInt(parts[1]) + count}`;
+          found = true;
+        }
+      });
+      if (!found) {
+        const li = document.createElement('li');
+        li.textContent = `${name} x${count}`;
+        ul.appendChild(li);
+      }
+      this.reset();
+      updateSuggestionsList(document.getElementById('type').value);
+    });
     async function loadData() {
       const url = "https://script.google.com/macros/s/AKfycbzzraQxVtCn6r_VhL_BitUXUxFqrQp7q0ShBv6hRTXSfkIL0jdzxq-wnzhZWAxcxUOkTA/exec"; // from Google Apps Script deployment
       const res = await fetch(url);
