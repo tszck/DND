@@ -93,7 +93,24 @@
     function loadCharacter(idx) {
       selectedChar = characters[idx];
       if (!selectedChar) return;
-      document.getElementById('avatar-preview').src = selectedChar.avatar_url || 'avatar.png';
+      const avatarImg = document.getElementById('avatar-preview');
+      if (avatarImg) {
+        const username = selectedChar.username || selectedChar.name || '';
+        const canonicalAvatarUrl = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${username}.jpg`;
+        avatarImg.onerror = function() {
+          if (!this.src.endsWith('avatar.jpg')) {
+            this.onerror = function() {
+              this.onerror = null;
+              this.src = '';
+              this.title = 'No avatar image found.';
+            };
+            this.src = 'avatar.jpg';
+            this.title = 'Avatar could not be loaded. Showing default avatar.';
+          }
+        };
+        avatarImg.src = canonicalAvatarUrl;
+        avatarImg.title = selectedChar.avatar_url ? '' : 'No avatar set. Upload or provide a URL.';
+      }
       document.getElementById('name').value = selectedChar.name || '';
       document.getElementById('bio').value = selectedChar.bio || '';
       document.getElementById('story-bio').value = selectedChar.story_bio || '';
@@ -149,7 +166,26 @@
         canvas.toBlob(function(blob) {
           avatarBlob = blob;
           avatarFileType = file.type;
-          document.getElementById('avatar-preview').src = canvas.toDataURL(file.type, 0.92);
+          // Show preview immediately, but also set up fallback logic for canonical avatar
+          const avatarImg = document.getElementById('avatar-preview');
+          if (avatarImg) {
+            avatarImg.onerror = function() {
+              if (!this.src.endsWith('avatar.jpg')) {
+                this.onerror = function() {
+                  this.onerror = null;
+                  this.src = '';
+                  this.title = 'No avatar image found.';
+                };
+                this.src = 'avatar.jpg';
+                this.title = 'Avatar could not be loaded. Showing default avatar.';
+              }
+            };
+            avatarImg.src = canvas.toDataURL(file.type, 0.92);
+          }
+// Prevent ReferenceError if attachTooltipListeners is missing
+if (typeof attachTooltipListeners !== 'function') {
+  function attachTooltipListeners() {}
+}
         }, file.type, 0.92);
       };
       const reader = new FileReader();

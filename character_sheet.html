@@ -34,7 +34,7 @@
     .profile, .stats {
       flex: 1 1 0;
       min-width: 0;
-      max-width: 50%;
+      /* Remove max-width to allow equal flex */
     }
     .profile {
       text-align: center;
@@ -106,7 +106,7 @@
 <body>
   <div class="dashboard">
     <div class="top-row">
-      <div class="profile" style="background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-width:0;min-height:600px;box-sizing:border-box;width:100%;overflow:visible;display:flex;flex-direction:column;align-items:center;">
+  <div class="profile" style="background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-height:600px;box-sizing:border-box;overflow:visible;display:flex;flex-direction:column;align-items:center;">
   <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="this.onerror=null;this.src='avatar.jpg';">
     <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
     <div id="avatar-fallback" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#2b2f33;color:#ffd166;">
@@ -128,7 +128,7 @@
     </div>
       <!-- Avatar removed: file not found -->
     </div>
-  <div class="stats" style="text-align:left;background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-width:0;min-height:600px;box-sizing:border-box;width:100%;overflow:visible;">
+  <div class="stats" style="text-align:left;background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-height:600px;box-sizing:border-box;overflow:visible;">
         <div class="section-title">Stats</div>
         <table id="stats-table"></table>
       </div>
@@ -832,19 +832,31 @@
   // Avatar display
   const avatarImg = document.getElementById('avatar-img');
   if (avatarImg) {
-    // Try avatar_{username}.jpg, fallback to avatar.jpg if not found
-    const canonicalAvatarUrl = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${character.username || character.name || currentUsername}.jpg`;
+    // Use avatar_url from DB if present, else canonical, else fallback
+    let avatarUrl = character.avatar_url;
+    if (!avatarUrl) {
+      avatarUrl = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${character.username || character.name || currentUsername}.jpg`;
+    }
     avatarImg.onerror = function() {
       // Only fallback if not already on avatar.jpg
       if (!this.src.endsWith('avatar.jpg')) {
-        this.onerror = null;
+        this.onerror = function() {
+          // If avatar.jpg is also missing, show blank and set title
+          this.onerror = null;
+          this.src = '';
+          this.title = 'No avatar image found.';
+        };
         this.src = 'avatar.jpg';
         this.title = 'Avatar could not be loaded. Showing default avatar.';
       }
     };
-    avatarImg.src = canonicalAvatarUrl;
+    avatarImg.src = avatarUrl;
     avatarImg.title = character.avatar_url ? '' : 'No avatar set. Upload or provide a URL.';
   }
+// Prevent ReferenceError if attachTooltipListeners is missing
+if (typeof attachTooltipListeners !== 'function') {
+  function attachTooltipListeners() {}
+}
   document.getElementById('char-name').textContent = character.name || character.username || '';
   document.getElementById('char-class').textContent = `Level ${character.level ?? ''} ${character.class ?? ''}`;
   // Summary
