@@ -99,12 +99,8 @@
         const canonicalAvatarUrl = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${username}.jpg`;
         avatarImg.onerror = function() {
           if (!this.src.endsWith('avatar.jpg')) {
-            this.onerror = function() {
-              this.onerror = null;
-              this.src = '';
-              this.title = 'No avatar image found.';
-            };
-            this.src = 'avatar.jpg';
+            this.onerror = null;
+            this.src = 'https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg';
             this.title = 'Avatar could not be loaded. Showing default avatar.';
           }
         };
@@ -171,12 +167,8 @@
           if (avatarImg) {
             avatarImg.onerror = function() {
               if (!this.src.endsWith('avatar.jpg')) {
-                this.onerror = function() {
-                  this.onerror = null;
-                  this.src = '';
-                  this.title = 'No avatar image found.';
-                };
-                this.src = 'avatar.jpg';
+                this.onerror = null;
+                this.src = 'https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg';
                 this.title = 'Avatar could not be loaded. Showing default avatar.';
               }
             };
