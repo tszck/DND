@@ -94,12 +94,12 @@
 <body>
   <div class="dashboard">
     <div class="profile">
-    <img id="avatar-img" src="avatar.png" alt="Character Avatar">
+  <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="this.onerror=null;this.src='avatar.jpg';">
     <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
     <div id="avatar-fallback" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#2b2f33;color:#ffd166;">
       <div style="margin-bottom:6px;"><strong>Avatar upload failed because the storage bucket appears to be missing.</strong></div>
       <div style="font-size:0.95em;margin-bottom:8px;color:#ddd;">You can either create a storage bucket named <code>avatars</code> in your Supabase project (Storage → Create bucket → public), or provide a direct image URL below to use as the avatar.</div>
-      <input id="avatar-url-input" type="url" placeholder="https://.../avatar.png" style="width:68%;padding:6px;border-radius:4px;border:1px solid #444;background:#111;color:#fff;" />
+      <input id="avatar-url-input" type="url" placeholder="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg" style="width:68%;padding:6px;border-radius:4px;border:1px solid #444;background:#111;color:#fff;" />
       <button id="avatar-url-save" style="padding:6px 10px;margin-left:8px;">Use Image URL</button>
     </div>
       <h2 id="char-name"></h2>
@@ -181,8 +181,8 @@
         avatarInput.addEventListener('change', async function(e) {
           const file = e.target.files[0];
           if (!file) return;
-          if (!['image/jpeg','image/png'].includes(file.type)) {
-            alert('Only JPEG and PNG images allowed.');
+          if (file.type !== 'image/jpeg') {
+            alert('Only JPEG images (.jpg) are allowed.');
             return;
           }
           if (file.size > 200*1024) {
@@ -209,41 +209,39 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, w, h);
             canvas.toBlob(async function(blob) {
-              // Upload to Supabase Storage
-              const fileExt = file.type === 'image/png' ? 'png' : 'jpg';
-              const fileName = `avatar_${currentUsername}.${fileExt}`;
-              // Use supabase.js client
-                try {
-                  const { data, error } = await supabaseClient.storage.from('avatars').upload(fileName, blob, {
-                    upsert: true,
-                    contentType: file.type
-                  });
-                  if (error) throw error;
-                  // Get public URL
-                  const { publicURL } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
-                  // Save URL to character
-                  const res = await updateCharacter(currentUsername, { avatar_url: publicURL });
-                  if (!res) {
-                    alert('Avatar uploaded but saving to character failed. Check console for details.');
-                    return;
-                  }
-                  currentCharacter = res;
-                  document.getElementById('avatar-img').src = publicURL;
-                  alert('Avatar updated!');
-                } catch (err) {
-                  console.error('Avatar upload error:', err);
-                  // If the bucket isn't found, show fallback UI with instructions
-                  const fallback = document.getElementById('avatar-fallback');
-                  if (err && err.message && err.message.toLowerCase().includes('bucket')) {
-                    fallback.style.display = 'block';
-                    alert('Avatar upload failed: storage bucket not found. See fallback instructions.');
-                  } else {
-                    // generic error show message and fallback
-                    fallback.style.display = 'block';
-                    alert('Avatar upload failed: ' + (err.message || err));
-                  }
+              // Always use .jpg and canonical name
+              const fileName = `avatar_${currentUsername}.jpg`;
+              try {
+                const { data, error } = await supabaseClient.storage.from('avatars').upload(fileName, blob, {
+                  upsert: true,
+                  contentType: 'image/jpeg'
+                });
+                if (error) throw error;
+                // Always use canonical public URL
+                const publicURL = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${currentUsername}.jpg`;
+                // Save URL to character
+                const res = await updateCharacter(currentUsername, { avatar_url: publicURL });
+                if (!res) {
+                  alert('Avatar uploaded but saving to character failed. Check console for details.');
+                  return;
                 }
-            }, file.type, 0.92);
+                currentCharacter = res;
+                document.getElementById('avatar-img').src = publicURL;
+                alert('Avatar updated!');
+              } catch (err) {
+                console.error('Avatar upload error:', err);
+                // If the bucket isn't found, show fallback UI with instructions
+                const fallback = document.getElementById('avatar-fallback');
+                if (err && err.message && err.message.toLowerCase().includes('bucket')) {
+                  fallback.style.display = 'block';
+                  alert('Avatar upload failed: storage bucket not found. See fallback instructions.');
+                } else {
+                  // generic error show message and fallback
+                  fallback.style.display = 'block';
+                  alert('Avatar upload failed: ' + (err.message || err));
+                }
+              }
+            }, 'image/jpeg', 0.92);
           };
           const reader = new FileReader();
           reader.onload = function(ev) { img.src = ev.target.result; };
@@ -791,18 +789,15 @@
   // Avatar display
   const avatarImg = document.getElementById('avatar-img');
   if (avatarImg) {
-    // Always set a fallback first
-    avatarImg.src = 'avatar.png';
-    if (character.avatar_url) {
-      avatarImg.src = character.avatar_url;
-      // If the image fails to load (404, RLS, etc), revert to fallback
-      avatarImg.onerror = function() {
-        avatarImg.src = 'avatar.png';
-        avatarImg.title = 'Avatar could not be loaded. Check Supabase Storage permissions or use the fallback.';
-      };
-    } else {
-      avatarImg.title = 'No avatar set. Upload or provide a URL.';
-    }
+    // Always use canonical public URL for avatar
+    const canonicalAvatarUrl = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${character.username || character.name || currentUsername}.jpg`;
+    avatarImg.src = canonicalAvatarUrl;
+    avatarImg.onerror = function() {
+      this.onerror = null;
+      this.src = 'avatar.jpg';
+      this.title = 'Avatar could not be loaded. Showing default avatar.';
+    };
+    avatarImg.title = character.avatar_url ? '' : 'No avatar set. Upload or provide a URL.';
   }
   document.getElementById('char-name').textContent = character.name || character.username || '';
   document.getElementById('char-class').textContent = `Level ${character.level ?? ''} ${character.class ?? ''}`;
@@ -1131,11 +1126,12 @@
           bonus += 2;
           sources.push('Background +2');
         }
-        let display = skill.name;
-        if (bonus > 0) {
-          display += ` (+${bonus} [${sources.join(', ')}])`;
-        }
+        // Only show skills that are present in the database (count > 0 or have a bonus)
         if ((skill.count ?? 0) > 0 || bonus > 0) {
+          let display = skill.name;
+          if (bonus > 0) {
+            display += ` (${sources.join(', ')})`;
+          }
           const row = document.createElement('tr');
           const nameCell = document.createElement('td');
           nameCell.textContent = display;
@@ -1153,236 +1149,265 @@
       if (type === 'items') entry = (dndData.items || []).find(i => i.name === name);
       else if (type === 'equipment') entry = (dndData.equipment || []).find(e => e.name === name);
       else if (type === 'skills') entry = (dndData.skills || []).find(s => s.name === name);
-      else if (type === 'spells') entry = (dndData.spells || []).find(sp => sp.name === name);
-      if (!entry) return '';
-      let html = `<b>${entry.name}</b><br>`;
-      if (type === 'items' || type === 'equipment') {
-        if (entry.type) html += `<i>Type:</i> ${entry.type}<br>`;
-        if (entry.damage) html += `<i>Damage:</i> ${entry.damage}<br>`;
-        if (entry.ac) html += `<i>AC:</i> ${entry.ac}<br>`;
-        if (entry.ac_bonus) html += `<i>AC Bonus:</i> ${entry.ac_bonus}<br>`;
-        if (entry.dex_bonus) html += `<i>Dex Bonus:</i> Yes<br>`;
-        if (entry.strength_req) html += `<i>Strength Req:</i> ${entry.strength_req}<br>`;
-        if (entry.stealth_disadvantage) html += `<i>Stealth Disadvantage:</i> Yes<br>`;
-        if (entry.effect) html += `<i>Effect:</i> ${entry.effect}<br>`;
-        if (entry.properties) html += `<i>Properties:</i> ${entry.properties.join(', ')}<br>`;
-      }
-      if (type === 'skills') {
-        if (entry.ability) html += `<i>Ability:</i> ${entry.ability}<br>`;
-      }
-      if (type === 'spells') {
-        if (entry.level) html += `<i>Level:</i> ${entry.level}<br>`;
-        if (entry.school) html += `<i>School:</i> ${entry.school}<br>`;
-        if (entry.description) html += `<i>Description:</i> ${entry.description}<br>`;
-      }
-      return html;
-    }
-
-    function showTooltip(e, type, name) {
-      const tooltip = document.getElementById('tooltip');
-      tooltip.innerHTML = getTooltipContent(type, name);
-      tooltip.style.display = 'block';
-      const rect = e.target.getBoundingClientRect();
-      tooltip.style.left = `${rect.right + 10 + window.scrollX}px`;
-      tooltip.style.top = `${rect.top + window.scrollY}px`;
-    }
-
-    function hideTooltip() {
-      const tooltip = document.getElementById('tooltip');
-      tooltip.style.display = 'none';
-    }
-
-    // Attach tooltip listeners after rendering character sheet
-    function attachTooltipListeners() {
-      ['weapons-table', 'armor-table', 'items-table', 'skills-table', 'spells-table'].forEach(tableId => {
-        const table = document.getElementById(tableId);
-        if (!table) return;
-        table.querySelectorAll('td[data-type]').forEach(td => {
-          td.addEventListener('mouseenter', function(e) {
-            const type = td.getAttribute('data-type');
-            const name = td.getAttribute('data-name');
-            showTooltip(e, type, name);
+      // Print Character Sheet logic
+      document.addEventListener('DOMContentLoaded', function() {
+        const printBtn = document.getElementById('printSheetBtn');
+        if (printBtn) {
+          printBtn.addEventListener('click', function() {
+            if (currentCharacter) openPrintableCharacterSheet(currentCharacter);
           });
-          td.addEventListener('mouseleave', hideTooltip);
-        });
+        }
       });
-    }
-    }
 
-    // Example: Add item and update DB
-    async function addItemToCharacter(itemName, count) {
-      if (!currentCharacter || !currentUsername) return;
-      let items = currentCharacter.items || [];
-      // Determine cost (in gold) from dndData if available
-      let costPer = 0;
-      if (dndData && Array.isArray(dndData.items)) {
-        const entry = dndData.items.find(i => i.name === itemName);
-        if (entry) costPer = getCostFromEntry(entry);
-      }
-      const totalCost = (costPer || 0) * count;
-      const currentGold = (currentCharacter.gold !== undefined && currentCharacter.gold !== null) ? Number(currentCharacter.gold) : undefined;
-      // If server has no top-level gold column (undefined), fall back to adding item only and inform the user
-      if (totalCost > 0 && (currentGold === undefined)) {
-        // Add item locally and save without changing gold
-        const idx = items.findIndex(i => i.name === itemName);
-        if (idx > -1) items[idx].count += count;
-        else items.push({ name: itemName, count });
-        const res = await updateCharacter(currentUsername, { items });
-        if (!res) return;
-        currentCharacter = res;
-        renderCharacterSheet(currentCharacter);
-        alert("Item added, but the server does not appear to have a top-level 'gold' column so Gold couldn't be deducted.\n\nRun 'migrate_gold.html' or add a numeric 'gold' column to the 'characters' table as described in README.md to enable automatic gold deduction.");
-        return;
-      }
-      if (totalCost > 0 && currentGold < totalCost) {
-        alert(`Not enough Gold. Need ${totalCost}G but you have ${currentGold}G.`);
-        return;
-      }
-      // Deduct gold from top-level field
-      const newGold = Math.max(0, (currentGold || 0) - totalCost);
-      const idx = items.findIndex(i => i.name === itemName);
-      if (idx > -1) items[idx].count += count;
-      else items.push({ name: itemName, count });
-      const res = await updateCharacter(currentUsername, { items, gold: newGold });
-      if (!res) return;
-      currentCharacter = res;
-      renderCharacterSheet(currentCharacter);
-    }
+    function openPrintableCharacterSheet(character) {
+      const printWindow = window.open('', '_blank', 'width=800,height=1000,scrollbars=yes');
+      // Stat bonus logic
+      const raceInfo = {
+        "Human": { bonus: { strength: 1, dexterity: 1, constitution: 1 } },
+        "Elf": { bonus: { dexterity: 2, intelligence: 1 } },
+        "Dwarf": { bonus: { constitution: 2, strength: 1 } },
+        "Halfling": { bonus: { dexterity: 2, charisma: 1 } },
+        "Dragonborn": { bonus: { strength: 2, charisma: 1 } },
+        "Gnome": { bonus: { intelligence: 2, constitution: 1 } },
+        "Half-Elf": { bonus: { charisma: 2, dexterity: 1 } },
+        "Half-Orc": { bonus: { strength: 2, constitution: 1 } },
+        "Tiefling": { bonus: { charisma: 2, intelligence: 1 } }
+      };
+      const classInfo = {
+        "Fighter": { bonus: { strength: 2 }, skill: "Athletics" },
+        "Rogue": { bonus: { dexterity: 2 }, skill: "Stealth" },
+        "Wizard": { bonus: { intelligence: 2 }, skill: "Arcana" },
+        "Cleric": { bonus: { wisdom: 2 }, skill: "Religion" },
+        "Barbarian": { bonus: { strength: 1, constitution: 1 }, skill: "Athletics" },
+        "Bard": { bonus: { charisma: 2 }, skill: "Performance" },
+        "Druid": { bonus: { wisdom: 1, constitution: 1 }, skill: "Nature" },
+        "Monk": { bonus: { dexterity: 1, wisdom: 1 }, skill: "Acrobatics" },
+        "Paladin": { bonus: { strength: 1, charisma: 1 }, skill: "Persuasion" },
+        "Ranger": { bonus: { dexterity: 1, wisdom: 1 }, skill: "Survival" },
+        "Sorcerer": { bonus: { charisma: 1, constitution: 1 }, skill: "Arcana" },
+        "Warlock": { bonus: { charisma: 1, intelligence: 1 }, skill: "Intimidation" }
+      };
+      const backgroundInfo = {
+        "Acolyte": { skills: ["Insight", "Religion"], bonus: { wisdom: 1 } },
+        "Charlatan": { skills: ["Deception", "Sleight of Hand"], bonus: { charisma: 1 } },
+        "Criminal": { skills: ["Deception", "Stealth"], bonus: { dexterity: 1 } },
+        "Entertainer": { skills: ["Acrobatics", "Performance"], bonus: { charisma: 1 } },
+        "Folk Hero": { skills: ["Animal Handling", "Survival"], bonus: { constitution: 1 } },
+        "Guild Artisan": { skills: ["Insight", "Persuasion"], bonus: { intelligence: 1 } },
+        "Hermit": { skills: ["Medicine", "Religion"], bonus: { wisdom: 1 } },
+        "Noble": { skills: ["History", "Persuasion"], bonus: { charisma: 1 } },
+        "Outlander": { skills: ["Athletics", "Survival"], bonus: { constitution: 1 } },
+        "Sage": { skills: ["Arcana", "History"], bonus: { intelligence: 1 } },
+        "Sailor": { skills: ["Athletics", "Perception"], bonus: { strength: 1 } },
+        "Soldier": { skills: ["Athletics", "Intimidation"], bonus: { strength: 1 } },
+        "Urchin": { skills: ["Sleight of Hand", "Stealth"], bonus: { dexterity: 1 } }
+      };
 
-    // Add equipment and update DB
-    async function addEquipmentToCharacter(equipmentName, count) {
-      if (!currentCharacter || !currentUsername) return;
-      let equipment = currentCharacter.equipment || [];
-      // Determine cost from dndData
-      let costPer = 0;
-      if (dndData && Array.isArray(dndData.equipment)) {
-        const entry = dndData.equipment.find(e => e.name === equipmentName);
-        if (entry) costPer = getCostFromEntry(entry);
+      function getTotalStat(character, stat) {
+        let total = character[stat] || 0;
+        if (raceInfo[character.race] && raceInfo[character.race].bonus && raceInfo[character.race].bonus[stat]) {
+          total += raceInfo[character.race].bonus[stat];
+        }
+        if (classInfo[character.class] && classInfo[character.class].bonus && classInfo[character.class].bonus[stat]) {
+          total += classInfo[character.class].bonus[stat];
+        }
+        if (backgroundInfo[character.background] && backgroundInfo[character.background].bonus && backgroundInfo[character.background].bonus[stat]) {
+          total += backgroundInfo[character.background].bonus[stat];
+        }
+        return total;
       }
-      const totalCost = (costPer || 0) * count;
-      const currentGold = (currentCharacter.gold !== undefined && currentCharacter.gold !== null) ? Number(currentCharacter.gold) : undefined;
-      if (totalCost > 0 && (currentGold === undefined)) {
-        // Save equipment without deducting gold
-        const idx = equipment.findIndex(e => e.name === equipmentName);
-        if (idx > -1) equipment[idx].count += count;
-        else equipment.push({ name: equipmentName, count });
-        const res = await updateCharacter(currentUsername, { equipment });
-        if (!res) return;
-        currentCharacter = res;
-        renderCharacterSheet(currentCharacter);
-        alert("Equipment added, but the server does not appear to have a top-level 'gold' column so Gold couldn't be deducted.\n\nRun 'migrate_gold.html' or add a numeric 'gold' column to the 'characters' table as described in README.md to enable automatic gold deduction.");
-        return;
-      }
-      if (totalCost > 0 && currentGold < totalCost) {
-        alert(`Not enough Gold. Need ${totalCost}G but you have ${currentGold}G.`);
-        return;
-      }
-      const newGold = Math.max(0, (currentGold || 0) - totalCost);
-      const idx = equipment.findIndex(e => e.name === equipmentName);
-      if (idx > -1) equipment[idx].count += count;
-      else equipment.push({ name: equipmentName, count });
-      const res = await updateCharacter(currentUsername, { equipment, gold: newGold });
-      if (!res) return;
-      currentCharacter = res;
-      renderCharacterSheet(currentCharacter);
-    }
 
-    // Add skill and update DB
-    async function addSkillToCharacter(skillName, count) {
-      if (!currentCharacter || !currentUsername) return;
-      let skills = currentCharacter.skills || [];
-      const idx = skills.findIndex(s => s.name === skillName);
-      if (idx > -1) skills[idx].count += count;
-      else skills.push({ name: skillName, count });
-      await updateCharacter(currentUsername, { skills });
-      currentCharacter.skills = skills;
-      renderCharacterSheet(currentCharacter);
-    }
-
-    // Add spell and update DB
-    async function addSpellToCharacter(spellName, count) {
-      if (!currentCharacter || !currentUsername) return;
-      let spells = currentCharacter.spells || [];
-      const idx = spells.findIndex(sp => sp.name === spellName);
-      if (idx > -1) spells[idx].count += count;
-      else spells.push({ name: spellName, count });
-      await updateCharacter(currentUsername, { spells });
-      currentCharacter.spells = spells;
-      renderCharacterSheet(currentCharacter);
-    }
-
-    // Remove item and update DB
-    async function removeItemFromCharacter(itemName, count) {
-      if (!currentCharacter || !currentUsername) return;
-      let items = currentCharacter.items || [];
-      const idx = items.findIndex(i => i.name === itemName);
-      if (idx > -1) {
-        items[idx].count = Math.max(0, items[idx].count - count);
+      // Print skills as a list with bonuses only (no 'Level X')
+      function getSkillPrintList(character) {
+        const skills = Array.isArray(character.skills) ? character.skills : [];
+        let out = [];
+        for (const skill of skills) {
+          let bonus = 0;
+          let sources = [];
+          if (character.class && classInfo[character.class] && classInfo[character.class].skill === skill.name) {
+            bonus += 2;
+            sources.push('Class +2');
+          }
+          if (character.background && backgroundInfo[character.background] && backgroundInfo[character.background].skills && backgroundInfo[character.background].skills.includes(skill.name)) {
+            bonus += 2;
+            sources.push('Background +2');
+          }
+          if ((skill.count ?? 0) > 0 || bonus > 0) {
+            let display = skill.name;
+            if (sources.length > 0) display += ` (${sources.join(', ')})`;
+            out.push(display);
+          }
+        }
+        return out;
       }
-      await updateCharacter(currentUsername, { items });
-      currentCharacter.items = items;
-      renderCharacterSheet(currentCharacter);
-    }
 
-    // Remove equipment and update DB
-    async function removeEquipmentFromCharacter(equipmentName, count) {
-      if (!currentCharacter || !currentUsername) return;
-      let equipment = currentCharacter.equipment || [];
-      const idx = equipment.findIndex(e => e.name === equipmentName);
-      if (idx > -1) {
-        equipment[idx].count = Math.max(0, equipment[idx].count - count);
-      }
-      await updateCharacter(currentUsername, { equipment });
-      currentCharacter.equipment = equipment;
-      renderCharacterSheet(currentCharacter);
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${character.name || character.username} - Character Sheet</title>
+          <style>
+            @media print {
+              body { margin: 0; }
+              .no-print { display: none; }
+            }
+            body { 
+              font-family: 'Times New Roman', serif; 
+              margin: 20px; 
+              background: white; 
+              color: black; 
+              line-height: 1.4;
+            }
+            .header { 
+              text-align: center; 
+              border-bottom: 3px solid #000; 
+              padding-bottom: 10px; 
+              margin-bottom: 20px; 
+            }
+            .character-name { 
+              font-size: 28px; 
+              font-weight: bold; 
+              margin: 0; 
+            }
+            .character-details { 
+              font-size: 16px; 
+              margin: 5px 0; 
+            }
+            .section { 
+              margin-bottom: 20px; 
+              border: 2px solid #000; 
+              padding: 10px; 
+            }
+            .section-title { 
+              font-size: 18px; 
+              font-weight: bold; 
+              border-bottom: 1px solid #000; 
+              margin-bottom: 10px; 
+              padding-bottom: 5px; 
+            }
+            .stats-grid { 
+              display: grid; 
+              grid-template-columns: repeat(3, 1fr); 
+              gap: 10px; 
+            }
+            .stat-box { 
+              border: 1px solid #000; 
+              padding: 8px; 
+              text-align: center; 
+            }
+            .stat-name { 
+              font-weight: bold; 
+              font-size: 12px; 
+            }
+            .stat-value { 
+              font-size: 20px; 
+              font-weight: bold; 
+            }
+            .equipment-list { 
+              columns: 2; 
+              column-gap: 20px; 
+            }
+            .equipment-item { 
+              break-inside: avoid; 
+              margin-bottom: 5px; 
+            }
+            .no-print { 
+              position: fixed; 
+              top: 10px; 
+              right: 10px; 
+            }
+            button { 
+              padding: 10px 20px; 
+              font-size: 16px; 
+              cursor: pointer; 
+            }
+          </style>
+        </head>
+        <body>
+          <button class="no-print" onclick="window.print()">Print Character Sheet</button>
+          <div class="header">
+            <h1 class="character-name">${character.name || character.username}</h1>
+            <div class="character-details">
+              Level ${character.level} ${character.race} ${character.class}
+            </div>
+            <div class="character-details">
+              Background: ${character.background} | Username: ${character.username}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Ability Scores</div>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-name">STRENGTH</div>
+                <div class="stat-value">${getTotalStat(character, 'strength')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">DEXTERITY</div>
+                <div class="stat-value">${getTotalStat(character, 'dexterity')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">CONSTITUTION</div>
+                <div class="stat-value">${getTotalStat(character, 'constitution')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">INTELLIGENCE</div>
+                <div class="stat-value">${getTotalStat(character, 'intelligence')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">WISDOM</div>
+                <div class="stat-value">${getTotalStat(character, 'wisdom')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">CHARISMA</div>
+                <div class="stat-value">${getTotalStat(character, 'charisma')}</div>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Character Progress</div>
+            <p><strong>Level:</strong> ${character.level}</p>
+            <p><strong>Experience Points:</strong> ${character.xp || 0}</p>
+            <p><strong>XP to Next Level:</strong> ${(100 * (character.level + 1)) - (character.xp || 0)}</p>
+            <p><strong>Free Stat Points:</strong> ${character.free_stat_points || 0}</p>
+          </div>
+          <div class="section">
+            <div class="section-title">Equipment & Items</div>
+            <div class="equipment-list">
+              ${character.equipment ? character.equipment.filter(eq => eq.count > 0).map(eq => 
+                `<div class="equipment-item">${eq.name} (${eq.count})</div>`
+              ).join('') : '<div>No equipment</div>'}
+              ${character.items ? character.items.filter(item => item.count > 0).map(item => 
+                `<div class="equipment-item">${item.name} (${item.count})</div>`
+              ).join('') : ''}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Skills</div>
+            <div class="equipment-list">
+              ${getSkillPrintList(character).length > 0 ? getSkillPrintList(character).map(skill => 
+                `<div class="equipment-item">${skill}</div>`
+              ).join('') : '<div>No skills</div>'}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Spells</div>
+            <div class="equipment-list">
+              ${character.spells ? character.spells.filter(spell => spell.count > 0).map(spell => 
+                `<div class="equipment-item">${spell.name}</div>`
+              ).join('') : '<div>No spells</div>'}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Notes</div>
+            <div style="height: 150px; border: 1px solid #ccc; padding: 10px;">
+              ${character.bio || 'The tale of this adventurer is yet to be written...'}
+            </div>
+          </div>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
     }
-
-    // Remove skill and update DB
-    async function removeSkillFromCharacter(skillName, count) {
-      if (!currentCharacter || !currentUsername) return;
-      let skills = currentCharacter.skills || [];
-      const idx = skills.findIndex(s => s.name === skillName);
-      if (idx > -1) {
-        skills[idx].count = Math.max(0, skills[idx].count - count);
-      }
-      await updateCharacter(currentUsername, { skills });
-      currentCharacter.skills = skills;
-      renderCharacterSheet(currentCharacter);
-    }
-
-    // Remove spell and update DB
-    async function removeSpellFromCharacter(spellName, count) {
-      if (!currentCharacter || !currentUsername) return;
-      let spells = currentCharacter.spells || [];
-      const idx = spells.findIndex(sp => sp.name === spellName);
-      if (idx > -1) {
-        spells[idx].count = Math.max(0, spells[idx].count - count);
-      }
-      await updateCharacter(currentUsername, { spells });
-      currentCharacter.spells = spells;
-      renderCharacterSheet(currentCharacter);
-    }
-
-    // Add XP and handle level progression
-    async function addXPToCharacter(xpAmount) {
-      if (!currentCharacter || !currentUsername) return;
-      let currentXP = currentCharacter.xp || 0;
-      let currentLevel = currentCharacter.level || 1;
-      let statPoints = currentCharacter.free_stat_points || 0;
-      let leveledUp = false;
-      // Add XP
-      currentXP += xpAmount;
-      // Check for level ups (100 * (currentLevel+1) XP needed for each level)
-      while (currentXP >= (100 * (currentLevel + 1))) {
-        currentXP -= (100 * (currentLevel + 1));
-        currentLevel++;
-        statPoints += 2;
-        leveledUp = true;
-      }
-      const res = await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel, free_stat_points: statPoints });
-      if (!res) {
-        // updateCharacter will have already alerted; stop further UI updates
-        console.warn('addXPToCharacter: updateCharacter returned null');
         return;
       }
       // res should be the updated character row
