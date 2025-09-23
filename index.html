@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Form</title>
+  <title>Character Form</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
 </head>
 <body>
     <h1>Character Name Entry</h1>
@@ -14,11 +16,15 @@
     </form>
     <button onclick="window.location.href='character_generator.html'">Generate New Character</button>
     <script>
-      document.getElementById('characterForm').addEventListener('submit', function(e) {
+      document.getElementById('characterForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const name = document.getElementById('characterName').value.trim();
-        if (name) {
-          window.location.href = `character_sheet.html?name=${encodeURIComponent(name)}`;
+        const username = document.getElementById('characterName').value.trim();
+        if (!username) return;
+        const character = await fetchCharacter(username);
+        if (character) {
+          window.location.href = `character_sheet.html?username=${encodeURIComponent(username)}`;
+        } else {
+          alert('Character not found!');
         }
       });
     </script>

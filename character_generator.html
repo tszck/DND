@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate New Character</title>
+  <title>Generate New Character</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
     <style>
       body { font-family: Arial, sans-serif; background: #23272a; color: #fff; }
       .form-box { background: #2c2f33; padding: 24px; border-radius: 10px; max-width: 400px; margin: 40px auto; }
@@ -82,7 +84,7 @@
   <script>
     let generatedBlob = null;
     function randomStat() { return Math.floor(Math.random() * 10) + 8; }
-    document.getElementById('genForm').addEventListener('submit', function(e) {
+    document.getElementById('genForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const name = document.getElementById('name').value.trim();
       const race = document.getElementById('race').value;
@@ -91,6 +93,7 @@
       const alignment = document.getElementById('alignment').value;
       const level = parseInt(document.getElementById('level').value);
       const character = {
+        username: name.toLowerCase(),
         name,
         race,
         class: charClass,
@@ -131,6 +134,13 @@
           { name: "Mage Armor", count: Math.floor(Math.random()*2) }
         ]
       };
+      // Save to Supabase
+      const { data, error } = await supabase.from('characters').insert([character]);
+      if (error) {
+        alert('Error saving character: ' + error.message);
+      } else {
+        alert('Character saved to database!');
+      }
       generatedBlob = new Blob([JSON.stringify(character, null, 2)], {type: 'application/json'});
       document.getElementById('downloadBtn').style.display = 'inline-block';
     });

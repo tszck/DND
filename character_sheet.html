@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>RPG Character Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
@@ -70,7 +72,12 @@
   </style>
 </head>
 <body>
-  <div class="dashboard">
+  <form id="loginForm" style="margin-bottom:24px;">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <button type="submit">Login</button>
+  </form>
+  <div class="dashboard" style="display:none;">
     <div class="section-title">Add to Character</div>
     <form id="addForm" style="margin-bottom:24px;">
       <label for="type">Type:</label>
@@ -193,74 +200,93 @@
     loadData();
   </script>
   <script>
-    // Get character name from URL or default to 'chris'
-    function getCharacterName() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('name') || 'chris';
-    }
-    const charName = getCharacterName();
-    fetch(`${charName}.json`)
-      .then(response => response.json())
-      .then(character => {
-        // Profile
-        document.getElementById('char-name').textContent = character.name || charName;
-        document.getElementById('char-class').textContent = `Level ${character.level || ''} ${character.class || ''}`;
-        // Stats
-        const statsTable = document.getElementById('stats-table');
-        const statKeys = ['strength','dexterity','constitution','intelligence','wisdom','charisma'];
-        statKeys.forEach(key => {
-          if (character[key] !== undefined) {
-            const row = document.createElement('tr');
-            const th = document.createElement('th');
-            th.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-            const td = document.createElement('td');
-            td.textContent = character[key];
-            row.appendChild(th);
-            row.appendChild(td);
-            statsTable.appendChild(row);
-          }
-        });
-        // Items
-        const itemsList = document.getElementById('items-list');
-        (character.items || []).forEach(item => {
-          if (item.count > 0) {
-            const li = document.createElement('li');
-            li.textContent = `${item.name} x${item.count}`;
-            itemsList.appendChild(li);
-          }
-        });
-        // Equipment
-        const gearsList = document.getElementById('gears-list');
-        (character.equipment || []).forEach(eq => {
-          if (eq.count > 0) {
-            const li = document.createElement('li');
-            li.textContent = `${eq.name} x${eq.count}`;
-            gearsList.appendChild(li);
-          }
-        });
-        // Skills
-        const skillsList = document.getElementById('skills-list');
-        (character.skills || []).forEach(skill => {
-          if (skill.count > 0) {
-            const li = document.createElement('li');
-            li.textContent = `${skill.name} x${skill.count}`;
-            skillsList.appendChild(li);
-          }
-        });
-        // Spells
-        const spellsList = document.getElementById('spells-list');
-        (character.spells || []).forEach(spell => {
-          if (spell.count > 0) {
-            const li = document.createElement('li');
-            li.textContent = `${spell.name} x${spell.count}`;
-            spellsList.appendChild(li);
-          }
-        });
-      })
-      .catch(err => {
-        document.body.innerHTML += `<p style='color:red;'>Could not load character data for ${charName}.</p>`;
-        console.error(err);
+    // Supabase login and character sheet integration
+    let currentUsername = null;
+    let currentCharacter = null;
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const character = await fetchCharacter(username);
+      if (character) {
+        currentUsername = username;
+        currentCharacter = character;
+        document.querySelector('.dashboard').style.display = '';
+        renderCharacterSheet(character);
+      }
+    });
+
+    function renderCharacterSheet(character) {
+      document.getElementById('char-name').textContent = character.name || character.username;
+      document.getElementById('char-class').textContent = `Level ${character.level || ''} ${character.class || ''}`;
+      // Stats
+      const statsTable = document.getElementById('stats-table');
+      statsTable.innerHTML = '';
+      const statKeys = ['strength','dexterity','constitution','intelligence','wisdom','charisma'];
+      statKeys.forEach(key => {
+        if (character[key] !== undefined) {
+          const row = document.createElement('tr');
+          const th = document.createElement('th');
+          th.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+          const td = document.createElement('td');
+          td.textContent = character[key];
+          row.appendChild(th);
+          row.appendChild(td);
+          statsTable.appendChild(row);
+        }
       });
+      // Items
+      const itemsList = document.getElementById('items-list');
+      itemsList.innerHTML = '';
+      (character.items || []).forEach(item => {
+        if (item.count > 0) {
+          const li = document.createElement('li');
+          li.textContent = `${item.name} x${item.count}`;
+          itemsList.appendChild(li);
+        }
+      });
+      // Equipment
+      const gearsList = document.getElementById('gears-list');
+      gearsList.innerHTML = '';
+      (character.equipment || []).forEach(eq => {
+        if (eq.count > 0) {
+          const li = document.createElement('li');
+          li.textContent = `${eq.name} x${eq.count}`;
+          gearsList.appendChild(li);
+        }
+      });
+      // Skills
+      const skillsList = document.getElementById('skills-list');
+      skillsList.innerHTML = '';
+      (character.skills || []).forEach(skill => {
+        if (skill.count > 0) {
+          const li = document.createElement('li');
+          li.textContent = `${skill.name} x${skill.count}`;
+          skillsList.appendChild(li);
+        }
+      });
+      // Spells
+      const spellsList = document.getElementById('spells-list');
+      spellsList.innerHTML = '';
+      (character.spells || []).forEach(spell => {
+        if (spell.count > 0) {
+          const li = document.createElement('li');
+          li.textContent = `${spell.name} x${spell.count}`;
+          spellsList.appendChild(li);
+        }
+      });
+    }
+
+    // Example: Add item and update DB
+    async function addItemToCharacter(itemName, count) {
+      if (!currentCharacter || !currentUsername) return;
+      let items = currentCharacter.items || [];
+      const idx = items.findIndex(i => i.name === itemName);
+      if (idx > -1) items[idx].count += count;
+      else items.push({ name: itemName, count });
+      await updateCharacter(currentUsername, { items });
+      currentCharacter.items = items;
+      renderCharacterSheet(currentCharacter);
+    }
   </script>
 </body>
 </html>
