@@ -106,8 +106,13 @@ TO authenticated
 USING (bucket_id = 'avatars');
 ```
 
+> **Note:** If you use the authenticated policy, users must be logged in to Supabase Auth to upload or view avatars. For most D&D use cases, the public policy is simpler and avoids broken images for non-logged-in users.
+
 5. After adding the policy, try uploading the avatar again in `character_sheet.html`.
 
-**After a successful upload, the avatar should immediately display in the character sheet.**
+**Troubleshooting:**
+- If avatars do not display after upload, make sure the bucket is public or your policy allows public read access.
+- If the avatar is missing or broken, the character sheet will show a default avatar image.
+- You can always use the fallback in the character sheet to paste a public image URL for the avatar.
 
-If you still have issues, you can use the fallback in the character sheet to paste a public image URL for the avatar.
+**After a successful upload, the avatar should immediately display in the character sheet.**

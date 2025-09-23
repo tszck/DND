@@ -791,10 +791,17 @@
   // Avatar display
   const avatarImg = document.getElementById('avatar-img');
   if (avatarImg) {
+    // Always set a fallback first
+    avatarImg.src = 'avatar.png';
     if (character.avatar_url) {
       avatarImg.src = character.avatar_url;
+      // If the image fails to load (404, RLS, etc), revert to fallback
+      avatarImg.onerror = function() {
+        avatarImg.src = 'avatar.png';
+        avatarImg.title = 'Avatar could not be loaded. Check Supabase Storage permissions or use the fallback.';
+      };
     } else {
-      avatarImg.src = 'avatar.png';
+      avatarImg.title = 'No avatar set. Upload or provide a URL.';
     }
   }
   document.getElementById('char-name').textContent = character.name || character.username || '';
