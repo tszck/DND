@@ -207,7 +207,17 @@
     let currentCharacter = null;
     // Expect username to be passed via localStorage from index.html
     window.addEventListener('DOMContentLoaded', async function() {
-      const username = localStorage.getItem('dnd_username');
+      // Try to get username from query string first
+      function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
+      let username = getQueryParam('username');
+      if (!username) {
+        username = localStorage.getItem('dnd_username');
+      } else {
+        localStorage.setItem('dnd_username', username);
+      }
       if (username) {
         currentUsername = username;
         const character = await fetchCharacter(username);
@@ -216,7 +226,6 @@
           renderCharacterSheet(character);
         }
       } else {
-        // Optionally redirect to index.html if not logged in
         window.location.href = 'index.html';
       }
     });
@@ -306,9 +315,9 @@
           statsTable.appendChild(row);
         }
       });
-      // Skills
-      const skillsListBonus = document.getElementById('skills-list');
-      skillsListBonus.innerHTML = '';
+      // Skills (only render once, with bonus breakdown)
+      const skillsList = document.getElementById('skills-list');
+      skillsList.innerHTML = '';
       (character.skills || []).forEach(skill => {
         let bonus = 0;
         let sources = [];
@@ -331,9 +340,10 @@
           li.textContent = display;
           li.setAttribute('data-type', 'skills');
           li.setAttribute('data-name', skill.name);
-          skillsListBonus.appendChild(li);
+          skillsList.appendChild(li);
         }
       });
+      // Items
       const itemsList = document.getElementById('items-list');
       itemsList.innerHTML = '';
       (character.items || []).forEach(item => {
@@ -355,18 +365,6 @@
           li.setAttribute('data-type', 'equipment');
           li.setAttribute('data-name', eq.name);
           gearsList.appendChild(li);
-        }
-      });
-      // Skills
-      const skillsList = document.getElementById('skills-list');
-      skillsList.innerHTML = '';
-      (character.skills || []).forEach(skill => {
-        if (skill.count > 0) {
-          const li = document.createElement('li');
-          li.textContent = `${skill.name} x${skill.count}`;
-          li.setAttribute('data-type', 'skills');
-          li.setAttribute('data-name', skill.name);
-          skillsList.appendChild(li);
         }
       });
       // Spells
