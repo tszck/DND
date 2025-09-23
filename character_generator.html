@@ -32,7 +32,8 @@
         <option>Half-Orc</option>
         <option>Tiefling</option>
       </select>
-      <div id="race-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
+  <div id="race-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
+  <div id="race-bonus" style="background:#23272a;border-left:4px solid #43b581;padding:8px 12px;margin-bottom:12px;border-radius:6px;display:none;font-size:0.98em;"></div>
       <label for="class">Class:</label>
       <select id="class" name="class">
         <option>Fighter</option>
@@ -48,7 +49,8 @@
         <option>Sorcerer</option>
         <option>Warlock</option>
       </select>
-      <div id="class-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
+  <div id="class-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
+  <div id="class-bonus" style="background:#23272a;border-left:4px solid #43b581;padding:8px 12px;margin-bottom:12px;border-radius:6px;display:none;font-size:0.98em;"></div>
       <label for="background">Background:</label>
       <select id="background" name="background">
         <option>Acolyte</option>
@@ -133,6 +135,38 @@
     }
     updateDesc('race', 'race-desc', raceInfo);
     updateDesc('class', 'class-desc', classInfo);
+    // Show race bonuses below menu
+    function showRaceBonus() {
+      const select = document.getElementById('race');
+      const bonusDiv = document.getElementById('race-bonus');
+      const val = select.value;
+      if (raceInfo[val] && raceInfo[val].bonus) {
+        const bonuses = Object.entries(raceInfo[val].bonus).map(([stat, amt]) => `+${amt} <span style='color:#43b581'>${stat.charAt(0).toUpperCase() + stat.slice(1)}</span>`);
+        bonusDiv.style.display = 'block';
+        bonusDiv.innerHTML = `<b>Bonuses:</b> ${bonuses.join(', ')}`;
+      } else {
+        bonusDiv.style.display = 'none';
+        bonusDiv.innerHTML = '';
+      }
+    }
+    document.getElementById('race').addEventListener('change', showRaceBonus);
+    showRaceBonus();
+
+    // Show class bonuses below menu
+    function showClassBonus() {
+      const select = document.getElementById('class');
+      const bonusDiv = document.getElementById('class-bonus');
+      const val = select.value;
+      if (classInfo[val] && classInfo[val].desc) {
+        bonusDiv.style.display = 'block';
+        bonusDiv.innerHTML = `<b>Bonuses:</b> <span style='color:#43b581'>${classInfo[val].desc.replace(/\+([0-9]) ([A-Za-z ]+)/g, '+$1 <span style=\'color:#43b581\'>$2</span>').replace(/\./g, '')}</span>`;
+      } else {
+        bonusDiv.style.display = 'none';
+        bonusDiv.innerHTML = '';
+      }
+    }
+    document.getElementById('class').addEventListener('change', showClassBonus);
+    showClassBonus();
     // Show background bonuses below menu
     function showBackgroundBonus() {
       const select = document.getElementById('background');
