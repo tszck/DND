@@ -1,76 +1,3 @@
-      <label for="background">Background:</label>
-      <select id="background" name="background">
-        <option>Acolyte</option>
-        <option>Charlatan</option>
-        <option>Criminal</option>
-        <option>Entertainer</option>
-        <option>Folk Hero</option>
-        <option>Guild Artisan</option>
-        <option>Hermit</option>
-        <option>Noble</option>
-        <option>Outlander</option>
-        <option>Sage</option>
-        <option>Sailor</option>
-        <option>Soldier</option>
-        <option>Urchin</option>
-      </select>
-      <div id="background-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
-    const backgroundInfo = {
-      "Acolyte": {
-        desc: "Proficient in Insight & Religion.",
-        skills: ["Insight", "Religion"]
-      },
-      "Charlatan": {
-        desc: "Proficient in Deception & Sleight of Hand.",
-        skills: ["Deception", "Sleight of Hand"]
-      },
-      "Criminal": {
-        desc: "Proficient in Stealth & Deception.",
-        skills: ["Stealth", "Deception"]
-      },
-      "Entertainer": {
-        desc: "Proficient in Acrobatics & Performance.",
-        skills: ["Acrobatics", "Performance"]
-      },
-      "Folk Hero": {
-        desc: "Proficient in Animal Handling & Survival.",
-        skills: ["Animal Handling", "Survival"]
-      },
-      "Guild Artisan": {
-        desc: "Proficient in Insight & Persuasion.",
-        skills: ["Insight", "Persuasion"]
-      },
-      "Hermit": {
-        desc: "Proficient in Medicine & Religion.",
-        skills: ["Medicine", "Religion"]
-      },
-      "Noble": {
-        desc: "Proficient in History & Persuasion.",
-        skills: ["History", "Persuasion"]
-      },
-      "Outlander": {
-        desc: "Proficient in Athletics & Survival.",
-        skills: ["Athletics", "Survival"]
-      },
-      "Sage": {
-        desc: "Proficient in Arcana & History.",
-        skills: ["Arcana", "History"]
-      },
-      "Sailor": {
-        desc: "Proficient in Athletics & Perception.",
-        skills: ["Athletics", "Perception"]
-      },
-      "Soldier": {
-        desc: "Proficient in Athletics & Intimidation.",
-        skills: ["Athletics", "Intimidation"]
-      },
-      "Urchin": {
-        desc: "Proficient in Sleight of Hand & Stealth.",
-        skills: ["Sleight of Hand", "Stealth"]
-      }
-    };
-    updateDesc('background', 'background-desc', backgroundInfo);
-  const background = document.getElementById('background').value;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,6 +101,21 @@
       "Ranger": { desc: "+2 Survival, +1 Dexterity." },
       "Sorcerer": { desc: "+2 Arcana, +1 Charisma." },
       "Warlock": { desc: "+2 Intimidation, +1 Charisma." }
+    };
+    const backgroundInfo = {
+      "Acolyte": { desc: "Skill Proficiencies: Insight, Religion.", skills: ["Insight", "Religion"] },
+      "Charlatan": { desc: "Skill Proficiencies: Deception, Sleight of Hand.", skills: ["Deception", "Sleight of Hand"] },
+      "Criminal": { desc: "Skill Proficiencies: Deception, Stealth.", skills: ["Deception", "Stealth"] },
+      "Entertainer": { desc: "Skill Proficiencies: Acrobatics, Performance.", skills: ["Acrobatics", "Performance"] },
+      "Folk Hero": { desc: "Skill Proficiencies: Animal Handling, Survival.", skills: ["Animal Handling", "Survival"] },
+      "Guild Artisan": { desc: "Skill Proficiencies: Insight, Persuasion.", skills: ["Insight", "Persuasion"] },
+      "Hermit": { desc: "Skill Proficiencies: Medicine, Religion.", skills: ["Medicine", "Religion"] },
+      "Noble": { desc: "Skill Proficiencies: History, Persuasion.", skills: ["History", "Persuasion"] },
+      "Outlander": { desc: "Skill Proficiencies: Athletics, Survival.", skills: ["Athletics", "Survival"] },
+      "Sage": { desc: "Skill Proficiencies: Arcana, History.", skills: ["Arcana", "History"] },
+      "Sailor": { desc: "Skill Proficiencies: Athletics, Perception.", skills: ["Athletics", "Perception"] },
+      "Soldier": { desc: "Skill Proficiencies: Athletics, Intimidation.", skills: ["Athletics", "Intimidation"] },
+      "Urchin": { desc: "Skill Proficiencies: Sleight of Hand, Stealth.", skills: ["Sleight of Hand", "Stealth"] }
     };
     // Show descriptions on change
     function updateDesc(selectId, descId, infoObj) {
