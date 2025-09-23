@@ -30,7 +30,14 @@
       if (!user || amt === 0) return alert('Provide username and amount');
       const character = await fetchCharacter(user);
       if (!character) return alert('Character not found');
-      const newGold = (character.gold || 0) + amt;
+      // If the characters table doesn't yet have a top-level `gold` column, abort and instruct admin
+      if (character.gold === undefined) {
+        const msg = "The database does not appear to have a top-level 'gold' column.\n\nPlease add it in the Supabase SQL editor (run as an admin):\n\nALTER TABLE public.characters ADD COLUMN IF NOT EXISTS gold integer DEFAULT 0;\n\nAfter adding the column you can re-run this operation or use migrate_gold.html to move item-based gold into the new column.";
+        alert(msg);
+        document.getElementById('msg').textContent = 'Aborted: missing top-level gold column. See alert for SQL.';
+        return;
+      }
+      const newGold = (Number(character.gold) || 0) + amt;
       const res = await updateCharacter(user, { gold: newGold });
       if (!res) return;
       document.getElementById('msg').textContent = `Added ${amt}G to ${user}`;

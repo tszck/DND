@@ -66,3 +66,48 @@ For detailed database setup, see `database/supabase_schema.sql`
 ---
 
 *Ready to start your adventure? Open `index.html` and create your first character!*
+
+## Supabase Storage (avatars bucket)
+
+This project stores character avatars in a Supabase Storage bucket named `avatars`. If you see an "Upload failed: Bucket not found" error, create the bucket and make it public:
+
+1. Open your Supabase project dashboard.
+2. Go to "Storage" → "Create a new bucket".
+3. Set the bucket ID to `avatars`.
+4. Recommended: mark the bucket as "public" so the files are directly accessible via URL.
+5. Save and test by re-uploading an avatar in `character_sheet.html`.
+
+
+## Supabase Storage Row Level Security (RLS) for Avatars
+
+If you see an error like `Upload failed: new row violates row-level security policy` when uploading an avatar, you need to add a policy to allow uploads to the `avatars` bucket.
+
+**To allow public uploads and reads (recommended for avatars):**
+
+1. Go to your Supabase project dashboard.
+2. Click "Storage" → select the `avatars` bucket.
+3. Click the "Policies" tab.
+4. Add this policy:
+
+```sql
+CREATE POLICY "Public upload and read for avatars"
+ON storage.objects
+FOR ALL
+USING (bucket_id = 'avatars');
+```
+
+**To allow only authenticated users:**
+
+```sql
+CREATE POLICY "Authenticated upload and read for avatars"
+ON storage.objects
+FOR ALL
+TO authenticated
+USING (bucket_id = 'avatars');
+```
+
+5. After adding the policy, try uploading the avatar again in `character_sheet.html`.
+
+**After a successful upload, the avatar should immediately display in the character sheet.**
+
+If you still have issues, you can use the fallback in the character sheet to paste a public image URL for the avatar.

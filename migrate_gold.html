@@ -90,6 +90,28 @@
     async function runMigration({ dryRun=true, singleUser=null } = {}) {
       log('Starting migration', dryRun ? '(DRY RUN)' : '(APPLY)');
       let rows = [];
+      // If applying (not dry-run), verify that the characters table has a top-level `gold` column.
+      if (!dryRun) {
+        log('Verifying that the top-level `gold` column exists...');
+        // Try to fetch a single character to inspect the row shape
+        try {
+          const { data: sample, error: sampleErr } = await supabaseClient.from('characters').select('*').limit(1).single();
+          if (sampleErr) {
+            log('Error while verifying schema:', sampleErr.message || sampleErr);
+            alert('Could not verify database schema. Migration aborted. Check console for details.');
+            return;
+          }
+          if (sample && sample.gold === undefined) {
+            alert("The database does not have a top-level 'gold' column. Please add it first (Supabase SQL):\n\nALTER TABLE public.characters ADD COLUMN IF NOT EXISTS gold integer DEFAULT 0;\n\nThen re-run this migration (Apply).");
+            log('Migration aborted: missing top-level gold column.');
+            return;
+          }
+        } catch (e) {
+          log('Schema verification threw:', e.message || e);
+          alert('Schema verification failed; aborting migration. See console.');
+          return;
+        }
+      }
       if (singleUser) {
         log('Fetching single user:', singleUser);
         const { data, error } = await supabaseClient.from('characters').select('*').eq('username', singleUser).limit(1).single();

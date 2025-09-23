@@ -362,10 +362,19 @@
         updated_at: new Date().toISOString()
       };
       // Note: gold is stored as top-level numeric field `gold` (100 G starting)
-      // Save to Supabase
-      const { data, error } = await supabaseClient.from('characters').insert([character]);
-      if (error) {
-        alert('Error saving character: ' + error.message);
+      // Save to Supabase. If the DB rejects the `gold` column because the schema wasn't migrated,
+      // retry the insert without `gold` so client-side flows continue to work.
+      let insertResp = await supabaseClient.from('characters').insert([character]);
+      if (insertResp.error) {
+        const msg = (insertResp.error.message || '').toLowerCase();
+        if (msg.includes('could not find') && msg.includes('gold')) {
+          console.warn('Insert failed due to missing gold column; retrying without gold.');
+          const { gold, ...characterNoGold } = character;
+          insertResp = await supabaseClient.from('characters').insert([characterNoGold]);
+        }
+      }
+      if (insertResp.error) {
+        alert('Error saving character: ' + insertResp.error.message);
       } else {
         alert('Character saved to database!');
       }

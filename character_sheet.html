@@ -96,6 +96,12 @@
     <div class="profile">
     <img id="avatar-img" src="avatar.png" alt="Character Avatar">
     <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
+    <div id="avatar-fallback" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#2b2f33;color:#ffd166;">
+      <div style="margin-bottom:6px;"><strong>Avatar upload failed because the storage bucket appears to be missing.</strong></div>
+      <div style="font-size:0.95em;margin-bottom:8px;color:#ddd;">You can either create a storage bucket named <code>avatars</code> in your Supabase project (Storage → Create bucket → public), or provide a direct image URL below to use as the avatar.</div>
+      <input id="avatar-url-input" type="url" placeholder="https://.../avatar.png" style="width:68%;padding:6px;border-radius:4px;border:1px solid #444;background:#111;color:#fff;" />
+      <button id="avatar-url-save" style="padding:6px 10px;margin-left:8px;">Use Image URL</button>
+    </div>
       <h2 id="char-name"></h2>
       <p id="char-class"></p>
       <div id="char-summary" style="margin-top:10px;color:#43b581;font-size:1em;"></div>
@@ -170,6 +176,7 @@
     // Avatar upload logic
     document.addEventListener('DOMContentLoaded', function() {
       const avatarInput = document.getElementById('avatar-upload');
+      const fallback = document.getElementById('avatar-fallback');
       if (avatarInput) {
         avatarInput.addEventListener('change', async function(e) {
           const file = e.target.files[0];
@@ -206,21 +213,36 @@
               const fileExt = file.type === 'image/png' ? 'png' : 'jpg';
               const fileName = `avatar_${currentUsername}.${fileExt}`;
               // Use supabase.js client
-              const { data, error } = await supabaseClient.storage.from('avatars').upload(fileName, blob, {
-                upsert: true,
-                contentType: file.type
-              });
-              if (error) {
-                alert('Upload failed: ' + error.message);
-                return;
-              }
-              // Get public URL
-              const { publicURL } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
-              // Save URL to character
-              await updateCharacter(currentUsername, { avatar_url: publicURL });
-              currentCharacter.avatar_url = publicURL;
-              document.getElementById('avatar-img').src = publicURL;
-              alert('Avatar updated!');
+                try {
+                  const { data, error } = await supabaseClient.storage.from('avatars').upload(fileName, blob, {
+                    upsert: true,
+                    contentType: file.type
+                  });
+                  if (error) throw error;
+                  // Get public URL
+                  const { publicURL } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
+                  // Save URL to character
+                  const res = await updateCharacter(currentUsername, { avatar_url: publicURL });
+                  if (!res) {
+                    alert('Avatar uploaded but saving to character failed. Check console for details.');
+                    return;
+                  }
+                  currentCharacter = res;
+                  document.getElementById('avatar-img').src = publicURL;
+                  alert('Avatar updated!');
+                } catch (err) {
+                  console.error('Avatar upload error:', err);
+                  // If the bucket isn't found, show fallback UI with instructions
+                  const fallback = document.getElementById('avatar-fallback');
+                  if (err && err.message && err.message.toLowerCase().includes('bucket')) {
+                    fallback.style.display = 'block';
+                    alert('Avatar upload failed: storage bucket not found. See fallback instructions.');
+                  } else {
+                    // generic error show message and fallback
+                    fallback.style.display = 'block';
+                    alert('Avatar upload failed: ' + (err.message || err));
+                  }
+                }
             }, file.type, 0.92);
           };
           const reader = new FileReader();
@@ -478,6 +500,43 @@
     }
     window.addEventListener('DOMContentLoaded', function() {
       loadSuggestions();
+    });
+
+    // Attach manual avatar URL save handler (fallback when storage bucket not available)
+    document.addEventListener('DOMContentLoaded', function() {
+      const avatarUrlSave = document.getElementById('avatar-url-save');
+      const avatarUrlInput = document.getElementById('avatar-url-input');
+      const fallback = document.getElementById('avatar-fallback');
+      if (!avatarUrlSave || !avatarUrlInput) return;
+      avatarUrlSave.addEventListener('click', async function() {
+        const url = (avatarUrlInput.value || '').trim();
+        if (!url) return alert('Please enter a valid image URL.');
+        if (!url.startsWith('http')) return alert('Please enter a valid absolute URL (http/https).');
+        if (!currentUsername) return alert('No current user found. Please reload the page while logged in.');
+        try {
+          const res = await updateCharacter(currentUsername, { avatar_url: url });
+          if (!res) return;
+          currentCharacter = res;
+          const avatarImg = document.getElementById('avatar-img');
+          if (avatarImg) avatarImg.src = url;
+          if (fallback) fallback.style.display = 'none';
+          alert('Avatar URL saved.');
+        } catch (err) {
+          console.error('Failed to save avatar URL', err);
+          alert('Failed to save avatar URL. See console for details.');
+        }
+      });
+      // Proactive check: does the 'avatars' bucket exist? If not, show instructions early
+      (async function checkAvatarsBucket() {
+        try {
+          const listRes = await supabaseClient.storage.from('avatars').list('', { limit: 1 });
+          // If bucket doesn't exist supabase-js throws or returns error; if we get here assume ok
+          if (listRes && listRes.error) throw listRes.error;
+        } catch (err) {
+          console.warn('avatars bucket check failed:', err && err.message ? err.message : err);
+          if (fallback) fallback.style.display = 'block';
+        }
+      })();
     });
 
     // Helper: extract numeric gold cost from dnd entry objects
@@ -1154,13 +1213,26 @@
         if (entry) costPer = getCostFromEntry(entry);
       }
       const totalCost = (costPer || 0) * count;
-      const currentGold = currentCharacter.gold || 0;
+      const currentGold = (currentCharacter.gold !== undefined && currentCharacter.gold !== null) ? Number(currentCharacter.gold) : undefined;
+      // If server has no top-level gold column (undefined), fall back to adding item only and inform the user
+      if (totalCost > 0 && (currentGold === undefined)) {
+        // Add item locally and save without changing gold
+        const idx = items.findIndex(i => i.name === itemName);
+        if (idx > -1) items[idx].count += count;
+        else items.push({ name: itemName, count });
+        const res = await updateCharacter(currentUsername, { items });
+        if (!res) return;
+        currentCharacter = res;
+        renderCharacterSheet(currentCharacter);
+        alert("Item added, but the server does not appear to have a top-level 'gold' column so Gold couldn't be deducted.\n\nRun 'migrate_gold.html' or add a numeric 'gold' column to the 'characters' table as described in README.md to enable automatic gold deduction.");
+        return;
+      }
       if (totalCost > 0 && currentGold < totalCost) {
         alert(`Not enough Gold. Need ${totalCost}G but you have ${currentGold}G.`);
         return;
       }
       // Deduct gold from top-level field
-      const newGold = Math.max(0, currentGold - totalCost);
+      const newGold = Math.max(0, (currentGold || 0) - totalCost);
       const idx = items.findIndex(i => i.name === itemName);
       if (idx > -1) items[idx].count += count;
       else items.push({ name: itemName, count });
@@ -1181,12 +1253,24 @@
         if (entry) costPer = getCostFromEntry(entry);
       }
       const totalCost = (costPer || 0) * count;
-      const currentGold = currentCharacter.gold || 0;
+      const currentGold = (currentCharacter.gold !== undefined && currentCharacter.gold !== null) ? Number(currentCharacter.gold) : undefined;
+      if (totalCost > 0 && (currentGold === undefined)) {
+        // Save equipment without deducting gold
+        const idx = equipment.findIndex(e => e.name === equipmentName);
+        if (idx > -1) equipment[idx].count += count;
+        else equipment.push({ name: equipmentName, count });
+        const res = await updateCharacter(currentUsername, { equipment });
+        if (!res) return;
+        currentCharacter = res;
+        renderCharacterSheet(currentCharacter);
+        alert("Equipment added, but the server does not appear to have a top-level 'gold' column so Gold couldn't be deducted.\n\nRun 'migrate_gold.html' or add a numeric 'gold' column to the 'characters' table as described in README.md to enable automatic gold deduction.");
+        return;
+      }
       if (totalCost > 0 && currentGold < totalCost) {
         alert(`Not enough Gold. Need ${totalCost}G but you have ${currentGold}G.`);
         return;
       }
-      const newGold = Math.max(0, currentGold - totalCost);
+      const newGold = Math.max(0, (currentGold || 0) - totalCost);
       const idx = equipment.findIndex(e => e.name === equipmentName);
       if (idx > -1) equipment[idx].count += count;
       else equipment.push({ name: equipmentName, count });

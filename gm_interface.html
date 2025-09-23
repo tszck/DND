@@ -194,9 +194,11 @@
         avatar_url: avatarUrl,
         updated_at: new Date().toISOString()
       };
-      const { error } = await supabaseClient.from('characters').update(updated).eq('username', selectedChar.username);
-      if (error) {
-        alert('Failed to update character: ' + error.message);
+      // Use the common helper so we get retries and verification, and automatic fallback when
+      // the `gold` column is missing on the server.
+      const updatedRow = await updateCharacter(selectedChar.username, updated);
+      if (!updatedRow) {
+        alert('Failed to update character. See console for details.');
       } else {
         alert('Character updated!');
         await fetchCharacters();

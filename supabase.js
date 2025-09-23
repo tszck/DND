@@ -31,6 +31,29 @@ async function updateCharacter(username, updates) {
         .single();
       const { data, error } = resp;
       if (error) {
+        // If the error appears to be caused by a missing column on the server (e.g. 'gold'),
+        // remove that key from the updates and retry once. This makes client code resilient
+        // when the database schema hasn't been migrated yet.
+        try {
+          const msg = (error.message || '').toLowerCase();
+          if (updates && Object.prototype.hasOwnProperty.call(updates, 'gold') && msg.includes('could not find') && msg.includes('gold')) {
+            console.warn('Server reports missing gold column; retrying update without gold...');
+            const { gold, ...updatesNoGold } = updates;
+            // Perform a retry without gold immediately
+            const retryResp = await supabaseClient
+              .from('characters')
+              .update(updatesNoGold)
+              .eq('username', username)
+              .select()
+              .single();
+            if (!retryResp.error) return retryResp.data;
+            // If retry returned error, fall through to the existing verification flow so we still attempt
+            // to verify whether the update actually applied.
+            updates = updatesNoGold; // continue verification using the reduced payload
+          }
+        } catch (e) {
+          console.warn('Error while handling missing-column fallback:', e);
+        }
         // If this was the first attempt, wait briefly and retry once
         if (attempt === 1) {
           console.warn(`updateCharacter attempt ${attempt} failed, retrying...`, error);
