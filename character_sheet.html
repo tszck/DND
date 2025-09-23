@@ -96,19 +96,15 @@
     <div class="profile">
     <img id="avatar-img" src="avatar.png" alt="Character Avatar">
     <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
-    <div style="margin-top:18px;">
-      <label for="bio-edit" style="color:#43b581;font-size:1em;">Bio / Notes:</label>
-      <textarea id="bio-edit" rows="3" style="width:100%;margin-top:4px;border-radius:4px;padding:8px;background:#23272a;color:#b9bbbe;font-size:1em;"></textarea>
-      <button id="save-bio-btn" style="margin-top:6px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Save Bio</button>
-    </div>
-    <div style="margin-top:18px;">
-      <label style="color:#faa61a;font-size:1em;">Story Bio (GM only):</label>
-      <div id="story-bio" style="min-height:48px;padding:8px;background:#23272a;border-radius:8px;color:#faa61a;font-size:1em;white-space:pre-line;"></div>
-    </div>
       <h2 id="char-name"></h2>
       <p id="char-class"></p>
       <div id="char-summary" style="margin-top:10px;color:#43b581;font-size:1em;"></div>
       <div id="char-bio" style="margin-top:18px;padding:10px;background:#23272a;border-radius:8px;color:#b9bbbe;font-size:1em;white-space:pre-line;"></div>
+      <div style="margin-top:18px;">
+        <label for="bio-edit" style="color:#43b581;font-size:1em;">Bio / Notes:</label>
+        <textarea id="bio-edit" rows="3" style="width:100%;margin-top:4px;border-radius:4px;padding:8px;background:#23272a;color:#b9bbbe;font-size:1em;"></textarea>
+        <button id="save-bio-btn" style="margin-top:6px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Save Bio</button>
+      </div>
       <button id="printSheetBtn" style="margin-top:18px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:10px 20px;cursor:pointer;">Print Character Sheet</button>
     </div>
       <!-- Avatar removed: file not found -->
@@ -119,13 +115,13 @@
         <div class="section-title">Add/Remove</div>
         <form id="addForm" style="margin-bottom:24px;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;">
           <label for="type" style="margin:0 4px 0 0;">Type:</label>
-          <select id="type" name="type" required style="width:5ch;min-width:40px;max-width:100px;text-align:left;">
+          <select id="type" name="type" style="flex:0 0 20%;max-width:100px;max-width:40%;">
             <option value="items">Item</option>
             <option value="equipment">Equipment</option>
             <option value="skills">Skill</option>
             <option value="spells">Spell</option>
             <option value="xp">XP</option>
-            <option value="stats">Free Stat Point</option>
+              <option value="stats">Allocate Stat Point</option>
           </select>
           <label for="suggestion">Name:</label>
           <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
@@ -133,7 +129,7 @@
           <label for="count" style="margin:0 4px 0 0;">Count:</label>
           <input type="number" id="count" name="count" min="1" value="1" required style="width:3ch;min-width:40px;max-width:48px;text-align:center;">
           <button type="submit" style="background: #43b581;">Add</button>
-          <button type="button" id="removeBtn" style="background: #f04747; margin-left: 8px;">Remove</button>
+          <button type="button" id="removeBtn" style="background: #f04747; margin-left: 2px;">Remove</button>
         </form>
       </div>
       <div class="inventory">
@@ -705,6 +701,14 @@
 
   const mainBioText = character.bio && character.bio.trim() ? character.bio : 'The tale of this adventurer is yet to be written...';
   const storyBioText = character.story_bio && character.story_bio.trim() ? character.story_bio : '';
+
+  // Merge story bio into the same container (do not show separately)
+  if (storyBioText) {
+    charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>') +
+      `<div style="margin-top:12px;color:#faa61a;white-space:pre-line;"><strong>Story Bio (GM):</strong><br>${escHtml(storyBioText).replace(/\n/g, '<br>')}</div>`;
+  } else {
+    charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>');
+  }
 
   // Hide the edit panel by default and show an "Edit Bio" button
   if (bioEdit && saveBtn) {
