@@ -14,27 +14,27 @@
       padding: 0;
     }
     .dashboard {
-      max-width: 1100px;
+      max-width: 900px;
       margin: 40px auto;
       background: #2c2f33;
       border-radius: 12px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-      padding: 24px;
+      padding: 32px;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 32px;
     }
-    /* Top panel: profile + stats side-by-side */
     .top-row {
       display: flex;
       flex-direction: row;
-      gap: 24px;
+      gap: 32px;
       align-items: flex-start;
       width: 100%;
     }
     .profile, .stats {
-      flex: 1 1 0;
+      flex: 1 1;
       min-width: 0;
+      /* Remove max-width to allow equal flex */
     }
     .profile {
       text-align: center;
@@ -101,112 +101,79 @@
       max-width: 320px;
       display: none;
     }
-    /* Bottom panel: two columns */
-    .bottom-row {
-      display: flex;
-      gap: 24px;
-      width: 100%;
-      margin-top: 8px;
-    }
-    .col-left, .col-right {
-      flex: 1 1 0;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .panel {
-      background:#23272a;
-      padding:18px 20px;
-      border-radius:16px;
-      box-sizing:border-box;
-    }
-    /* responsive stack on small screens */
-    @media (max-width: 900px) {
-      .top-row, .bottom-row { flex-direction: column; }
-      .dashboard { padding: 16px; }
-    }
   </style>
 </head>
 <body>
   <div class="dashboard">
     <div class="top-row">
-      <div class="profile panel" style="overflow:visible;">
-        <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="this.onerror=null;this.src='avatar.jpg';">
-        <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
-        <div id="avatar-fallback" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#2b2f33;color:#ffd166;">
-          <div style="margin-bottom:6px;"><strong>Avatar upload failed because the storage bucket appears to be missing.</strong></div>
-          <div style="font-size:0.95em;margin-bottom:8px;color:#ddd;">You can either create a storage bucket named <code>avatars</code> in your Supabase project (Storage → Create bucket → public), or provide a direct image URL below to use as the avatar.</div>
-          <input id="avatar-url-input" type="url" placeholder="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg" style="width:68%;padding:6px;border-radius:4px;border:1px solid #444;background:#111;color:#fff;" />
-          <button id="avatar-url-save" style="padding:6px 10px;margin-left:8px;">Use Image URL</button>
-        </div>
-        <h2 id="char-name"></h2>
-        <p id="char-class"></p>
-        <div id="char-summary" style="margin-top:10px;color:#43b581;font-size:1em;"></div>
-        <div id="char-bio" style="margin-top:18px;padding:10px;background:#23272a;border-radius:8px;color:#b9bbbe;font-size:1em;white-space:pre-line;"></div>
-        <div style="margin-top:18px;">
-          <label for="bio-edit" style="color:#43b581;font-size:1em;">Bio / Notes:</label>
-          <textarea id="bio-edit" rows="3" style="width:100%;margin-top:4px;border-radius:4px;padding:8px;background:#23272a;color:#b9bbbe;font-size:1em;"></textarea>
-          <button id="save-bio-btn" style="margin-top:6px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Save Bio</button>
-        </div>
-        <button id="printSheetBtn" style="margin-top:18px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Print Character Sheet</button>
+  <div class="profile" style="background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-height:600px;box-sizing:border-box;overflow:visible;display:flex;flex-direction:column;align-items:center;">
+  <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="this.onerror=null;this.src='avatar.jpg';">
+    <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
+    <div id="avatar-fallback" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#2b2f33;color:#ffd166;">
+      <div style="margin-bottom:6px;"><strong>Avatar upload failed because the storage bucket appears to be missing.</strong></div>
+      <div style="font-size:0.95em;margin-bottom:8px;color:#ddd;">You can either create a storage bucket named <code>avatars</code> in your Supabase project (Storage → Create bucket → public), or provide a direct image URL below to use as the avatar.</div>
+      <input id="avatar-url-input" type="url" placeholder="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg" style="width:68%;padding:6px;border-radius:4px;border:1px solid #444;background:#111;color:#fff;" />
+      <button id="avatar-url-save" style="padding:6px 10px;margin-left:8px;">Use Image URL</button>
+    </div>
+      <h2 id="char-name"></h2>
+      <p id="char-class"></p>
+      <div id="char-summary" style="margin-top:10px;color:#43b581;font-size:1em;"></div>
+      <div id="char-bio" style="margin-top:18px;padding:10px;background:#23272a;border-radius:8px;color:#b9bbbe;font-size:1em;white-space:pre-line;"></div>
+      <div style="margin-top:18px;">
+        <label for="bio-edit" style="color:#43b581;font-size:1em;">Bio / Notes:</label>
+        <textarea id="bio-edit" rows="3" style="width:100%;margin-top:4px;border-radius:4px;padding:8px;background:#23272a;color:#b9bbbe;font-size:1em;"></textarea>
+        <button id="save-bio-btn" style="margin-top:6px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Save Bio</button>
       </div>
-
-      <div class="stats panel">
+      <button id="printSheetBtn" style="margin-top:18px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Print Character Sheet</button>
+    </div>
+      <!-- Avatar removed: file not found -->
+    </div>
+  <div class="stats" style="text-align:left;background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-height:600px;box-sizing:border-box;overflow:visible;">
         <div class="section-title">Stats</div>
         <table id="stats-table"></table>
       </div>
     </div>
-
-    <div class="bottom-row">
-      <div class="col-left">
-        <div class="panel add-remove" id="add-remove-panel">
-          <div class="section-title">Add/Remove</div>
-          <form id="addForm" style="margin-bottom:24px;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;">
-            <label for="type" style="margin:0 4px 0 0;">Type:</label>
-            <select id="type" name="type" style="flex:0 0 20%;max-width:100px;max-width:40%;">
-              <option value="items">Item</option>
-              <option value="equipment">Equipment</option>
-              <option value="skills">Skill</option>
-              <option value="spells">Spell</option>
-              <option value="xp">XP</option>
-              <option value="stats">Allocate Stat Point</option>
-            </select>
-            <label for="suggestion">Name:</label>
-            <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
-            <span id="suggestion-cost" style="margin-left:8px;color:#faa61a;white-space:nowrap;"></span>
-            <datalist id="suggestions"></datalist>
-            <label for="count" style="margin:0 4px 0 0;">Count:</label>
-            <input type="number" id="count" name="count" min="1" value="1" required style="width:3ch;min-width:40px;max-width:48px;text-align:center;">
-            <button type="submit" style="background: #43b581;">Add</button>
-            <button type="button" id="removeBtn" style="background: #f04747; margin-left: 2px;">Remove</button>
-          </form>
-        </div>
-
-        <div class="panel inventory">
-          <div class="section-title">Weapons</div>
-          <table id="weapons-table" style="width:100%;margin-bottom:12px;"></table>
-          <div class="section-title">Armor</div>
-          <table id="armor-table" style="width:100%;margin-bottom:12px;"></table>
-          <div class="section-title">Items</div>
-          <table id="items-table" style="width:100%;margin-bottom:12px;"></table>
-        </div>
+    <div class="bottom-row" style="display:flex;flex-direction:column;gap:24px;width:100%;margin-top:16px;">
+      <div class="add-remove" style="background:#23272a;padding:18px 24px 18px 24px;border-radius:16px;max-width:900px;width:100%;margin:0 auto 0 auto;box-sizing:border-box;">
+        <div class="section-title">Add/Remove</div>
+        <form id="addForm" style="margin-bottom:24px;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;">
+          <label for="type" style="margin:0 4px 0 0;">Type:</label>
+          <select id="type" name="type" style="flex:0 0 20%;max-width:100px;max-width:40%;">
+            <option value="items">Item</option>
+            <option value="equipment">Equipment</option>
+            <option value="skills">Skill</option>
+            <option value="spells">Spell</option>
+            <option value="xp">XP</option>
+            <option value="stats">Allocate Stat Point</option>
+          </select>
+          <label for="suggestion">Name:</label>
+          <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
+          <span id="suggestion-cost" style="margin-left:8px;color:#faa61a;white-space:nowrap;"></span>
+          <datalist id="suggestions"></datalist>
+          <label for="count" style="margin:0 4px 0 0;">Count:</label>
+          <input type="number" id="count" name="count" min="1" value="1" required style="width:3ch;min-width:40px;max-width:48px;text-align:center;">
+          <button type="submit" style="background: #43b581;">Add</button>
+          <button type="button" id="removeBtn" style="background: #f04747; margin-left: 2px;">Remove</button>
+        </form>
       </div>
-
-      <div class="col-right">
-        <div class="panel abilities">
-          <div class="section-title">Skills</div>
-          <table id="skills-table" style="width:100%;margin-bottom:12px;"></table>
-          <div class="section-title">Spells</div>
-          <table id="spells-table" style="width:100%;margin-bottom:12px;"></table>
-        </div>
+      <div class="inventory" style="background:#23272a;padding:18px 24px 18px 24px;border-radius:16px;max-width:900px;width:100%;margin:0 auto 0 auto;box-sizing:border-box;">
+        <div class="section-title" style="text-align:left;">Weapons</div>
+        <table id="weapons-table" style="width:100%;margin-bottom:12px;"></table>
+        <div class="section-title">Armor</div>
+        <table id="armor-table" style="width:100%;margin-bottom:12px;"></table>
+        <div class="section-title">Items</div>
+        <table id="items-table" style="width:100%;margin-bottom:12px;"></table>
+      </div>
+      <div class="abilities" style="background:#23272a;padding:18px 24px 18px 24px;border-radius:16px;max-width:900px;width:100%;margin:0 auto 0 auto;box-sizing:border-box;">
+        <div class="section-title" style="text-align:left;">Skills</div>
+        <table id="skills-table" style="width:100%;margin-bottom:12px;"></table>
+        <div class="section-title">Spells</div>
+        <table id="spells-table" style="width:100%;margin-bottom:12px;"></table>
       </div>
     </div>
   </div>
-
   <div id="sheet-data" style="margin:32px 0;"></div>
   <div id="tooltip" class="tooltip"></div>
-
   <script>
     // Bio edit/save logic
     document.addEventListener('DOMContentLoaded', function() {
@@ -223,7 +190,6 @@
         });
       }
     });
-
     // Avatar upload logic
     document.addEventListener('DOMContentLoaded', function() {
       const avatarInput = document.getElementById('avatar-upload');
@@ -277,11 +243,13 @@
                 try {
                   res = await updateCharacter(currentUsername, { avatar_url: publicURL });
                 } catch (err) {
+                  // If error is about missing avatar_url column, retry without it
                   if (err && err.message && err.message.toLowerCase().includes("avatar_url")) {
                     avatarUrlUpdateFailed = true;
                     try {
                       res = await updateCharacter(currentUsername, {});
                     } catch (e2) {
+                      // fallback: still update UI
                       res = currentCharacter;
                     }
                   } else {
@@ -293,6 +261,7 @@
                   return;
                 }
                 currentCharacter = res;
+                // Force reload image to avoid browser cache
                 const avatarImg = document.getElementById('avatar-img');
                 if (avatarImg) {
                   avatarImg.src = publicURL + '?t=' + Date.now();
@@ -304,11 +273,13 @@
                 }
               } catch (err) {
                 console.error('Avatar upload error:', err);
+                // If the bucket isn't found, show fallback UI with instructions
                 const fallback = document.getElementById('avatar-fallback');
                 if (err && err.message && err.message.toLowerCase().includes('bucket')) {
                   fallback.style.display = 'block';
                   alert('Avatar upload failed: storage bucket not found. See fallback instructions.');
                 } else {
+                  // generic error show message and fallback
                   fallback.style.display = 'block';
                   alert('Avatar upload failed: ' + (err.message || err));
                 }
@@ -321,8 +292,237 @@
         });
       }
     });
+  // Suggestions infrastructure
+    // Print Character Sheet logic
+    document.addEventListener('DOMContentLoaded', function() {
+      const printBtn = document.getElementById('printSheetBtn');
+      if (printBtn) {
+        printBtn.addEventListener('click', function() {
+          if (currentCharacter) openPrintableCharacterSheet(currentCharacter);
+        });
+      }
+    });
 
-    // Suggestions infrastructure and Print logic
+    function openPrintableCharacterSheet(character) {
+      const printWindow = window.open('', '_blank', 'width=800,height=1000,scrollbars=yes');
+      // Stat bonus logic
+      const raceInfo = {
+        "Human": { bonus: { strength: 1, dexterity: 1, constitution: 1 } },
+        "Elf": { bonus: { dexterity: 2, intelligence: 1 } },
+        "Dwarf": { bonus: { constitution: 2, strength: 1 } },
+        "Halfling": { bonus: { dexterity: 2, charisma: 1 } },
+        "Dragonborn": { bonus: { strength: 2, charisma: 1 } },
+        "Gnome": { bonus: { intelligence: 2, constitution: 1 } },
+        "Half-Elf": { bonus: { charisma: 2, dexterity: 1 } },
+        "Half-Orc": { bonus: { strength: 2, constitution: 1 } },
+        "Tiefling": { bonus: { charisma: 2, intelligence: 1 } }
+      };
+      const classInfo = {
+        "Fighter": { bonus: { strength: 2 } },
+        "Rogue": { bonus: { dexterity: 2 } },
+        "Wizard": { bonus: { intelligence: 2 } },
+        "Cleric": { bonus: { wisdom: 2 } },
+        "Barbarian": { bonus: { strength: 1, constitution: 1 } },
+        "Bard": { bonus: { charisma: 2 } },
+        "Druid": { bonus: { wisdom: 1, constitution: 1 } },
+        "Monk": { bonus: { dexterity: 1, wisdom: 1 } },
+        "Paladin": { bonus: { strength: 1, charisma: 1 } },
+        "Ranger": { bonus: { dexterity: 1, wisdom: 1 } },
+        "Sorcerer": { bonus: { charisma: 1, constitution: 1 } },
+        "Warlock": { bonus: { charisma: 1, intelligence: 1 } }
+      };
+      const backgroundInfo = {
+        "Acolyte": { bonus: { wisdom: 1 } },
+        "Charlatan": { bonus: { charisma: 1 } },
+        "Criminal": { bonus: { dexterity: 1 } },
+        "Entertainer": { bonus: { charisma: 1 } },
+        "Folk Hero": { bonus: { constitution: 1 } },
+        "Guild Artisan": { bonus: { intelligence: 1 } },
+        "Hermit": { bonus: { wisdom: 1 } },
+        "Noble": { bonus: { charisma: 1 } },
+        "Outlander": { bonus: { constitution: 1 } },
+        "Sage": { bonus: { intelligence: 1 } },
+        "Sailor": { bonus: { strength: 1 } },
+        "Soldier": { bonus: { strength: 1 } },
+        "Urchin": { bonus: { dexterity: 1 } }
+      };
+
+      function getTotalStat(character, stat) {
+        let total = character[stat] || 0;
+        if (raceInfo[character.race] && raceInfo[character.race].bonus && raceInfo[character.race].bonus[stat]) {
+          total += raceInfo[character.race].bonus[stat];
+        }
+        if (classInfo[character.class] && classInfo[character.class].bonus && classInfo[character.class].bonus[stat]) {
+          total += classInfo[character.class].bonus[stat];
+        }
+        if (backgroundInfo[character.background] && backgroundInfo[character.background].bonus && backgroundInfo[character.background].bonus[stat]) {
+          total += backgroundInfo[character.background].bonus[stat];
+        }
+        return total;
+      }
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${character.name || character.username} - Character Sheet</title>
+          <style>
+            @media print {
+              body { margin: 0; }
+              .no-print { display: none; }
+            }
+            body { 
+              font-family: 'Times New Roman', serif; 
+              margin: 20px; 
+              background: white; 
+              color: black; 
+              line-height: 1.4;
+            }
+            .header { 
+              text-align: center; 
+              border-bottom: 3px solid #000; 
+              padding-bottom: 10px; 
+              margin-bottom: 20px; 
+            }
+            .character-name { 
+              font-size: 28px; 
+              font-weight: bold; 
+              margin: 0; 
+            }
+            .character-details { 
+              font-size: 16px; 
+              margin: 5px 0; 
+            }
+            .section { 
+              margin-bottom: 20px; 
+              border: 2px solid #000; 
+              padding: 10px; 
+            }
+            .section-title { 
+              font-size: 18px; 
+              font-weight: bold; 
+              border-bottom: 1px solid #000; 
+              margin-bottom: 10px; 
+              padding-bottom: 5px; 
+            }
+            .stats-grid { 
+              display: grid; 
+              grid-template-columns: repeat(3, 1fr); 
+              gap: 10px; 
+            }
+            .stat-box { 
+              border: 1px solid #000; 
+              padding: 8px; 
+              text-align: center; 
+            }
+            .stat-name { 
+              font-weight: bold; 
+              font-size: 12px; 
+            }
+            .stat-value { 
+              font-size: 20px; 
+              font-weight: bold; 
+            }
+            .equipment-list { 
+              columns: 2; 
+              column-gap: 20px; 
+            }
+            .equipment-item { 
+              break-inside: avoid; 
+              margin-bottom: 5px; 
+            }
+            .no-print { 
+              position: fixed; 
+              top: 10px; 
+              right: 10px; 
+            }
+            button { 
+              padding: 10px 20px; 
+              font-size: 16px; 
+              cursor: pointer; 
+            }
+          </style>
+        </head>
+        <body>
+          <button class="no-print" onclick="window.print()">Print Character Sheet</button>
+          <div class="header">
+            <h1 class="character-name">${character.name || character.username}</h1>
+            <div class="character-details">
+              Level ${character.level} ${character.race} ${character.class}
+            </div>
+            <div class="character-details">
+              Background: ${character.background} | Username: ${character.username}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Ability Scores</div>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-name">STRENGTH</div>
+                <div class="stat-value">${getTotalStat(character, 'strength')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">DEXTERITY</div>
+                <div class="stat-value">${getTotalStat(character, 'dexterity')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">CONSTITUTION</div>
+                <div class="stat-value">${getTotalStat(character, 'constitution')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">INTELLIGENCE</div>
+                <div class="stat-value">${getTotalStat(character, 'intelligence')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">WISDOM</div>
+                <div class="stat-value">${getTotalStat(character, 'wisdom')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">CHARISMA</div>
+                <div class="stat-value">${getTotalStat(character, 'charisma')}</div>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Character Progress</div>
+            <p><strong>Level:</strong> ${character.level}</p>
+            <p><strong>Experience Points:</strong> ${character.xp || 0}</p>
+            <p><strong>XP to Next Level:</strong> ${(100 * (character.level + 1)) - (character.xp || 0)}</p>
+            <p><strong>Free Stat Points:</strong> ${character.free_stat_points || 0}</p>
+          </div>
+          <div class="section">
+            <div class="section-title">Equipment & Items</div>
+            <div class="equipment-list">
+              ${character.equipment ? character.equipment.filter(eq => eq.count > 0).map(eq => 
+                `<div class="equipment-item">${eq.name} (${eq.count})</div>`
+              ).join('') : '<div>No equipment</div>'}
+              ${character.items ? character.items.filter(item => item.count > 0).map(item => 
+                `<div class="equipment-item">${item.name} (${item.count})</div>`
+              ).join('') : ''}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Skills & Spells</div>
+            <div class="equipment-list">
+              ${character.skills ? character.skills.filter(skill => skill.count > 0).map(skill => 
+                `<div class="equipment-item">${skill.name} (Level ${skill.count})</div>`
+              ).join('') : '<div>No skills</div>'}
+              ${character.spells ? character.spells.filter(spell => spell.count > 0).map(spell => 
+                `<div class="equipment-item">${spell.name}</div>`
+              ).join('') : ''}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Notes</div>
+            <div style="height: 150px; border: 1px solid #ccc; padding: 10px;">
+              ${character.bio || 'The tale of this adventurer is yet to be written...'}
+            </div>
+          </div>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
     let sheetSuggestions = { items: [], equipment: [], skills: [], spells: [], xp: ['Experience Points'] };
     let dndData = null;
     async function loadSuggestions() {
@@ -343,7 +543,7 @@
       loadSuggestions();
     });
 
-    // Avatar URL fallback handler and proactive bucket check
+    // Attach manual avatar URL save handler (fallback when storage bucket not available)
     document.addEventListener('DOMContentLoaded', function() {
       const avatarUrlSave = document.getElementById('avatar-url-save');
       const avatarUrlInput = document.getElementById('avatar-url-input');
@@ -367,9 +567,11 @@
           alert('Failed to save avatar URL. See console for details.');
         }
       });
+      // Proactive check: does the 'avatars' bucket exist? If not, show instructions early
       (async function checkAvatarsBucket() {
         try {
           const listRes = await supabaseClient.storage.from('avatars').list('', { limit: 1 });
+          // If bucket doesn't exist supabase-js throws or returns error; if we get here assume ok
           if (listRes && listRes.error) throw listRes.error;
         } catch (err) {
           console.warn('avatars bucket check failed:', err && err.message ? err.message : err);
@@ -381,6 +583,7 @@
     // Helper: extract numeric gold cost from dnd entry objects
     function getCostFromEntry(entry) {
       if (!entry) return 0;
+      // Common fields
       if (typeof entry.cost === 'number') return entry.cost;
       if (typeof entry.price === 'number') return entry.price;
       const candidates = ['cost','price','value','gp','gold','cost_gp','cost_string'];
@@ -389,20 +592,22 @@
           const v = entry[k];
           if (typeof v === 'number') return v;
           if (typeof v === 'string') {
+            // try to extract number like "10 gp" or "1,000"
             const m = v.replace(/,/g,'').match(/([0-9]+(?:\.[0-9]+)?)/);
             if (m) return parseFloat(m[1]);
           }
         }
       }
+      // If entry has a cost object like {quantity:1,unit:'gp'}
       if (entry.cost && typeof entry.cost === 'object') {
         if (entry.cost.quantity) return Number(entry.cost.quantity) || 0;
         if (entry.cost.amount) return Number(entry.cost.amount) || 0;
       }
       return 0;
     }
-
     document.getElementById('type').addEventListener('change', function() {
       updateSuggestionsList(this.value);
+      // If stats selected, show stat keys as suggestions
       if (this.value === 'stats') {
         const datalist = document.getElementById('suggestions');
         datalist.innerHTML = '';
@@ -413,13 +618,13 @@
         });
       }
     });
-
     function updateSuggestionsList(type) {
       const datalist = document.getElementById('suggestions');
       datalist.innerHTML = '';
-      (sheetSuggestions[type] || []).forEach(s => {
+      sheetSuggestions[type].forEach(s => {
         const option = document.createElement('option');
         option.value = s;
+        // if dndData has an entry, attach cost for quick lookup
         try {
           if (dndData && Array.isArray(dndData[type])) {
             const entry = dndData[type].find(x => x.name === s);
@@ -431,7 +636,7 @@
         datalist.appendChild(option);
       });
     }
-
+    // Show cost in the UI when suggestion input changes
     (function attachSuggestionCostListener() {
       const suggestionInput = document.getElementById('suggestion');
       const suggestionCostSpan = document.getElementById('suggestion-cost');
@@ -449,19 +654,22 @@
             }
           }
         } catch (err) {
+          // ignore
         }
         suggestionCostSpan.textContent = costText;
       });
     })();
-
-    // Manual add/remove handlers (kept intact)
+    // Manual add logic
     document.getElementById('addForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const type = document.getElementById('type').value;
       const name = document.getElementById('suggestion').value.trim();
       const count = parseInt(document.getElementById('count').value);
+      
       if (!name || !count || !currentCharacter || !currentUsername) return;
+      
       try {
+          // Stat allocation logic
           if (["strength","dexterity","constitution","intelligence","wisdom","charisma"].includes(name.toLowerCase()) && type === 'stats') {
             if ((currentCharacter.free_stat_points ?? 0) < count) {
               alert('Not enough free stat points to allocate.');
@@ -476,6 +684,7 @@
             renderCharacterSheet(currentCharacter);
             return;
           }
+        // Update the character data based on type
         if (type === 'items') {
           await addItemToCharacter(name, count);
         } else if (type === 'equipment') {
@@ -487,6 +696,8 @@
         } else if (type === 'xp') {
           await addXPToCharacter(count);
         }
+        
+        // Reset form
         this.reset();
         updateSuggestionsList(document.getElementById('type').value);
       } catch (error) {
@@ -495,13 +706,17 @@
       }
     });
 
+    // Remove button logic
     document.getElementById('removeBtn').addEventListener('click', async function(e) {
       e.preventDefault();
       const type = document.getElementById('type').value;
       const name = document.getElementById('suggestion').value.trim();
       const count = parseInt(document.getElementById('count').value);
+      
       if (!name || !count || !currentCharacter || !currentUsername) return;
+      
       try {
+        // Stat point removal logic
         if (["strength","dexterity","constitution","intelligence","wisdom","charisma"].includes(name.toLowerCase()) && type === 'stats') {
           let statKey = name.toLowerCase();
           let currentValue = currentCharacter[statKey] ?? 0;
@@ -517,6 +732,7 @@
           renderCharacterSheet(currentCharacter);
           return;
         }
+        // ...existing code...
         let items = [];
         if (type === 'items') items = currentCharacter.items || [];
         else if (type === 'equipment') items = currentCharacter.equipment || [];
@@ -528,6 +744,7 @@
             return;
           }
         }
+        
         if (type !== 'xp') {
           const existingItem = items.find(item => item.name === name);
           if (!existingItem || (existingItem.count || 0) === 0) {
@@ -535,6 +752,8 @@
             return;
           }
         }
+        
+        // Remove from the character data based on type
         if (type === 'items') {
           await removeItemFromCharacter(name, count);
         } else if (type === 'equipment') {
@@ -546,6 +765,8 @@
         } else if (type === 'xp') {
           await removeXPFromCharacter(count);
         }
+        
+        // Reset form
         document.getElementById('addForm').reset();
         updateSuggestionsList(document.getElementById('type').value);
       } catch (error) {
@@ -553,11 +774,19 @@
         alert('Failed to remove item. Please try again.');
       }
     });
-
-    // renderCharacterSheet and Supabase integration (kept intact) -------------------------------------------------
+    async function loadData() {
+      // Removed due to CORS issues and not being used
+    }
+    // setInterval(loadData, 5000);
+    // loadData();
+  </script>
+  <script>
+    // Supabase character sheet integration
     let currentUsername = null;
     let currentCharacter = null;
+    // Expect username to be passed via localStorage from index.html
     window.addEventListener('DOMContentLoaded', async function() {
+      // Try to get username from query string first
       function getQueryParam(name) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(name);
@@ -581,130 +810,161 @@
     });
 
     function renderCharacterSheet(character) {
-      // Free stat points
-      const freeStatPoints = character.free_stat_points ?? 0;
-      let statPointDiv = document.getElementById('free-stat-points');
-      if (!statPointDiv) {
-        statPointDiv = document.createElement('div');
-        statPointDiv.id = 'free-stat-points';
-        statPointDiv.style = 'margin-top:10px;color:#faa61a;font-size:1em;';
-        document.querySelector('.profile').appendChild(statPointDiv);
-      }
-      statPointDiv.textContent = `Free stat points: ${freeStatPoints}`;
-      // Gold display
-      let goldDiv = document.getElementById('gold-display');
-      if (!goldDiv) {
-        goldDiv = document.createElement('div');
-        goldDiv.id = 'gold-display';
-        goldDiv.style = 'margin-top:6px;color:#ffd166;font-size:1em;';
-        document.querySelector('.profile').appendChild(goldDiv);
-      }
-      goldDiv.textContent = `Gold: ${character.gold ?? 0} G`;
-      // Avatar display
-      const avatarImg = document.getElementById('avatar-img');
-      if (avatarImg) {
-        let avatarUrl = character.avatar_url;
-        if (!avatarUrl) {
-          avatarUrl = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${character.username || character.name || currentUsername}.jpg`;
-        }
-        avatarImg.onerror = function() {
-          if (!this.src.endsWith('avatar.jpg')) {
-            this.onerror = function() {
-              this.onerror = null;
-              this.src = '';
-              this.title = 'No avatar image found.';
-            };
-            this.src = 'avatar.jpg';
-            this.title = 'Avatar could not be loaded. Showing default avatar.';
-          }
+  // Free stat points
+  freeStatPoints = character.free_stat_points ?? 0;
+  let statPointDiv = document.getElementById('free-stat-points');
+  if (!statPointDiv) {
+    statPointDiv = document.createElement('div');
+    statPointDiv.id = 'free-stat-points';
+    statPointDiv.style = 'margin-top:10px;color:#faa61a;font-size:1em;';
+    document.querySelector('.profile').appendChild(statPointDiv);
+  }
+  statPointDiv.textContent = `Free stat points: ${freeStatPoints}`;
+  // Gold display
+  let goldDiv = document.getElementById('gold-display');
+  if (!goldDiv) {
+    goldDiv = document.createElement('div');
+    goldDiv.id = 'gold-display';
+    goldDiv.style = 'margin-top:6px;color:#ffd166;font-size:1em;';
+    document.querySelector('.profile').appendChild(goldDiv);
+  }
+  goldDiv.textContent = `Gold: ${character.gold ?? 0} G`;
+  // Avatar display
+  const avatarImg = document.getElementById('avatar-img');
+  if (avatarImg) {
+    // Use avatar_url from DB if present, else canonical, else fallback
+    let avatarUrl = character.avatar_url;
+    if (!avatarUrl) {
+      avatarUrl = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${character.username || character.name || currentUsername}.jpg`;
+    }
+    avatarImg.onerror = function() {
+      // Only fallback if not already on avatar.jpg
+      if (!this.src.endsWith('avatar.jpg')) {
+        this.onerror = function() {
+          // If avatar.jpg is also missing, show blank and set title
+          this.onerror = null;
+          this.src = '';
+          this.title = 'No avatar image found.';
         };
-        avatarImg.src = avatarUrl;
-        avatarImg.title = character.avatar_url ? '' : 'No avatar set. Upload or provide a URL.';
+        this.src = 'avatar.jpg';
+        this.title = 'Avatar could not be loaded. Showing default avatar.';
       }
+    };
+    avatarImg.src = avatarUrl;
+    avatarImg.title = character.avatar_url ? '' : 'No avatar set. Upload or provide a URL.';
+  }
+// Prevent ReferenceError if attachTooltipListeners is missing
+if (typeof attachTooltipListeners !== 'function') {
+  function attachTooltipListeners() {}
+}
+  document.getElementById('char-name').textContent = character.name || character.username || '';
+  document.getElementById('char-class').textContent = `Level ${character.level ?? ''} ${character.class ?? ''}`;
+  // Summary
+  let summary = '';
+  if (character.race) summary += `<b>Race:</b> ${character.race} `;
+  if (character.class) summary += `<b>Class:</b> ${character.class} `;
+  if (character.background) summary += `<b>Background:</b> ${character.background}`;
+  document.getElementById('char-summary').innerHTML = summary;
+  // Bio at bottom of profile
+  // Editable bio (show textarea only when "Edit Bio" clicked)
+  const bioEdit = document.getElementById('bio-edit');
+  const saveBtn = document.getElementById('save-bio-btn');
+  if (bioEdit) bioEdit.value = character.bio && character.bio.trim() ? character.bio : '';
 
-      if (typeof attachTooltipListeners !== 'function') {
-        function attachTooltipListeners() {}
-      }
-      document.getElementById('char-name').textContent = character.name || character.username || '';
-      document.getElementById('char-class').textContent = `Level ${character.level ?? ''} ${character.class ?? ''}`;
-      let summary = '';
-      if (character.race) summary += `<b>Race:</b> ${character.race} `;
-      if (character.class) summary += `<b>Class:</b> ${character.class} `;
-      if (character.background) summary += `<b>Background:</b> ${character.background}`;
-      document.getElementById('char-summary').innerHTML = summary;
-      const bioEdit = document.getElementById('bio-edit');
-      const saveBtn = document.getElementById('save-bio-btn');
-      if (bioEdit) bioEdit.value = character.bio && character.bio.trim() ? character.bio : '';
-      const charBioDiv = document.getElementById('char-bio');
-      const storyBioDiv = document.getElementById('story-bio');
-      if (storyBioDiv) storyBioDiv.style.display = 'none';
-      function escHtml(s) {
-        return (s || '').toString()
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#39;');
-      }
-      const mainBioText = character.bio && character.bio.trim() ? character.bio : 'The tale of this adventurer is yet to be written...';
-      const storyBioText = character.story_bio && character.story_bio.trim() ? character.story_bio : '';
-      if (storyBioText) {
-        charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>') +
-          `<div style="margin-top:12px;color:#faa61a;white-space:pre-line;"><strong>Story Bio (GM):</strong><br>${escHtml(storyBioText).replace(/\n/g, '<br>')}</div>`;
-      } else {
-        charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>');
-      }
-      if (bioEdit && saveBtn) {
-        const bioContainer = bioEdit.parentElement;
-        let editBtn = document.getElementById('edit-bio-btn');
-        if (!editBtn) {
-          editBtn = document.createElement('button');
-          editBtn.id = 'edit-bio-btn';
-          editBtn.textContent = 'Edit Bio';
-          editBtn.style = 'margin-top:10px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;';
-        }
-        let cancelBtn = document.getElementById('cancel-bio-btn');
-        if (!cancelBtn) {
-          cancelBtn = document.createElement('button');
-          cancelBtn.id = 'cancel-bio-btn';
-          cancelBtn.textContent = 'Cancel';
-          cancelBtn.style = 'margin-left:8px;background:#777;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;display:none;';
-        }
-        if (bioContainer && bioContainer.parentElement) {
-          if (!editBtn.parentElement) bioContainer.parentElement.insertBefore(editBtn, bioContainer);
-          if (!cancelBtn.parentElement) bioContainer.appendChild(cancelBtn);
-          bioContainer.style.display = 'none';
-          editBtn.style.display = 'inline-block';
-        }
-        editBtn.addEventListener('click', function() {
-          bioEdit.value = character.bio && character.bio.trim() ? character.bio : '';
-          bioContainer.style.display = 'block';
-          editBtn.style.display = 'none';
-          cancelBtn.style.display = 'inline-block';
-          bioEdit.focus();
-        });
-        cancelBtn.addEventListener('click', function() {
+  const charBioDiv = document.getElementById('char-bio');
+  const storyBioDiv = document.getElementById('story-bio');
+  // do not show the separate story-bio container
+  if (storyBioDiv) storyBioDiv.style.display = 'none';
+
+  // helper to escape HTML
+  function escHtml(s) {
+    return (s || '').toString()
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  const mainBioText = character.bio && character.bio.trim() ? character.bio : 'The tale of this adventurer is yet to be written...';
+  const storyBioText = character.story_bio && character.story_bio.trim() ? character.story_bio : '';
+
+  // Merge story bio into the same container (do not show separately)
+  if (storyBioText) {
+    charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>') +
+      `<div style="margin-top:12px;color:#faa61a;white-space:pre-line;"><strong>Story Bio (GM):</strong><br>${escHtml(storyBioText).replace(/\n/g, '<br>')}</div>`;
+  } else {
+    charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>');
+  }
+
+  // Hide the edit panel by default and show an "Edit Bio" button
+  if (bioEdit && saveBtn) {
+    const bioContainer = bioEdit.parentElement; // the div that contains label, textarea, and save button
+    // create Edit button if not present
+    let editBtn = document.getElementById('edit-bio-btn');
+    if (!editBtn) {
+      editBtn = document.createElement('button');
+      editBtn.id = 'edit-bio-btn';
+      editBtn.textContent = 'Edit Bio';
+      editBtn.style = 'margin-top:10px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;';
+    }
+    // create Cancel button to appear while editing
+    let cancelBtn = document.getElementById('cancel-bio-btn');
+    if (!cancelBtn) {
+      cancelBtn = document.createElement('button');
+      cancelBtn.id = 'cancel-bio-btn';
+      cancelBtn.textContent = 'Cancel';
+      cancelBtn.style = 'margin-left:8px;background:#777;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;display:none;';
+    }
+
+    // ensure the edit button sits before the bio container
+    if (bioContainer && bioContainer.parentElement) {
+      if (!editBtn.parentElement) bioContainer.parentElement.insertBefore(editBtn, bioContainer);
+      if (!cancelBtn.parentElement) bioContainer.appendChild(cancelBtn);
+      // hide the bio container (label + textarea + save) by default
+      bioContainer.style.display = 'none';
+      // show edit button
+      editBtn.style.display = 'inline-block';
+    }
+
+    // open editor when clicking Edit
+    editBtn.addEventListener('click', function() {
+      // populate current text and show
+      bioEdit.value = character.bio && character.bio.trim() ? character.bio : '';
+      bioContainer.style.display = 'block';
+      editBtn.style.display = 'none';
+      cancelBtn.style.display = 'inline-block';
+      bioEdit.focus();
+    });
+
+    // cancel editing
+    cancelBtn.addEventListener('click', function() {
+      bioContainer.style.display = 'none';
+      cancelBtn.style.display = 'none';
+      editBtn.style.display = 'inline-block';
+      // revert textarea to current character bio
+      bioEdit.value = character.bio && character.bio.trim() ? character.bio : '';
+    });
+
+    // After saving, hide the editor panel. Add only once.
+    if (!saveBtn.dataset.hideAfterSave) {
+      saveBtn.dataset.hideAfterSave = '1';
+      saveBtn.addEventListener('click', function() {
+        // small delay to allow the existing save handler to complete updates
+        setTimeout(() => {
           bioContainer.style.display = 'none';
           cancelBtn.style.display = 'none';
           editBtn.style.display = 'inline-block';
-          bioEdit.value = character.bio && character.bio.trim() ? character.bio : '';
-        });
-        if (!saveBtn.dataset.hideAfterSave) {
-          saveBtn.dataset.hideAfterSave = '1';
-          saveBtn.addEventListener('click', function() {
-            setTimeout(() => {
-              bioContainer.style.display = 'none';
-              cancelBtn.style.display = 'none';
-              editBtn.style.display = 'inline-block';
-              const newText = (currentCharacter && currentCharacter.bio) ? currentCharacter.bio : mainBioText;
-              charBioDiv.innerHTML = escHtml(newText).replace(/\n/g, '<br>') +
-                (storyBioText ? `<div style="margin-top:12px;color:#faa61a;white-space:pre-line;"><strong>Story Bio (GM):</strong><br>${escHtml(storyBioText).replace(/\n/g, '<br>')}</div>` : '');
-            }, 250);
-          });
-        }
-      }
+          // update displayed bio from currentCharacter if available
+          const newText = (currentCharacter && currentCharacter.bio) ? currentCharacter.bio : mainBioText;
+          charBioDiv.innerHTML = escHtml(newText).replace(/\n/g, '<br>') +
+            (storyBioText ? `<div style="margin-top:12px;color:#faa61a;white-space:pre-line;"><strong>Story Bio (GM):</strong><br>${escHtml(storyBioText).replace(/\n/g, '<br>')}</div>` : '');
+        }, 250);
+      });
+    }
+  }
 
-      // Bonus logic reused from above
+      // Bonus logic
       const raceInfo = {
         "Human": { bonus: { strength: 1, dexterity: 1, constitution: 1 } },
         "Elf": { bonus: { dexterity: 2, intelligence: 1 } },
@@ -746,9 +1006,11 @@
         "Urchin": { skills: ["Sleight of Hand", "Stealth"], bonus: { dexterity: 1 } }
       };
 
-      // Stats table rendering
+      // Stats
       const statsTable = document.getElementById('stats-table');
       statsTable.innerHTML = '<tr><th style="width:30%;">Stat</th><th style="width:20%;">Total</th><th style="width:50%;"></th></tr>';
+      
+      // Level and XP display
       const levelRow = document.createElement('tr');
       const levelTh = document.createElement('th');
       levelTh.textContent = 'Level';
@@ -760,7 +1022,7 @@
       levelRow.appendChild(levelTd);
       levelRow.appendChild(levelBreakdown);
       statsTable.appendChild(levelRow);
-
+      
       const xpRow = document.createElement('tr');
       const xpTh = document.createElement('th');
       xpTh.textContent = 'XP';
@@ -775,24 +1037,28 @@
       xpRow.appendChild(xpTd);
       xpRow.appendChild(xpBreakdown);
       statsTable.appendChild(xpRow);
-
+      
       const statKeys = ['strength','dexterity','constitution','intelligence','wisdom','charisma'];
       statKeys.forEach(key => {
         let base = character[key] ?? 0;
         let bonus = 0;
         let breakdown = [];
+        // Race bonus
         if (character.race && raceInfo[character.race] && raceInfo[character.race].bonus && raceInfo[character.race].bonus[key]) {
           bonus += raceInfo[character.race].bonus[key];
           breakdown.push(`Race +${raceInfo[character.race].bonus[key]}`);
         }
+        // Class bonus
         if (character.class && classInfo[character.class] && classInfo[character.class].bonus && classInfo[character.class].bonus[key]) {
           bonus += classInfo[character.class].bonus[key];
           breakdown.push(`Class +${classInfo[character.class].bonus[key]}`);
         }
+        // Background bonus
         if (character.background && backgroundInfo[character.background] && backgroundInfo[character.background].bonus && backgroundInfo[character.background].bonus[key]) {
           bonus += backgroundInfo[character.background].bonus[key];
           breakdown.push(`Background +${backgroundInfo[character.background].bonus[key]}`);
         }
+        // Total value
         const total = base + bonus;
         const row = document.createElement('tr');
         const th = document.createElement('th');
@@ -806,7 +1072,6 @@
         row.appendChild(tdBreakdown);
         statsTable.appendChild(row);
       });
-
       // Weapons, Armor, Items tables
       const weaponsTable = document.getElementById('weapons-table');
       const armorTable = document.getElementById('armor-table');
@@ -814,7 +1079,7 @@
       weaponsTable.innerHTML = '<tr><th style="width:40%;">Name</th><th style="width:25%;">Type</th><th style="width:20%;">Damage</th><th style="width:15%;">Quantity</th></tr>';
       armorTable.innerHTML = '<tr><th style="width:40%;">Name</th><th style="width:25%;">Type</th><th style="width:20%;">AC</th><th style="width:15%;">Quantity</th></tr>';
       itemsTable.innerHTML = '<tr><th style="width:70%;">Name</th><th style="width:30%;">Quantity</th></tr>';
-
+      // Items
       (Array.isArray(character.items) ? character.items : []).forEach(item => {
         if ((item.count ?? 0) > 0) {
           const row = document.createElement('tr');
@@ -829,11 +1094,12 @@
           itemsTable.appendChild(row);
         }
       });
-
+      // Equipment split
       (Array.isArray(character.equipment) ? character.equipment : []).forEach(eq => {
         if ((eq.count ?? 0) > 0 && dndData) {
           const eqData = (dndData.equipment || []).find(e => e.name === eq.name);
           if (eqData && eqData.type && eqData.type.toLowerCase().includes('weapon')) {
+            // Weapon
             const row = document.createElement('tr');
             const nameCell = document.createElement('td');
             nameCell.textContent = eq.name;
@@ -851,6 +1117,7 @@
             row.appendChild(qtyCell);
             weaponsTable.appendChild(row);
           } else if (eqData && eqData.type && eqData.type.toLowerCase().includes('armor')) {
+            // Armor
             const row = document.createElement('tr');
             const nameCell = document.createElement('td');
             nameCell.textContent = eq.name;
@@ -868,6 +1135,7 @@
             row.appendChild(qtyCell);
             armorTable.appendChild(row);
           } else {
+            // If not weapon/armor, treat as item
             const row = document.createElement('tr');
             const nameCell = document.createElement('td');
             nameCell.textContent = eq.name;
@@ -881,7 +1149,7 @@
           }
         }
       });
-
+      // Spells
       const spellsTable = document.getElementById('spells-table');
       spellsTable.innerHTML = '<tr><th style="width:70%;">Name</th><th style="width:30%;">Level</th></tr>';
       (Array.isArray(character.spells) ? character.spells : []).forEach(spell => {
@@ -892,6 +1160,7 @@
           nameCell.setAttribute('data-type', 'spells');
           nameCell.setAttribute('data-name', spell.name);
           const lvlCell = document.createElement('td');
+          // Show spell level if available
           let spellData = (dndData && dndData.spells) ? dndData.spells.find(sp => sp.name === spell.name) : null;
           lvlCell.textContent = spellData && spellData.level ? spellData.level : (spell.level ?? '');
           row.appendChild(nameCell);
@@ -899,20 +1168,23 @@
           spellsTable.appendChild(row);
         }
       });
-
+      // Skills
       const skillsTable = document.getElementById('skills-table');
       skillsTable.innerHTML = '<tr><th style="width:100%;">Name</th></tr>';
       (Array.isArray(character.skills) ? character.skills : []).forEach(skill => {
         let bonus = 0;
         let sources = [];
+        // Class bonus
         if (character.class && classInfo[character.class] && classInfo[character.class].skill === skill.name) {
           bonus += 2;
           sources.push('Class +2');
         }
+        // Background bonus
         if (character.background && backgroundInfo[character.background] && backgroundInfo[character.background].skills && backgroundInfo[character.background].skills.includes(skill.name)) {
           bonus += 2;
           sources.push('Background +2');
         }
+        // Only show skills that are present in the database (count > 0 or have a bonus)
         if ((skill.count ?? 0) > 0 || bonus > 0) {
           let display = skill.name;
           if (bonus > 0) {
@@ -927,23 +1199,309 @@
           skillsTable.appendChild(row);
         }
       });
-
       attachTooltipListeners();
+    // Tooltip logic
+    function getTooltipContent(type, name) {
+      if (!dndData) return '';
+      let entry = null;
+      if (type === 'items') entry = (dndData.items || []).find(i => i.name === name);
+      else if (type === 'equipment') entry = (dndData.equipment || []).find(e => e.name === name);
+      else if (type === 'skills') entry = (dndData.skills || []).find(s => s.name === name);
+      // Print Character Sheet logic
+      document.addEventListener('DOMContentLoaded', function() {
+        const printBtn = document.getElementById('printSheetBtn');
+        if (printBtn) {
+          printBtn.addEventListener('click', function() {
+            if (currentCharacter) openPrintableCharacterSheet(currentCharacter);
+          });
+        }
+      });
+
+    function openPrintableCharacterSheet(character) {
+      const printWindow = window.open('', '_blank', 'width=800,height=1000,scrollbars=yes');
+      // Stat bonus logic
+      const raceInfo = {
+        "Human": { bonus: { strength: 1, dexterity: 1, constitution: 1 } },
+        "Elf": { bonus: { dexterity: 2, intelligence: 1 } },
+        "Dwarf": { bonus: { constitution: 2, strength: 1 } },
+        "Halfling": { bonus: { dexterity: 2, charisma: 1 } },
+        "Dragonborn": { bonus: { strength: 2, charisma: 1 } },
+        "Gnome": { bonus: { intelligence: 2, constitution: 1 } },
+        "Half-Elf": { bonus: { charisma: 2, dexterity: 1 } },
+        "Half-Orc": { bonus: { strength: 2, constitution: 1 } },
+        "Tiefling": { bonus: { charisma: 2, intelligence: 1 } }
+      };
+      const classInfo = {
+        "Fighter": { bonus: { strength: 2 }, skill: "Athletics" },
+        "Rogue": { bonus: { dexterity: 2 }, skill: "Stealth" },
+        "Wizard": { bonus: { intelligence: 2 }, skill: "Arcana" },
+        "Cleric": { bonus: { wisdom: 2 }, skill: "Religion" },
+        "Barbarian": { bonus: { strength: 1, constitution: 1 }, skill: "Athletics" },
+        "Bard": { bonus: { charisma: 2 }, skill: "Performance" },
+        "Druid": { bonus: { wisdom: 1, constitution: 1 }, skill: "Nature" },
+        "Monk": { bonus: { dexterity: 1, wisdom: 1 }, skill: "Acrobatics" },
+        "Paladin": { bonus: { strength: 1, charisma: 1 }, skill: "Persuasion" },
+        "Ranger": { bonus: { dexterity: 1, wisdom: 1 }, skill: "Survival" },
+        "Sorcerer": { bonus: { charisma: 1, constitution: 1 }, skill: "Arcana" },
+        "Warlock": { bonus: { charisma: 1, intelligence: 1 }, skill: "Intimidation" }
+      };
+      const backgroundInfo = {
+        "Acolyte": { skills: ["Insight", "Religion"], bonus: { wisdom: 1 } },
+        "Charlatan": { skills: ["Deception", "Sleight of Hand"], bonus: { charisma: 1 } },
+        "Criminal": { skills: ["Deception", "Stealth"], bonus: { dexterity: 1 } },
+        "Entertainer": { skills: ["Acrobatics", "Performance"], bonus: { charisma: 1 } },
+        "Folk Hero": { skills: ["Animal Handling", "Survival"], bonus: { constitution: 1 } },
+        "Guild Artisan": { skills: ["Insight", "Persuasion"], bonus: { intelligence: 1 } },
+        "Hermit": { skills: ["Medicine", "Religion"], bonus: { wisdom: 1 } },
+        "Noble": { skills: ["History", "Persuasion"], bonus: { charisma: 1 } },
+        "Outlander": { skills: ["Athletics", "Survival"], bonus: { constitution: 1 } },
+        "Sage": { skills: ["Arcana", "History"], bonus: { intelligence: 1 } },
+        "Sailor": { skills: ["Athletics", "Perception"], bonus: { strength: 1 } },
+        "Soldier": { skills: ["Athletics", "Intimidation"], bonus: { strength: 1 } },
+        "Urchin": { skills: ["Sleight of Hand", "Stealth"], bonus: { dexterity: 1 } }
+      };
+
+      function getTotalStat(character, stat) {
+        let total = character[stat] || 0;
+        if (raceInfo[character.race] && raceInfo[character.race].bonus && raceInfo[character.race].bonus[stat]) {
+          total += raceInfo[character.race].bonus[stat];
+        }
+        if (classInfo[character.class] && classInfo[character.class].bonus && classInfo[character.class].bonus[stat]) {
+          total += classInfo[character.class].bonus[stat];
+        }
+        if (backgroundInfo[character.background] && backgroundInfo[character.background].bonus && backgroundInfo[character.background].bonus[stat]) {
+          total += backgroundInfo[character.background].bonus[stat];
+        }
+        return total;
+      }
+
+      // Print skills as a list with bonuses only (no 'Level X')
+      function getSkillPrintList(character) {
+        const skills = Array.isArray(character.skills) ? character.skills : [];
+        let out = [];
+        for (const skill of skills) {
+          let bonus = 0;
+          let sources = [];
+          if (character.class && classInfo[character.class] && classInfo[character.class].skill === skill.name) {
+            bonus += 2;
+            sources.push('Class +2');
+          }
+          if (character.background && backgroundInfo[character.background] && backgroundInfo[character.background].skills && backgroundInfo[character.background].skills.includes(skill.name)) {
+            bonus += 2;
+            sources.push('Background +2');
+          }
+          if ((skill.count ?? 0) > 0 || bonus > 0) {
+            let display = skill.name;
+            if (sources.length > 0) display += ` (${sources.join(', ')})`;
+            out.push(display);
+          }
+        }
+        return out;
+      }
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${character.name || character.username} - Character Sheet</title>
+          <style>
+            @media print {
+              body { margin: 0; }
+              .no-print { display: none; }
+            }
+            body { 
+              font-family: 'Times New Roman', serif; 
+              margin: 20px; 
+              background: white; 
+              color: black; 
+              line-height: 1.4;
+            }
+            .header { 
+              text-align: center; 
+              border-bottom: 3px solid #000; 
+              padding-bottom: 10px; 
+              margin-bottom: 20px; 
+            }
+            .character-name { 
+              font-size: 28px; 
+              font-weight: bold; 
+              margin: 0; 
+            }
+            .character-details { 
+              font-size: 16px; 
+              margin: 5px 0; 
+            }
+            .section { 
+              margin-bottom: 20px; 
+              border: 2px solid #000; 
+              padding: 10px; 
+            }
+            .section-title { 
+              font-size: 18px; 
+              font-weight: bold; 
+              border-bottom: 1px solid #000; 
+              margin-bottom: 10px; 
+              padding-bottom: 5px; 
+            }
+            .stats-grid { 
+              display: grid; 
+              grid-template-columns: repeat(3, 1fr); 
+              gap: 10px; 
+            }
+            .stat-box { 
+              border: 1px solid #000; 
+              padding: 8px; 
+              text-align: center; 
+            }
+            .stat-name { 
+              font-weight: bold; 
+              font-size: 12px; 
+            }
+            .stat-value { 
+              font-size: 20px; 
+              font-weight: bold; 
+            }
+            .equipment-list { 
+              columns: 2; 
+              column-gap: 20px; 
+            }
+            .equipment-item { 
+              break-inside: avoid; 
+              margin-bottom: 5px; 
+            }
+            .no-print { 
+              position: fixed; 
+              top: 10px; 
+              right: 10px; 
+            }
+            button { 
+              padding: 10px 20px; 
+              font-size: 16px; 
+              cursor: pointer; 
+            }
+          </style>
+        </head>
+        <body>
+          <button class="no-print" onclick="window.print()">Print Character Sheet</button>
+          <div class="header">
+            <h1 class="character-name">${character.name || character.username}</h1>
+            <div class="character-details">
+              Level ${character.level} ${character.race} ${character.class}
+            </div>
+            <div class="character-details">
+              Background: ${character.background} | Username: ${character.username}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Ability Scores</div>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-name">STRENGTH</div>
+                <div class="stat-value">${getTotalStat(character, 'strength')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">DEXTERITY</div>
+                <div class="stat-value">${getTotalStat(character, 'dexterity')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">CONSTITUTION</div>
+                <div class="stat-value">${getTotalStat(character, 'constitution')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">INTELLIGENCE</div>
+                <div class="stat-value">${getTotalStat(character, 'intelligence')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">WISDOM</div>
+                <div class="stat-value">${getTotalStat(character, 'wisdom')}</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-name">CHARISMA</div>
+                <div class="stat-value">${getTotalStat(character, 'charisma')}</div>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Character Progress</div>
+            <p><strong>Level:</strong> ${character.level}</p>
+            <p><strong>Experience Points:</strong> ${character.xp || 0}</p>
+            <p><strong>XP to Next Level:</strong> ${(100 * (character.level + 1)) - (character.xp || 0)}</p>
+            <p><strong>Free Stat Points:</strong> ${character.free_stat_points || 0}</p>
+          </div>
+          <div class="section">
+            <div class="section-title">Equipment & Items</div>
+            <div class="equipment-list">
+              ${character.equipment ? character.equipment.filter(eq => eq.count > 0).map(eq => 
+                `<div class="equipment-item">${eq.name} (${eq.count})</div>`
+              ).join('') : '<div>No equipment</div>'}
+              ${character.items ? character.items.filter(item => item.count > 0).map(item => 
+                `<div class="equipment-item">${item.name} (${item.count})</div>`
+              ).join('') : ''}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Skills</div>
+            <div class="equipment-list">
+              ${getSkillPrintList(character).length > 0 ? getSkillPrintList(character).map(skill => 
+                `<div class="equipment-item">${skill}</div>`
+              ).join('') : '<div>No skills</div>'}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Spells</div>
+            <div class="equipment-list">
+              ${character.spells ? character.spells.filter(spell => spell.count > 0).map(spell => 
+                `<div class="equipment-item">${spell.name}</div>`
+              ).join('') : '<div>No spells</div>'}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Notes</div>
+            <div style="height: 150px; border: 1px solid #ccc; padding: 10px;">
+              ${character.bio || 'The tale of this adventurer is yet to be written...'}
+            </div>
+          </div>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+        return;
+      }
+      // res should be the updated character row
+      if (res) {
+        currentCharacter = res;
+        renderCharacterSheet(currentCharacter);
+        if (leveledUp) {
+          alert(`Congratulations! You've reached level ${currentLevel} and earned ${statPoints} free stat points!`);
+        }
+      }
     }
 
-    // Minimal placeholder functions expected by the UI. Replace with real implementations.
-    async function fetchCharacter(username) { return null; }
-    async function updateCharacter(username, data) { return null; }
-    async function addItemToCharacter(name, count) {}
-    async function addEquipmentToCharacter(name, count) {}
-    async function addSkillToCharacter(name, count) {}
-    async function addSpellToCharacter(name, count) {}
-    async function addXPToCharacter(count) {}
-    async function removeItemFromCharacter(name, count) {}
-    async function removeEquipmentFromCharacter(name, count) {}
-    async function removeSkillFromCharacter(name, count) {}
-    async function removeSpellFromCharacter(name, count) {}
-    async function removeXPFromCharacter(count) {}
+    // Remove XP (can cause level down if XP goes negative)
+    async function removeXPFromCharacter(xpAmount) {
+      if (!currentCharacter || !currentUsername) return;
+      let currentXP = currentCharacter.xp || 0;
+      let currentLevel = currentCharacter.level || 1;
+      let statPoints = currentCharacter.free_stat_points || 0;
+      // Remove XP
+      currentXP = Math.max(0, currentXP - xpAmount);
+      // Check for level downs if we go below 0 XP for current level
+      while (currentLevel > 1 && currentXP < 0) {
+        currentLevel--;
+        currentXP += (100 * (currentLevel + 1));
+        statPoints = Math.max(0, statPoints - 2);
+      }
+      // Make sure XP doesn't go negative
+      currentXP = Math.max(0, currentXP);
+      const res = await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel, free_stat_points: statPoints });
+      if (!res) {
+        console.warn('removeXPFromCharacter: updateCharacter returned null');
+        return;
+      }
+      currentCharacter = res;
+      renderCharacterSheet(currentCharacter);
+    }
   </script>
 </body>
 </html>
