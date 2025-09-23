@@ -19,8 +19,8 @@
   <div class="form-box">
     <h2>Generate New Character</h2>
     <div style="text-align:center;margin-bottom:12px;">
-      <img id="avatar-preview" src="avatar.png" alt="Avatar Preview" style="width:96px;height:96px;border-radius:50%;border:3px solid #7289da;object-fit:cover;display:block;margin:0 auto 8px;">
-      <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-bottom:8px;">
+      <img id="avatar-preview" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg" alt="Default Avatar" style="width:96px;height:96px;border-radius:50%;border:3px solid #7289da;object-fit:cover;display:block;margin:0 auto 8px;">
+      <input type="file" id="avatar-upload" accept="image/jpeg" style="margin-bottom:8px;">
     </div>
     <form id="genForm">
   <label for="username">Username:</label>
@@ -89,8 +89,8 @@
     document.getElementById('avatar-upload').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
-      if (!['image/jpeg','image/png'].includes(file.type)) {
-        alert('Only JPEG and PNG images allowed.');
+      if (file.type !== 'image/jpeg') {
+        alert('Only JPEG images (.jpg) are allowed.');
         return;
       }
       if (file.size > 200*1024) {
@@ -118,10 +118,12 @@
         ctx.drawImage(img, 0, 0, w, h);
         canvas.toBlob(function(blob) {
           avatarBlob = blob;
-          avatarFileType = file.type;
-          // Show preview
-          document.getElementById('avatar-preview').src = canvas.toDataURL(file.type, 0.92);
-        }, file.type, 0.92);
+          avatarFileType = 'image/jpeg';
+          // Show preview and clear any error handlers
+          const preview = document.getElementById('avatar-preview');
+          preview.onerror = null;
+          preview.src = canvas.toDataURL('image/jpeg', 0.92);
+        }, 'image/jpeg', 0.92);
       };
       const reader = new FileReader();
       reader.onload = function(ev) { img.src = ev.target.result; };
@@ -193,6 +195,22 @@
       // Convert to lowercase and remove invalid characters
       let value = e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '');
       e.target.value = value;
+      
+      // Update avatar preview to show potential avatar for this username
+      if (value && !avatarBlob) {
+        const avatarPreview = document.getElementById('avatar-preview');
+        const potentialAvatarUrl = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${value}.jpg`;
+        // Try to load the user's existing avatar, fallback to default if not found
+        avatarPreview.onerror = function() {
+          this.onerror = null;
+          this.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiM3Mjg5ZGEiLz4KPHN2ZyB4PSIyNCIgeT0iMjAiIHdpZHRoPSI0OCIgaGVpZ2h0PSI1NiI+CjxjaXJjbGUgY3g9IjI0IiBjeT0iMjAiIHI9IjEyIiBmaWxsPSIjZmZmIi8+CjxwYXRoIGQ9Im0gMTIgNDAgYyAwIC04IDggLTE2IDE2IC0xNiBzIDE2IDggMTYgMTYgdiA4IGMgMCA0IC00IDggLTggOCBoIC0xNiBjIC00IDAgLTggLTQgLTggLTggdiAtOCIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4KPC9zdmc+";
+        };
+        avatarPreview.src = potentialAvatarUrl;
+      } else if (!value && !avatarBlob) {
+        // Reset to default avatar when username is empty
+        const avatarPreview = document.getElementById('avatar-preview');
+        avatarPreview.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiM3Mjg5ZGEiLz4KPHN2ZyB4PSIyNCIgeT0iMjAiIHdpZHRoPSI0OCIgaGVpZ2h0PSI1NiI+CjxjaXJjbGUgY3g9IjI0IiBjeT0iMjAiIHI9IjEyIiBmaWxsPSIjZmZmIi8+CjxwYXRoIGQ9Im0gMTIgNDAgYyAwIC04IDggLTE2IDE2IC0xNiBzIDE2IDggMTYgMTYgdiA4IGMgMCA0IC00IDggLTggOCBoIC0xNiBjIC00IDAgLTggLTQgLTggLTggdiAtOCIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4KPC9zdmc+";
+      }
     });
 
     // Show race bonuses below menu
@@ -323,18 +341,17 @@
 
       let avatarUrl = '';
       if (avatarBlob && avatarFileType) {
-        // Upload avatar to Supabase Storage
-        const fileExt = avatarFileType === 'image/png' ? 'png' : 'jpg';
-        const fileName = `avatar_${username}.${fileExt}`;
+        // Upload avatar to Supabase Storage - always use .jpg extension
+        const fileName = `avatar_${username}.jpg`;
         const { data: uploadData, error: uploadError } = await supabaseClient.storage.from('avatars').upload(fileName, avatarBlob, {
           upsert: true,
-          contentType: avatarFileType
+          contentType: 'image/jpeg'
         });
         if (uploadError) {
           alert('Avatar upload failed: ' + uploadError.message);
         } else {
-          const { publicURL } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
-          avatarUrl = publicURL;
+          // Use canonical public URL like in character sheet
+          avatarUrl = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${username}.jpg`;
         }
       }
       const character = {
