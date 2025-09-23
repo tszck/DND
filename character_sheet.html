@@ -683,13 +683,14 @@
   if (character.background) summary += `<b>Background:</b> ${character.background}`;
   document.getElementById('char-summary').innerHTML = summary;
   // Bio at bottom of profile
-  // Editable bio
+  // Editable bio (show textarea only when "Edit Bio" clicked)
   const bioEdit = document.getElementById('bio-edit');
+  const saveBtn = document.getElementById('save-bio-btn');
   if (bioEdit) bioEdit.value = character.bio && character.bio.trim() ? character.bio : '';
 
   const charBioDiv = document.getElementById('char-bio');
   const storyBioDiv = document.getElementById('story-bio');
-  // hide the separate story-bio container so it won't show twice
+  // do not show the separate story-bio container
   if (storyBioDiv) storyBioDiv.style.display = 'none';
 
   // helper to escape HTML
@@ -705,12 +706,79 @@
   const mainBioText = character.bio && character.bio.trim() ? character.bio : 'The tale of this adventurer is yet to be written...';
   const storyBioText = character.story_bio && character.story_bio.trim() ? character.story_bio : '';
 
+  // Merge story bio into the same container (do not show separately)
   if (storyBioText) {
-    // show story-driven bio immediately after the main bio inside the same container
     charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>') +
       `<div style="margin-top:12px;color:#faa61a;white-space:pre-line;"><strong>Story Bio (GM):</strong><br>${escHtml(storyBioText).replace(/\n/g, '<br>')}</div>`;
   } else {
     charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>');
+  }
+
+  // Hide the edit panel by default and show an "Edit Bio" button
+  if (bioEdit && saveBtn) {
+    const bioContainer = bioEdit.parentElement; // the div that contains label, textarea, and save button
+    // create Edit button if not present
+    let editBtn = document.getElementById('edit-bio-btn');
+    if (!editBtn) {
+      editBtn = document.createElement('button');
+      editBtn.id = 'edit-bio-btn';
+      editBtn.textContent = 'Edit Bio';
+      editBtn.style = 'margin-top:10px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;';
+    }
+    // create Cancel button to appear while editing
+    let cancelBtn = document.getElementById('cancel-bio-btn');
+    if (!cancelBtn) {
+      cancelBtn = document.createElement('button');
+      cancelBtn.id = 'cancel-bio-btn';
+      cancelBtn.textContent = 'Cancel';
+      cancelBtn.style = 'margin-left:8px;background:#777;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;display:none;';
+    }
+
+    // ensure the edit button sits before the bio container
+    if (bioContainer && bioContainer.parentElement) {
+      if (!editBtn.parentElement) bioContainer.parentElement.insertBefore(editBtn, bioContainer);
+      if (!cancelBtn.parentElement) bioContainer.appendChild(cancelBtn);
+      // hide the bio container (label + textarea + save) by default
+      bioContainer.style.display = 'none';
+      // show edit button
+      editBtn.style.display = 'inline-block';
+    }
+
+    // open editor when clicking Edit
+    editBtn.addEventListener('click', function() {
+      // populate current text and show
+      bioEdit.value = character.bio && character.bio.trim() ? character.bio : '';
+      bioContainer.style.display = 'block';
+      editBtn.style.display = 'none';
+      cancelBtn.style.display = 'inline-block';
+      bioEdit.focus();
+    });
+
+    // cancel editing
+    cancelBtn.addEventListener('click', function() {
+      bioContainer.style.display = 'none';
+      cancelBtn.style.display = 'none';
+      editBtn.style.display = 'inline-block';
+      // revert textarea to current character bio
+      bioEdit.value = character.bio && character.bio.trim() ? character.bio : '';
+    });
+
+    // After saving, hide the editor panel. Add only once.
+    if (!saveBtn.dataset.hideAfterSave) {
+      saveBtn.dataset.hideAfterSave = '1';
+      saveBtn.addEventListener('click', function() {
+        // small delay to allow the existing save handler to complete updates
+        setTimeout(() => {
+          bioContainer.style.display = 'none';
+          cancelBtn.style.display = 'none';
+          editBtn.style.display = 'inline-block';
+          // update displayed bio from currentCharacter if available
+          const newText = (currentCharacter && currentCharacter.bio) ? currentCharacter.bio : mainBioText;
+          charBioDiv.innerHTML = escHtml(newText).replace(/\n/g, '<br>') +
+            (storyBioText ? `<div style="margin-top:12px;color:#faa61a;white-space:pre-line;"><strong>Story Bio (GM):</strong><br>${escHtml(storyBioText).replace(/\n/g, '<br>')}</div>` : '');
+        }, 250);
+      });
+    }
   }
 
       // Bonus logic
