@@ -92,8 +92,9 @@
   </style>
 </head>
 <body>
-  <div class="dashboard" style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:32px;">
-    <div class="profile" style="background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-width:320px;min-height:600px;box-sizing:border-box;max-width:420px;width:100%;margin-bottom:24px;overflow:visible;display:flex;flex-direction:column;align-items:center;">
+  <div class="dashboard" style="display:flex;flex-direction:column;gap:32px;">
+    <div class="top-row" style="display:flex;flex-direction:row;gap:32px;align-items:flex-start;">
+      <div class="profile" style="background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-width:320px;min-height:600px;box-sizing:border-box;max-width:420px;width:100%;overflow:visible;display:flex;flex-direction:column;align-items:center;">
   <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="this.onerror=null;this.src='avatar.jpg';">
     <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
     <div id="avatar-fallback" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#2b2f33;color:#ffd166;">
@@ -114,10 +115,14 @@
       <button id="printSheetBtn" style="margin-top:18px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Print Character Sheet</button>
     </div>
       <!-- Avatar removed: file not found -->
-    <div>
-  <div class="stats" style="text-align:left;">
+    </div>
+    <div class="stats" style="text-align:left;background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-width:320px;min-height:600px;box-sizing:border-box;max-width:420px;width:100%;overflow:visible;">
         <div class="section-title">Stats</div>
         <table id="stats-table"></table>
+      </div>
+    </div>
+    <div class="bottom-row" style="display:flex;flex-direction:column;gap:24px;width:100%;margin-top:16px;">
+      <div class="add-remove" style="background:#23272a;padding:18px 24px 18px 24px;border-radius:16px;max-width:900px;width:100%;margin:0 auto 0 auto;box-sizing:border-box;">
         <div class="section-title">Add/Remove</div>
         <form id="addForm" style="margin-bottom:24px;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;">
           <label for="type" style="margin:0 4px 0 0;">Type:</label>
@@ -127,11 +132,11 @@
             <option value="skills">Skill</option>
             <option value="spells">Spell</option>
             <option value="xp">XP</option>
-              <option value="stats">Allocate Stat Point</option>
+            <option value="stats">Allocate Stat Point</option>
           </select>
           <label for="suggestion">Name:</label>
-            <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
-            <span id="suggestion-cost" style="margin-left:8px;color:#faa61a;white-space:nowrap;"></span>
+          <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
+          <span id="suggestion-cost" style="margin-left:8px;color:#faa61a;white-space:nowrap;"></span>
           <datalist id="suggestions"></datalist>
           <label for="count" style="margin:0 4px 0 0;">Count:</label>
           <input type="number" id="count" name="count" min="1" value="1" required style="width:3ch;min-width:40px;max-width:48px;text-align:center;">
@@ -139,19 +144,19 @@
           <button type="button" id="removeBtn" style="background: #f04747; margin-left: 2px;">Remove</button>
         </form>
       </div>
-      <div class="inventory">
-  <div class="section-title" style="text-align:left;">Weapons</div>
-  <table id="weapons-table" style="width:100%;margin-bottom:12px;"></table>
-  <div class="section-title">Armor</div>
-  <table id="armor-table" style="width:100%;margin-bottom:12px;"></table>
-  <div class="section-title">Items</div>
-  <table id="items-table" style="width:100%;margin-bottom:12px;"></table>
+      <div class="inventory" style="background:#23272a;padding:18px 24px 18px 24px;border-radius:16px;max-width:900px;width:100%;margin:0 auto 0 auto;box-sizing:border-box;">
+        <div class="section-title" style="text-align:left;">Weapons</div>
+        <table id="weapons-table" style="width:100%;margin-bottom:12px;"></table>
+        <div class="section-title">Armor</div>
+        <table id="armor-table" style="width:100%;margin-bottom:12px;"></table>
+        <div class="section-title">Items</div>
+        <table id="items-table" style="width:100%;margin-bottom:12px;"></table>
       </div>
-      <div class="abilities">
-  <div class="section-title" style="text-align:left;">Skills</div>
-  <table id="skills-table" style="width:100%;margin-bottom:12px;"></table>
-  <div class="section-title">Spells</div>
-  <table id="spells-table" style="width:100%;margin-bottom:12px;"></table>
+      <div class="abilities" style="background:#23272a;padding:18px 24px 18px 24px;border-radius:16px;max-width:900px;width:100%;margin:0 auto 0 auto;box-sizing:border-box;">
+        <div class="section-title" style="text-align:left;">Skills</div>
+        <table id="skills-table" style="width:100%;margin-bottom:12px;"></table>
+        <div class="section-title">Spells</div>
+        <table id="spells-table" style="width:100%;margin-bottom:12px;"></table>
       </div>
     </div>
   </div>
