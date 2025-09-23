@@ -92,8 +92,8 @@
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <div class="profile">
+  <div class="dashboard" style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:32px;">
+    <div class="profile" style="background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-width:320px;min-height:600px;box-sizing:border-box;max-width:420px;width:100%;margin-bottom:24px;overflow:visible;display:flex;flex-direction:column;align-items:center;">
   <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="this.onerror=null;this.src='avatar.jpg';">
     <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
     <div id="avatar-fallback" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#2b2f33;color:#ffd166;">
@@ -220,8 +220,25 @@
                 if (error) throw error;
                 // Always use canonical public URL
                 const publicURL = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${currentUsername}.jpg`;
-                // Save URL to character
-                const res = await updateCharacter(currentUsername, { avatar_url: publicURL });
+                // Save URL to character, but handle missing avatar_url column gracefully
+                let res = null;
+                let avatarUrlUpdateFailed = false;
+                try {
+                  res = await updateCharacter(currentUsername, { avatar_url: publicURL });
+                } catch (err) {
+                  // If error is about missing avatar_url column, retry without it
+                  if (err && err.message && err.message.toLowerCase().includes("avatar_url")) {
+                    avatarUrlUpdateFailed = true;
+                    try {
+                      res = await updateCharacter(currentUsername, {});
+                    } catch (e2) {
+                      // fallback: still update UI
+                      res = currentCharacter;
+                    }
+                  } else {
+                    throw err;
+                  }
+                }
                 if (!res) {
                   alert('Avatar uploaded but saving to character failed. Check console for details.');
                   return;
@@ -232,7 +249,11 @@
                 if (avatarImg) {
                   avatarImg.src = publicURL + '?t=' + Date.now();
                 }
-                alert('Avatar updated!');
+                if (avatarUrlUpdateFailed) {
+                  alert("Avatar uploaded, but your database does not have an 'avatar_url' column. The image will show, but the URL is not saved in the database. (Ask your admin to add the column if you want this feature.)");
+                } else {
+                  alert('Avatar updated!');
+                }
               } catch (err) {
                 console.error('Avatar upload error:', err);
                 // If the bucket isn't found, show fallback UI with instructions
