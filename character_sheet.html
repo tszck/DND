@@ -706,14 +706,6 @@
   const mainBioText = character.bio && character.bio.trim() ? character.bio : 'The tale of this adventurer is yet to be written...';
   const storyBioText = character.story_bio && character.story_bio.trim() ? character.story_bio : '';
 
-  // Merge story bio into the same container (do not show separately)
-  if (storyBioText) {
-    charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>') +
-      `<div style="margin-top:12px;color:#faa61a;white-space:pre-line;"><strong>Story Bio (GM):</strong><br>${escHtml(storyBioText).replace(/\n/g, '<br>')}</div>`;
-  } else {
-    charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>');
-  }
-
   // Hide the edit panel by default and show an "Edit Bio" button
   if (bioEdit && saveBtn) {
     const bioContainer = bioEdit.parentElement; // the div that contains label, textarea, and save button
