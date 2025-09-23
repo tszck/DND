@@ -20,15 +20,65 @@ async function fetchCharacter(username) {
 
 // Update character (e.g., add item, change stat)
 async function updateCharacter(username, updates) {
-  const { data, error } = await supabaseClient
-    .from('characters')
-    .update(updates)
-    .eq('username', username);
-  if (error) {
-    alert('Update failed!');
-    return null;
+  // Try update and return the updated row. Retry once on transient failure.
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const resp = await supabaseClient
+        .from('characters')
+        .update(updates)
+        .eq('username', username)
+        .select()
+        .single();
+      const { data, error } = resp;
+      if (error) {
+        // If this was the first attempt, wait briefly and retry once
+        if (attempt === 1) {
+          console.warn(`updateCharacter attempt ${attempt} failed, retrying...`, error);
+          await new Promise(r => setTimeout(r, 200));
+          continue;
+        }
+        console.warn('Update returned an error; verifying by refetching character...', error);
+        try {
+          const fetched = await fetchCharacter(username);
+          if (fetched) {
+            // Verify that fields in `updates` are present in fetched record
+            let match = true;
+            for (const key of Object.keys(updates)) {
+              const val = updates[key];
+              const fetchedVal = fetched[key];
+              // Compare arrays/objects via JSON, primitives directly
+              if (typeof val === 'object') {
+                if (JSON.stringify(val) !== JSON.stringify(fetchedVal)) { match = false; break; }
+              } else {
+                // treat numbers and strings loosely (coerce)
+                if ((fetchedVal === undefined && val !== undefined) || String(fetchedVal) !== String(val)) { match = false; break; }
+              }
+            }
+            if (match) {
+              console.info('Verification successful: updates present despite reported error.');
+              return fetched;
+            }
+          }
+        } catch (vf) {
+          console.error('Verification fetch failed:', vf);
+        }
+        console.error('Update failed:', error);
+        alert('Update failed: ' + (error.message || JSON.stringify(error)));
+        return null;
+      }
+      return data;
+    } catch (ex) {
+      // Network or unexpected error
+      if (attempt === 1) {
+        console.warn(`updateCharacter attempt ${attempt} threw, retrying...`, ex);
+        await new Promise(r => setTimeout(r, 200));
+        continue;
+      }
+      console.error('Update threw an exception:', ex);
+      alert('Update failed: ' + (ex.message || ex));
+      return null;
+    }
   }
-  return data;
 }
 
 // Polling for character updates (call this from your UI after login)

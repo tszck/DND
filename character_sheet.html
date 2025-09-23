@@ -1191,10 +1191,14 @@
         statPoints += 2;
         leveledUp = true;
       }
-      await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel, free_stat_points: statPoints });
-      currentCharacter.xp = currentXP;
-      currentCharacter.level = currentLevel;
-      currentCharacter.free_stat_points = statPoints;
+      const res = await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel, free_stat_points: statPoints });
+      if (!res) {
+        // updateCharacter will have already alerted; stop further UI updates
+        console.warn('addXPToCharacter: updateCharacter returned null');
+        return;
+      }
+      // res should be the updated character row
+      currentCharacter = res;
       renderCharacterSheet(currentCharacter);
       if (leveledUp) {
         alert(`Congratulations! You've reached level ${currentLevel} and earned ${statPoints} free stat points!`);
@@ -1217,10 +1221,12 @@
       }
       // Make sure XP doesn't go negative
       currentXP = Math.max(0, currentXP);
-      await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel, free_stat_points: statPoints });
-      currentCharacter.xp = currentXP;
-      currentCharacter.level = currentLevel;
-      currentCharacter.free_stat_points = statPoints;
+      const res = await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel, free_stat_points: statPoints });
+      if (!res) {
+        console.warn('removeXPFromCharacter: updateCharacter returned null');
+        return;
+      }
+      currentCharacter = res;
       renderCharacterSheet(currentCharacter);
     }
   </script>
