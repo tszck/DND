@@ -40,3 +40,7 @@ supabase
     });
   })
   .subscribe();
+
+// Expose functions globally
+window.fetchCharacter = fetchCharacter;
+window.updateCharacter = updateCharacter;
