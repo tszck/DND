@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Migrate Gold to Top-level Field</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background:#1f2326; color:#fff; padding:20px }
+    .panel { background:#2b2f33;border-radius:8px;padding:16px;max-width:900px;margin:0 auto }
+    textarea { width:100%; height:320px; background:#0f1112; color:#ddd; border:1px solid #444; padding:8px }
+    input, button { padding:8px 12px; margin-right:8px }
+    .warn { color:#ffcc00 }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h2>Migrate item-based Gold into top-level <code>gold</code> field</h2>
+    <p class="warn">This tool will scan characters and, if an entry in <code>items</code> looks like Gold (name contains "gold" or "gp"), it will add that amount to the top-level <code>gold</code> numeric field and remove the gold item from <code>items</code>. Use <strong>Dry Run</strong> first.</p>
+
+    <div style="margin-bottom:12px;">
+      <button id="dryRunBtn">Dry Run: Scan All Characters</button>
+      <button id="runBtn">Run Migration: Apply to All</button>
+      <input id="singleUser" placeholder="username (optional)" />
+      <button id="singleDry">Dry Run: Single User</button>
+      <button id="singleRun">Run: Single User</button>
+    </div>
+
+    <div style="margin-bottom:8px;"><strong>Output / Log</strong></div>
+    <textarea id="log" readonly></textarea>
+  </div>
+
+  <script>
+    const logEl = document.getElementById('log');
+    function log(...args) { console.log(...args); logEl.value += args.join(' ') + '\n'; logEl.scrollTop = logEl.scrollHeight; }
+
+    const goldNames = ['gold','gp','g'];
+    function looksLikeGoldName(n) {
+      if (!n) return false;
+      const s = String(n).toLowerCase();
+      return s.includes('gold') || s === 'gp' || s === 'g' || s === 'coins' || s.includes('gp');
+    }
+
+    async function fetchAllCharacters() {
+      log('Fetching all characters from Supabase...');
+      const { data, error } = await supabaseClient.from('characters').select('*');
+      if (error) { log('Error fetching characters:', error.message || error); return null; }
+      log(`Fetched ${data.length} characters.`);
+      return data;
+    }
+
+    async function migrateCharacterRow(row, dryRun=true) {
+      const username = row.username || row.name || row.id;
+      const items = Array.isArray(row.items) ? row.items.slice() : [];
+      let goldFromItems = 0;
+      const remainingItems = [];
+      for (const it of items) {
+        try {
+          const name = (it && it.name) ? String(it.name) : '';
+          const count = Number(it.count || it.quantity || 0) || 0;
+          if (looksLikeGoldName(name)) {
+            goldFromItems += count;
+          } else {
+            remainingItems.push(it);
+          }
+        } catch (e) {
+          // keep as-is
+          remainingItems.push(it);
+        }
+      }
+      if (goldFromItems === 0) {
+        return { migrated: false, username };
+      }
+      const currentGold = Number(row.gold || 0) || 0;
+      const newGold = currentGold + goldFromItems;
+      const updates = { items: remainingItems, gold: newGold };
+      if (dryRun) {
+        return { migrated: true, username, goldFromItems, currentGold, newGold, updates };
+      }
+      // apply update via updateCharacter helper if available
+      try {
+        const res = await updateCharacter(username, updates);
+        if (!res) return { migrated: false, username, error: 'updateCharacter returned null' };
+        return { migrated: true, username, goldFromItems, currentGold, newGold, updatedRow: res };
+      } catch (err) {
+        return { migrated: false, username, error: err.message || err };
+      }
+    }
+
+    async function runMigration({ dryRun=true, singleUser=null } = {}) {
+      log('Starting migration', dryRun ? '(DRY RUN)' : '(APPLY)');
+      let rows = [];
+      if (singleUser) {
+        log('Fetching single user:', singleUser);
+        const { data, error } = await supabaseClient.from('characters').select('*').eq('username', singleUser).limit(1).single();
+        if (error) { log('Error fetching user:', error.message || error); return; }
+        rows = [data];
+      } else {
+        const all = await fetchAllCharacters();
+        if (!all) return;
+        rows = all;
+      }
+      let count = 0;
+      for (const r of rows) {
+        try {
+          const result = await migrateCharacterRow(r, dryRun);
+          if (result.migrated) {
+            log(`User: ${result.username} -> GoldFromItems=${result.goldFromItems} | oldGold=${result.currentGold} | newGold=${result.newGold}`);
+            if (!dryRun && result.updatedRow) {
+              log('  Applied.');
+            }
+            count++;
+          } else {
+            // nothing to migrate
+          }
+        } catch (e) {
+          log('Error migrating row', r.username || r.id, e.message || e);
+        }
+      }
+      log(`Migration complete. Migrated ${count} character(s).`);
+    }
+
+    document.getElementById('dryRunBtn').addEventListener('click', () => runMigration({ dryRun:true }));
+    document.getElementById('runBtn').addEventListener('click', () => {
+      if (!confirm('Are you sure you want to APPLY the migration to ALL characters? This will modify the DB.')) return;
+      runMigration({ dryRun:false });
+    });
+    document.getElementById('singleDry').addEventListener('click', () => {
+      const u = document.getElementById('singleUser').value.trim();
+      if (!u) return alert('Please enter a username to dry-run.');
+      runMigration({ dryRun:true, singleUser: u });
+    });
+    document.getElementById('singleRun').addEventListener('click', () => {
+      const u = document.getElementById('singleUser').value.trim();
+      if (!u) return alert('Please enter a username to migrate.');
+      if (!confirm(`Apply migration for ${u}?`)) return;
+      runMigration({ dryRun:false, singleUser: u });
+    });
+  </script>
+</body>
+</html>

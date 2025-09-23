@@ -46,6 +46,8 @@
       <input type="number" id="level" name="level" min="1">
       <label for="xp">XP:</label>
       <input type="number" id="xp" name="xp" min="0">
+  <label for="gold">Gold (G):</label>
+  <input type="number" id="gold" name="gold" min="0">
       <label for="free_stat_points">Free Stat Points:</label>
       <input type="number" id="free_stat_points" name="free_stat_points" min="0">
       <label for="strength">Strength:</label>
@@ -100,6 +102,7 @@
       document.getElementById('background').value = selectedChar.background || '';
       document.getElementById('level').value = selectedChar.level || 1;
       document.getElementById('xp').value = selectedChar.xp || 0;
+  document.getElementById('gold').value = selectedChar.gold || 0;
       document.getElementById('free_stat_points').value = selectedChar.free_stat_points || 0;
       document.getElementById('strength').value = selectedChar.strength || 0;
       document.getElementById('dexterity').value = selectedChar.dexterity || 0;
@@ -181,6 +184,7 @@
         level: parseInt(document.getElementById('level').value) || 1,
         xp: parseInt(document.getElementById('xp').value) || 0,
         free_stat_points: parseInt(document.getElementById('free_stat_points').value) || 0,
+  gold: parseInt(document.getElementById('gold').value) || 0,
         strength: parseInt(document.getElementById('strength').value) || 0,
         dexterity: parseInt(document.getElementById('dexterity').value) || 0,
         constitution: parseInt(document.getElementById('constitution').value) || 0,

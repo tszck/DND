@@ -124,7 +124,8 @@
               <option value="stats">Allocate Stat Point</option>
           </select>
           <label for="suggestion">Name:</label>
-          <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
+            <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
+            <span id="suggestion-cost" style="margin-left:8px;color:#faa61a;white-space:nowrap;"></span>
           <datalist id="suggestions"></datalist>
           <label for="count" style="margin:0 4px 0 0;">Count:</label>
           <input type="number" id="count" name="count" min="1" value="1" required style="width:3ch;min-width:40px;max-width:48px;text-align:center;">
@@ -478,6 +479,32 @@
     window.addEventListener('DOMContentLoaded', function() {
       loadSuggestions();
     });
+
+    // Helper: extract numeric gold cost from dnd entry objects
+    function getCostFromEntry(entry) {
+      if (!entry) return 0;
+      // Common fields
+      if (typeof entry.cost === 'number') return entry.cost;
+      if (typeof entry.price === 'number') return entry.price;
+      const candidates = ['cost','price','value','gp','gold','cost_gp','cost_string'];
+      for (const k of candidates) {
+        if (entry[k]) {
+          const v = entry[k];
+          if (typeof v === 'number') return v;
+          if (typeof v === 'string') {
+            // try to extract number like "10 gp" or "1,000"
+            const m = v.replace(/,/g,'').match(/([0-9]+(?:\.[0-9]+)?)/);
+            if (m) return parseFloat(m[1]);
+          }
+        }
+      }
+      // If entry has a cost object like {quantity:1,unit:'gp'}
+      if (entry.cost && typeof entry.cost === 'object') {
+        if (entry.cost.quantity) return Number(entry.cost.quantity) || 0;
+        if (entry.cost.amount) return Number(entry.cost.amount) || 0;
+      }
+      return 0;
+    }
     document.getElementById('type').addEventListener('change', function() {
       updateSuggestionsList(this.value);
         // If stats selected, show stat keys as suggestions
@@ -497,9 +524,41 @@
       sheetSuggestions[type].forEach(s => {
         const option = document.createElement('option');
         option.value = s;
+        // if dndData has an entry, attach cost for quick lookup
+        try {
+          if (dndData && Array.isArray(dndData[type])) {
+            const entry = dndData[type].find(x => x.name === s);
+            if (entry) option.dataset.cost = String(getCostFromEntry(entry) || '');
+          }
+        } catch (e) {
+          option.dataset.cost = '';
+        }
         datalist.appendChild(option);
       });
     }
+    // Show cost in the UI when suggestion input changes
+    (function attachSuggestionCostListener() {
+      const suggestionInput = document.getElementById('suggestion');
+      const suggestionCostSpan = document.getElementById('suggestion-cost');
+      if (!suggestionInput || !suggestionCostSpan) return;
+      suggestionInput.addEventListener('input', function(e) {
+        const val = e.target.value;
+        let costText = '';
+        try {
+          const type = document.getElementById('type').value;
+          if (dndData && Array.isArray(dndData[type])) {
+            const entry = dndData[type].find(x => x.name === val);
+            if (entry) {
+              const c = getCostFromEntry(entry);
+              if (c) costText = `Cost: ${c}G`;
+            }
+          }
+        } catch (err) {
+          // ignore
+        }
+        suggestionCostSpan.textContent = costText;
+      });
+    })();
     // Manual add logic
     document.getElementById('addForm').addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -661,6 +720,15 @@
     document.querySelector('.profile').appendChild(statPointDiv);
   }
   statPointDiv.textContent = `Free stat points to allocate: ${freeStatPoints}`;
+  // Gold display
+  let goldDiv = document.getElementById('gold-display');
+  if (!goldDiv) {
+    goldDiv = document.createElement('div');
+    goldDiv.id = 'gold-display';
+    goldDiv.style = 'margin-top:6px;color:#ffd166;font-size:1em;';
+    document.querySelector('.profile').appendChild(goldDiv);
+  }
+  goldDiv.textContent = `Gold: ${character.gold ?? 0} G`;
   // Avatar display
   const avatarImg = document.getElementById('avatar-img');
   if (avatarImg) {
@@ -1079,11 +1147,26 @@
     async function addItemToCharacter(itemName, count) {
       if (!currentCharacter || !currentUsername) return;
       let items = currentCharacter.items || [];
+      // Determine cost (in gold) from dndData if available
+      let costPer = 0;
+      if (dndData && Array.isArray(dndData.items)) {
+        const entry = dndData.items.find(i => i.name === itemName);
+        if (entry) costPer = getCostFromEntry(entry);
+      }
+      const totalCost = (costPer || 0) * count;
+      const currentGold = currentCharacter.gold || 0;
+      if (totalCost > 0 && currentGold < totalCost) {
+        alert(`Not enough Gold. Need ${totalCost}G but you have ${currentGold}G.`);
+        return;
+      }
+      // Deduct gold from top-level field
+      const newGold = Math.max(0, currentGold - totalCost);
       const idx = items.findIndex(i => i.name === itemName);
       if (idx > -1) items[idx].count += count;
       else items.push({ name: itemName, count });
-      await updateCharacter(currentUsername, { items });
-      currentCharacter.items = items;
+      const res = await updateCharacter(currentUsername, { items, gold: newGold });
+      if (!res) return;
+      currentCharacter = res;
       renderCharacterSheet(currentCharacter);
     }
 
@@ -1091,11 +1174,25 @@
     async function addEquipmentToCharacter(equipmentName, count) {
       if (!currentCharacter || !currentUsername) return;
       let equipment = currentCharacter.equipment || [];
+      // Determine cost from dndData
+      let costPer = 0;
+      if (dndData && Array.isArray(dndData.equipment)) {
+        const entry = dndData.equipment.find(e => e.name === equipmentName);
+        if (entry) costPer = getCostFromEntry(entry);
+      }
+      const totalCost = (costPer || 0) * count;
+      const currentGold = currentCharacter.gold || 0;
+      if (totalCost > 0 && currentGold < totalCost) {
+        alert(`Not enough Gold. Need ${totalCost}G but you have ${currentGold}G.`);
+        return;
+      }
+      const newGold = Math.max(0, currentGold - totalCost);
       const idx = equipment.findIndex(e => e.name === equipmentName);
       if (idx > -1) equipment[idx].count += count;
       else equipment.push({ name: equipmentName, count });
-      await updateCharacter(currentUsername, { equipment });
-      currentCharacter.equipment = equipment;
+      const res = await updateCharacter(currentUsername, { equipment, gold: newGold });
+      if (!res) return;
+      currentCharacter = res;
       renderCharacterSheet(currentCharacter);
     }
 

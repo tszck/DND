@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>DB: Add Gold to Character</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background:#23272a; color:#fff; }
+    .box { max-width:500px;margin:40px auto;background:#2c2f33;padding:20px;border-radius:8px; }
+    label { display:block;margin-top:12px;color:#43b581 }
+    input { width:100%;padding:8px;border-radius:6px;border:none;background:#23272a;color:#fff }
+    button { margin-top:12px;padding:8px 12px;background:#7289da;border:none;border-radius:6px;cursor:pointer }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Add Gold to Character</h2>
+    <label>Username</label>
+    <input id="username" placeholder="character username">
+    <label>Amount (G to add)</label>
+    <input id="amount" type="number" value="50">
+    <button id="add">Add Gold</button>
+    <div id="msg" style="margin-top:12px;color:#faa61a"></div>
+  </div>
+  <script>
+    document.getElementById('add').addEventListener('click', async function() {
+      const user = document.getElementById('username').value.trim();
+      const amt = parseInt(document.getElementById('amount').value) || 0;
+      if (!user || amt === 0) return alert('Provide username and amount');
+      const character = await fetchCharacter(user);
+      if (!character) return alert('Character not found');
+      const newGold = (character.gold || 0) + amt;
+      const res = await updateCharacter(user, { gold: newGold });
+      if (!res) return;
+      document.getElementById('msg').textContent = `Added ${amt}G to ${user}`;
+    });
+  </script>
+</body>
+</html>
