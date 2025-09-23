@@ -119,13 +119,13 @@
         <div class="section-title">Add/Remove</div>
         <form id="addForm" style="margin-bottom:24px;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;">
           <label for="type" style="margin:0 4px 0 0;">Type:</label>
-          <select id="type" name="type" style="flex:0 0 40%;min-width:120px;max-width:66%;">
+          <select id="type" name="type" required style="width:5ch;min-width:40px;max-width:100px;text-align:left;">
             <option value="items">Item</option>
             <option value="equipment">Equipment</option>
             <option value="skills">Skill</option>
             <option value="spells">Spell</option>
             <option value="xp">XP</option>
-              <option value="stats">Allocate Stat Point</option>
+            <option value="stats">Free Stat Point</option>
           </select>
           <label for="suggestion">Name:</label>
           <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
