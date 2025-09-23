@@ -83,6 +83,11 @@
         if (!checkSupabaseReady()) return;
         const username = document.getElementById('characterName').value.trim();
         if (!username) return;
+        if (username === 'gamemaster') {
+          localStorage.setItem('dnd_username', username);
+          window.location.href = 'gm_interface.html';
+          return;
+        }
         const character = await fetchCharacter(username);
         if (character) {
           window.location.href = `character_sheet.html?username=${encodeURIComponent(username)}`;
