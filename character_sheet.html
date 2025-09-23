@@ -111,13 +111,14 @@
             <option value="equipment">Equipment</option>
             <option value="skills">Skill</option>
             <option value="spells">Spell</option>
+            <option value="xp">XP</option>
           </select>
           <label for="suggestion">Name:</label>
           <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
           <datalist id="suggestions"></datalist>
           <label for="count">Count:</label>
           <input type="number" id="count" name="count" min="1" value="1" required>
-          <button type="submit">Add</button>
+          <button type="submit" style="background: #43b581;">Add</button>
           <button type="button" id="removeBtn" style="background: #f04747; margin-left: 8px;">Remove</button>
         </form>
       </div>
@@ -141,7 +142,7 @@
   <div id="tooltip" class="tooltip"></div>
   <script>
     // Suggestions infrastructure
-    let sheetSuggestions = { items: [], equipment: [], skills: [], spells: [] };
+    let sheetSuggestions = { items: [], equipment: [], skills: [], spells: [], xp: ['Experience Points'] };
     let dndData = null;
     async function loadSuggestions() {
       try {
@@ -191,6 +192,8 @@
           await addSkillToCharacter(name, count);
         } else if (type === 'spells') {
           await addSpellToCharacter(name, count);
+        } else if (type === 'xp') {
+          await addXPToCharacter(count);
         }
         
         // Reset form
@@ -218,11 +221,19 @@
         else if (type === 'equipment') items = currentCharacter.equipment || [];
         else if (type === 'skills') items = currentCharacter.skills || [];
         else if (type === 'spells') items = currentCharacter.spells || [];
+        else if (type === 'xp') {
+          if ((currentCharacter.xp || 0) === 0) {
+            alert(`No XP to remove.`);
+            return;
+          }
+        }
         
-        const existingItem = items.find(item => item.name === name);
-        if (!existingItem || (existingItem.count || 0) === 0) {
-          alert(`No ${name} to remove.`);
-          return;
+        if (type !== 'xp') {
+          const existingItem = items.find(item => item.name === name);
+          if (!existingItem || (existingItem.count || 0) === 0) {
+            alert(`No ${name} to remove.`);
+            return;
+          }
         }
         
         // Remove from the character data based on type
@@ -234,6 +245,8 @@
           await removeSkillFromCharacter(name, count);
         } else if (type === 'spells') {
           await removeSpellFromCharacter(name, count);
+        } else if (type === 'xp') {
+          await removeXPFromCharacter(count);
         }
         
         // Reset form
@@ -291,49 +304,78 @@
 
       // Bonus logic
       const raceInfo = {
-        "Human": { bonus: { strength: 1, dexterity: 1, constitution: 1, intelligence: 1, wisdom: 1, charisma: 1 } },
+        "Human": { bonus: { strength: 1, dexterity: 1, constitution: 1 } },
         "Elf": { bonus: { dexterity: 2, intelligence: 1 } },
-        "Dwarf": { bonus: { constitution: 2, strength: 2 } },
+        "Dwarf": { bonus: { constitution: 2, strength: 1 } },
         "Halfling": { bonus: { dexterity: 2, charisma: 1 } },
         "Dragonborn": { bonus: { strength: 2, charisma: 1 } },
-        "Gnome": { bonus: { intelligence: 2, dexterity: 1 } },
-        "Half-Elf": { bonus: { charisma: 2 } },
+        "Gnome": { bonus: { intelligence: 2, constitution: 1 } },
+        "Half-Elf": { bonus: { charisma: 2, dexterity: 1 } },
         "Half-Orc": { bonus: { strength: 2, constitution: 1 } },
         "Tiefling": { bonus: { charisma: 2, intelligence: 1 } }
       };
       const classInfo = {
-        "Fighter": { stat: "strength", skill: "Athletics" },
-        "Rogue": { stat: "dexterity", skill: "Stealth" },
-        "Wizard": { stat: "intelligence", skill: "Arcana" },
-        "Cleric": { stat: "wisdom", skill: "Religion" },
-        "Barbarian": { stat: "constitution", skill: "Athletics" },
-        "Bard": { stat: "charisma", skill: "Performance" },
-        "Druid": { stat: "wisdom", skill: "Nature" },
-        "Monk": { stat: "dexterity", skill: "Acrobatics" },
-        "Paladin": { stat: "strength", skill: "Persuasion" },
-        "Ranger": { stat: "dexterity", skill: "Survival" },
-        "Sorcerer": { stat: "charisma", skill: "Arcana" },
-        "Warlock": { stat: "charisma", skill: "Intimidation" }
+        "Fighter": { bonus: { strength: 2 }, skill: "Athletics" },
+        "Rogue": { bonus: { dexterity: 2 }, skill: "Stealth" },
+        "Wizard": { bonus: { intelligence: 2 }, skill: "Arcana" },
+        "Cleric": { bonus: { wisdom: 2 }, skill: "Religion" },
+        "Barbarian": { bonus: { strength: 1, constitution: 1 }, skill: "Athletics" },
+        "Bard": { bonus: { charisma: 2 }, skill: "Performance" },
+        "Druid": { bonus: { wisdom: 1, constitution: 1 }, skill: "Nature" },
+        "Monk": { bonus: { dexterity: 1, wisdom: 1 }, skill: "Acrobatics" },
+        "Paladin": { bonus: { strength: 1, charisma: 1 }, skill: "Persuasion" },
+        "Ranger": { bonus: { dexterity: 1, wisdom: 1 }, skill: "Survival" },
+        "Sorcerer": { bonus: { charisma: 1, constitution: 1 }, skill: "Arcana" },
+        "Warlock": { bonus: { charisma: 1, intelligence: 1 }, skill: "Intimidation" }
       };
       const backgroundInfo = {
-        "Acolyte": ["Insight", "Religion"],
-        "Charlatan": ["Deception", "Sleight of Hand"],
-        "Criminal": ["Stealth", "Deception"],
-        "Entertainer": ["Acrobatics", "Performance"],
-        "Folk Hero": ["Animal Handling", "Survival"],
-        "Guild Artisan": ["Insight", "Persuasion"],
-        "Hermit": ["Medicine", "Religion"],
-        "Noble": ["History", "Persuasion"],
-        "Outlander": ["Athletics", "Survival"],
-        "Sage": ["Arcana", "History"],
-        "Sailor": ["Athletics", "Perception"],
-        "Soldier": ["Athletics", "Intimidation"],
-        "Urchin": ["Sleight of Hand", "Stealth"]
+        "Acolyte": { skills: ["Insight", "Religion"], bonus: { wisdom: 1 } },
+        "Charlatan": { skills: ["Deception", "Sleight of Hand"], bonus: { charisma: 1 } },
+        "Criminal": { skills: ["Deception", "Stealth"], bonus: { dexterity: 1 } },
+        "Entertainer": { skills: ["Acrobatics", "Performance"], bonus: { charisma: 1 } },
+        "Folk Hero": { skills: ["Animal Handling", "Survival"], bonus: { constitution: 1 } },
+        "Guild Artisan": { skills: ["Insight", "Persuasion"], bonus: { intelligence: 1 } },
+        "Hermit": { skills: ["Medicine", "Religion"], bonus: { wisdom: 1 } },
+        "Noble": { skills: ["History", "Persuasion"], bonus: { charisma: 1 } },
+        "Outlander": { skills: ["Athletics", "Survival"], bonus: { constitution: 1 } },
+        "Sage": { skills: ["Arcana", "History"], bonus: { intelligence: 1 } },
+        "Sailor": { skills: ["Athletics", "Perception"], bonus: { strength: 1 } },
+        "Soldier": { skills: ["Athletics", "Intimidation"], bonus: { strength: 1 } },
+        "Urchin": { skills: ["Sleight of Hand", "Stealth"], bonus: { dexterity: 1 } }
       };
 
       // Stats
       const statsTable = document.getElementById('stats-table');
       statsTable.innerHTML = '<tr><th style="width:30%;">Stat</th><th style="width:20%;">Total</th><th style="width:50%;">Breakdown</th></tr>';
+      
+      // Level and XP display
+      const levelRow = document.createElement('tr');
+      const levelTh = document.createElement('th');
+      levelTh.textContent = 'Level';
+      const levelTd = document.createElement('td');
+      levelTd.textContent = character.level ?? 1;
+      const levelBreakdown = document.createElement('td');
+      levelBreakdown.textContent = '';
+      levelRow.appendChild(levelTh);
+      levelRow.appendChild(levelTd);
+      levelRow.appendChild(levelBreakdown);
+      statsTable.appendChild(levelRow);
+      
+      const xpRow = document.createElement('tr');
+      const xpTh = document.createElement('th');
+      xpTh.textContent = 'XP';
+      const xpTd = document.createElement('td');
+      xpTd.textContent = character.xp ?? 0;
+      const xpBreakdown = document.createElement('td');
+      const currentLevel = character.level ?? 1;
+      const xpForNextLevel = 100 * currentLevel;
+      const currentXP = character.xp ?? 0;
+      xpBreakdown.textContent = `[${xpForNextLevel - currentXP} needed for level ${currentLevel + 1}]`;
+      xpRow.appendChild(xpTh);
+      xpRow.appendChild(xpTd);
+      xpRow.appendChild(xpBreakdown);
+      statsTable.appendChild(xpRow);
+      
       const statKeys = ['strength','dexterity','constitution','intelligence','wisdom','charisma'];
       statKeys.forEach(key => {
         let base = character[key] ?? 0;
@@ -345,9 +387,14 @@
           breakdown.push(`Race +${raceInfo[character.race].bonus[key]}`);
         }
         // Class bonus
-        if (character.class && classInfo[character.class] && classInfo[character.class].stat === key) {
-          bonus += 1;
-          breakdown.push('Class +1');
+        if (character.class && classInfo[character.class] && classInfo[character.class].bonus && classInfo[character.class].bonus[key]) {
+          bonus += classInfo[character.class].bonus[key];
+          breakdown.push(`Class +${classInfo[character.class].bonus[key]}`);
+        }
+        // Background bonus
+        if (character.background && backgroundInfo[character.background] && backgroundInfo[character.background].bonus && backgroundInfo[character.background].bonus[key]) {
+          bonus += backgroundInfo[character.background].bonus[key];
+          breakdown.push(`Background +${backgroundInfo[character.background].bonus[key]}`);
         }
         // Total value
         const total = base + bonus;
@@ -471,7 +518,7 @@
           sources.push('Class +2');
         }
         // Background bonus
-        if (character.background && backgroundInfo[character.background] && backgroundInfo[character.background].includes(skill.name)) {
+        if (character.background && backgroundInfo[character.background] && backgroundInfo[character.background].skills && backgroundInfo[character.background].skills.includes(skill.name)) {
           bonus += 2;
           sources.push('Background +2');
         }
@@ -650,6 +697,55 @@
       }
       await updateCharacter(currentUsername, { spells });
       currentCharacter.spells = spells;
+      renderCharacterSheet(currentCharacter);
+    }
+
+    // Add XP and handle level progression
+    async function addXPToCharacter(xpAmount) {
+      if (!currentCharacter || !currentUsername) return;
+      let currentXP = currentCharacter.xp || 0;
+      let currentLevel = currentCharacter.level || 1;
+      
+      // Add XP
+      currentXP += xpAmount;
+      
+      // Check for level ups (100 * Level XP needed for each level)
+      while (currentXP >= (100 * currentLevel)) {
+        currentXP -= (100 * currentLevel);
+        currentLevel++;
+      }
+      
+      await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel });
+      currentCharacter.xp = currentXP;
+      currentCharacter.level = currentLevel;
+      renderCharacterSheet(currentCharacter);
+      
+      if (currentLevel > (currentCharacter.level || 1)) {
+        alert(`Congratulations! You've reached level ${currentLevel}!`);
+      }
+    }
+
+    // Remove XP (can cause level down if XP goes negative)
+    async function removeXPFromCharacter(xpAmount) {
+      if (!currentCharacter || !currentUsername) return;
+      let currentXP = currentCharacter.xp || 0;
+      let currentLevel = currentCharacter.level || 1;
+      
+      // Remove XP
+      currentXP = Math.max(0, currentXP - xpAmount);
+      
+      // Check for level downs if we go below 0 XP for current level
+      while (currentLevel > 1 && currentXP < 0) {
+        currentLevel--;
+        currentXP += (100 * currentLevel);
+      }
+      
+      // Make sure XP doesn't go negative
+      currentXP = Math.max(0, currentXP);
+      
+      await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel });
+      currentCharacter.xp = currentXP;
+      currentCharacter.level = currentLevel;
       renderCharacterSheet(currentCharacter);
     }
   </script>

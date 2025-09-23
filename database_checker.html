@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database Variable Checker</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #36393f; color: #dcddde; }
+    .container { max-width: 800px; margin: 0 auto; }
+    .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+    .success { background: #43b581; }
+    .warning { background: #faa61a; }
+    .error { background: #f04747; }
+    button { background: #7289da; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+    input { background: #40444b; color: #dcddde; border: 1px solid #72767d; padding: 8px; border-radius: 4px; margin: 5px; }
+    .variable-check { margin: 5px 0; padding: 5px; background: #2f3136; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>D&D Database Variable Checker</h1>
+    <p>This tool helps verify that all character variables are properly stored and retrieved from Supabase.</p>
+    
+    <div>
+      <input type="text" id="testUsername" placeholder="Enter username to test" value="testuser123">
+      <button onclick="runDatabaseTest()">Test Database Variables</button>
+      <button onclick="createTestCharacter()">Create Test Character</button>
+      <button onclick="clearResults()">Clear Results</button>
+    </div>
+    
+    <div id="results"></div>
+  </div>
+
+  <script src="supabase.js"></script>
+  <script>
+    const expectedVariables = [
+      'username', 'name', 'race', 'class', 'background', 'level', 'xp',
+      'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma',
+      'items', 'equipment', 'skills', 'spells', 'bio', 'created_at', 'updated_at'
+    ];
+
+    function logResult(message, type = 'info') {
+      const results = document.getElementById('results');
+      const div = document.createElement('div');
+      div.className = `test-result ${type}`;
+      div.textContent = message;
+      results.appendChild(div);
+    }
+
+    function clearResults() {
+      document.getElementById('results').innerHTML = '';
+    }
+
+    async function createTestCharacter() {
+      const username = document.getElementById('testUsername').value;
+      if (!username) {
+        logResult('Please enter a username', 'error');
+        return;
+      }
+
+      try {
+        const testCharacter = {
+          username: username,
+          name: 'Test Character',
+          race: 'Human',
+          class: 'Fighter',
+          background: 'Soldier',
+          level: 1,
+          xp: 0,
+          strength: 15,
+          dexterity: 13,
+          constitution: 14,
+          intelligence: 10,
+          wisdom: 12,
+          charisma: 8,
+          items: [{ name: 'Health Potion', count: 2 }],
+          equipment: [{ name: 'Sword', count: 1 }, { name: 'Shield', count: 1 }],
+          skills: [{ name: 'Athletics', count: 1 }],
+          spells: [{ name: 'Cure Light Wounds', count: 1 }],
+          bio: 'This is a test character for database validation.',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
+        const result = await updateCharacter(username, testCharacter);
+        logResult(`Test character created successfully for ${username}`, 'success');
+        
+        // Now test retrieval
+        await runDatabaseTest();
+        
+      } catch (error) {
+        logResult(`Error creating test character: ${error.message}`, 'error');
+      }
+    }
+
+    async function runDatabaseTest() {
+      const username = document.getElementById('testUsername').value;
+      if (!username) {
+        logResult('Please enter a username', 'error');
+        return;
+      }
+
+      logResult(`Starting database test for username: ${username}`, 'info');
+      
+      try {
+        const character = await fetchCharacter(username);
+        
+        if (!character) {
+          logResult('Character not found in database', 'error');
+          return;
+        }
+
+        logResult('Character successfully retrieved from database', 'success');
+        
+        // Check each expected variable
+        const missingVars = [];
+        const presentVars = [];
+        const nullVars = [];
+        
+        expectedVariables.forEach(varName => {
+          if (character.hasOwnProperty(varName)) {
+            if (character[varName] === null || character[varName] === undefined) {
+              nullVars.push(varName);
+            } else {
+              presentVars.push(varName);
+            }
+          } else {
+            missingVars.push(varName);
+          }
+        });
+
+        // Report results
+        if (presentVars.length > 0) {
+          logResult(`✅ Present variables (${presentVars.length}): ${presentVars.join(', ')}`, 'success');
+        }
+        
+        if (nullVars.length > 0) {
+          logResult(`⚠️ Null/undefined variables (${nullVars.length}): ${nullVars.join(', ')}`, 'warning');
+        }
+        
+        if (missingVars.length > 0) {
+          logResult(`❌ Missing variables (${missingVars.length}): ${missingVars.join(', ')}`, 'error');
+        }
+
+        // Check array variables specifically
+        const arrayVars = ['items', 'equipment', 'skills', 'spells'];
+        arrayVars.forEach(varName => {
+          if (character[varName]) {
+            const isArray = Array.isArray(character[varName]);
+            const count = isArray ? character[varName].length : 'not an array';
+            logResult(`📋 ${varName}: ${isArray ? '✅' : '❌'} (${count} items)`, isArray ? 'success' : 'error');
+          }
+        });
+
+        // Check numeric variables
+        const numericVars = ['level', 'xp', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+        numericVars.forEach(varName => {
+          if (character[varName] !== undefined) {
+            const isNumeric = typeof character[varName] === 'number';
+            logResult(`🔢 ${varName}: ${isNumeric ? '✅' : '❌'} (${character[varName]})`, isNumeric ? 'success' : 'error');
+          }
+        });
+
+        // Display full character object for debugging
+        const characterDiv = document.createElement('div');
+        characterDiv.className = 'test-result';
+        characterDiv.style.background = '#2f3136';
+        characterDiv.innerHTML = `<strong>Full Character Object:</strong><br><pre>${JSON.stringify(character, null, 2)}</pre>`;
+        document.getElementById('results').appendChild(characterDiv);
+
+      } catch (error) {
+        logResult(`Error testing database: ${error.message}`, 'error');
+      }
+    }
+  </script>
+</body>
+</html>
