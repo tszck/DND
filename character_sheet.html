@@ -97,6 +97,7 @@
       <h2 id="char-name"></h2>
       <p id="char-class"></p>
       <div id="char-summary" style="margin-top:10px;color:#43b581;font-size:1em;"></div>
+      <div id="char-bio" style="margin-top:18px;padding:10px;background:#23272a;border-radius:8px;color:#b9bbbe;font-size:1em;white-space:pre-line;"></div>
     </div>
       <!-- Avatar removed: file not found -->
     <div>
@@ -112,6 +113,7 @@
             <option value="skills">Skill</option>
             <option value="spells">Spell</option>
             <option value="xp">XP</option>
+              <option value="stats">Allocate Stat Point</option>
           </select>
           <label for="suggestion">Name:</label>
           <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
@@ -163,6 +165,16 @@
     });
     document.getElementById('type').addEventListener('change', function() {
       updateSuggestionsList(this.value);
+        // If stats selected, show stat keys as suggestions
+        if (this.value === 'stats') {
+          const datalist = document.getElementById('suggestions');
+          datalist.innerHTML = '';
+          ['Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma'].forEach(s => {
+            const option = document.createElement('option');
+            option.value = s;
+            datalist.appendChild(option);
+          });
+        }
     });
     function updateSuggestionsList(type) {
       const datalist = document.getElementById('suggestions');
@@ -183,6 +195,21 @@
       if (!name || !count || !currentCharacter || !currentUsername) return;
       
       try {
+          // Stat allocation logic
+          if (["strength","dexterity","constitution","intelligence","wisdom","charisma"].includes(name.toLowerCase()) && type === 'stats') {
+            if ((currentCharacter.free_stat_points ?? 0) < count) {
+              alert('Not enough free stat points to allocate.');
+              return;
+            }
+            let statKey = name.toLowerCase();
+            let newValue = (currentCharacter[statKey] ?? 0) + count;
+            let newPoints = (currentCharacter.free_stat_points ?? 0) - count;
+            await updateCharacter(currentUsername, { [statKey]: newValue, free_stat_points: newPoints });
+            currentCharacter[statKey] = newValue;
+            currentCharacter.free_stat_points = newPoints;
+            renderCharacterSheet(currentCharacter);
+            return;
+          }
         // Update the character data based on type
         if (type === 'items') {
           await addItemToCharacter(name, count);
@@ -215,7 +242,23 @@
       if (!name || !count || !currentCharacter || !currentUsername) return;
       
       try {
-        // Check if item exists and has enough count
+        // Stat point removal logic
+        if (["strength","dexterity","constitution","intelligence","wisdom","charisma"].includes(name.toLowerCase()) && type === 'stats') {
+          let statKey = name.toLowerCase();
+          let currentValue = currentCharacter[statKey] ?? 0;
+          if (currentValue < count) {
+            alert('Cannot remove more stat points than currently allocated.');
+            return;
+          }
+          let newValue = currentValue - count;
+          let newPoints = (currentCharacter.free_stat_points ?? 0) + count;
+          await updateCharacter(currentUsername, { [statKey]: newValue, free_stat_points: newPoints });
+          currentCharacter[statKey] = newValue;
+          currentCharacter.free_stat_points = newPoints;
+          renderCharacterSheet(currentCharacter);
+          return;
+        }
+        // ...existing code...
         let items = [];
         if (type === 'items') items = currentCharacter.items || [];
         else if (type === 'equipment') items = currentCharacter.equipment || [];
@@ -293,6 +336,16 @@
     });
 
     function renderCharacterSheet(character) {
+  // Free stat points
+  freeStatPoints = character.free_stat_points ?? 0;
+  let statPointDiv = document.getElementById('free-stat-points');
+  if (!statPointDiv) {
+    statPointDiv = document.createElement('div');
+    statPointDiv.id = 'free-stat-points';
+    statPointDiv.style = 'margin-top:10px;color:#faa61a;font-size:1em;';
+    document.querySelector('.profile').appendChild(statPointDiv);
+  }
+  statPointDiv.textContent = `Free stat points to allocate: ${freeStatPoints}`;
   document.getElementById('char-name').textContent = character.name || character.username || '';
   document.getElementById('char-class').textContent = `Level ${character.level ?? ''} ${character.class ?? ''}`;
   // Summary
@@ -301,6 +354,8 @@
   if (character.class) summary += `<b>Class:</b> ${character.class} `;
   if (character.background) summary += `<b>Background:</b> ${character.background}`;
   document.getElementById('char-summary').innerHTML = summary;
+  // Bio at bottom of profile
+  document.getElementById('char-bio').textContent = character.bio && character.bio.trim() ? character.bio : 'The tale of this adventurer is yet to be written...';
 
       // Bonus logic
       const raceInfo = {
@@ -705,23 +760,24 @@
       if (!currentCharacter || !currentUsername) return;
       let currentXP = currentCharacter.xp || 0;
       let currentLevel = currentCharacter.level || 1;
-      
+      let statPoints = currentCharacter.free_stat_points || 0;
+      let leveledUp = false;
       // Add XP
       currentXP += xpAmount;
-      
-      // Check for level ups (100 * Level XP needed for each level)
-      while (currentXP >= (100 * currentLevel)) {
-        currentXP -= (100 * currentLevel);
+      // Check for level ups (100 * (currentLevel+1) XP needed for each level)
+      while (currentXP >= (100 * (currentLevel + 1))) {
+        currentXP -= (100 * (currentLevel + 1));
         currentLevel++;
+        statPoints += 2;
+        leveledUp = true;
       }
-      
-      await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel });
+      await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel, free_stat_points: statPoints });
       currentCharacter.xp = currentXP;
       currentCharacter.level = currentLevel;
+      currentCharacter.free_stat_points = statPoints;
       renderCharacterSheet(currentCharacter);
-      
-      if (currentLevel > (currentCharacter.level || 1)) {
-        alert(`Congratulations! You've reached level ${currentLevel}!`);
+      if (leveledUp) {
+        alert(`Congratulations! You've reached level ${currentLevel} and earned ${statPoints} free stat points!`);
       }
     }
 
@@ -730,22 +786,21 @@
       if (!currentCharacter || !currentUsername) return;
       let currentXP = currentCharacter.xp || 0;
       let currentLevel = currentCharacter.level || 1;
-      
+      let statPoints = currentCharacter.free_stat_points || 0;
       // Remove XP
       currentXP = Math.max(0, currentXP - xpAmount);
-      
       // Check for level downs if we go below 0 XP for current level
       while (currentLevel > 1 && currentXP < 0) {
         currentLevel--;
-        currentXP += (100 * currentLevel);
+        currentXP += (100 * (currentLevel + 1));
+        statPoints = Math.max(0, statPoints - 2);
       }
-      
       // Make sure XP doesn't go negative
       currentXP = Math.max(0, currentXP);
-      
-      await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel });
+      await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel, free_stat_points: statPoints });
       currentCharacter.xp = currentXP;
       currentCharacter.level = currentLevel;
+      currentCharacter.free_stat_points = statPoints;
       renderCharacterSheet(currentCharacter);
     }
   </script>

@@ -19,12 +19,14 @@
   <div class="form-box">
     <h2>Generate New Character</h2>
     <form id="genForm">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" pattern="[a-z0-9]+" title="Username must contain only lowercase letters and numbers" placeholder="e.g. player123" required>
-      <label for="name">Character Name:</label>
-      <input type="text" id="name" name="name" placeholder="e.g. Aragorn the Brave" required>
-      <label for="race">Race:</label>
-      <select id="race" name="race">
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username" pattern="[a-z0-9]+" title="Username must contain only lowercase letters and numbers" placeholder="e.g. player123" required>
+  <label for="name">Character Name:</label>
+  <input type="text" id="name" name="name" placeholder="e.g. Aragorn the Brave" required>
+  <label for="bio">Bio / Notes:</label>
+  <textarea id="bio" name="bio" rows="3" placeholder="Describe your character's background, personality, or notes..." style="width:100%;margin-top:4px;border-radius:4px;padding:8px;"></textarea>
+  <label for="race">Race:</label>
+  <select id="race" name="race">
         <option>Human</option>
         <option>Elf</option>
         <option>Dwarf</option>
@@ -209,12 +211,13 @@
 
     document.getElementById('genForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const username = document.getElementById('username').value.trim();
-      const name = document.getElementById('name').value.trim();
-      const race = document.getElementById('race').value;
-      const charClass = document.getElementById('class').value;
-      const background = document.getElementById('background').value;
-      const level = 1; // Default level
+  const username = document.getElementById('username').value.trim();
+  const name = document.getElementById('name').value.trim();
+  const bio = document.getElementById('bio').value.trim();
+  const race = document.getElementById('race').value;
+  const charClass = document.getElementById('class').value;
+  const background = document.getElementById('background').value;
+  const level = 1; // Default level
 
       // Load dnd_data.json for full item/equipment/skill/spell lists
       const res = await fetch('dnd_data.json');
@@ -288,7 +291,7 @@
         equipment: Array.isArray(dndData.equipment) ? initEntries(dndData.equipment) : [],
         skills: Array.isArray(skills) ? skills : [],
         spells: Array.isArray(dndData.spells) ? initEntries(dndData.spells) : [],
-        bio: '',
+        bio: bio,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
