@@ -65,7 +65,8 @@
         <option>Soldier</option>
         <option>Urchin</option>
       </select>
-      <div id="background-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
+  <div id="background-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
+  <div id="background-bonus" style="background:#23272a;border-left:4px solid #43b581;padding:8px 12px;margin-bottom:12px;border-radius:6px;display:none;font-size:0.98em;"></div>
       <label for="level">Level:</label>
       <input type="number" id="level" name="level" min="1" max="20" value="1" required>
       <button type="submit">Generate</button>
@@ -132,6 +133,21 @@
     }
     updateDesc('race', 'race-desc', raceInfo);
     updateDesc('class', 'class-desc', classInfo);
+    // Show background bonuses below menu
+    function showBackgroundBonus() {
+      const select = document.getElementById('background');
+      const bonusDiv = document.getElementById('background-bonus');
+      const val = select.value;
+      if (backgroundInfo[val] && Array.isArray(backgroundInfo[val].skills)) {
+        bonusDiv.style.display = 'block';
+        bonusDiv.innerHTML = `<b>Bonuses:</b> +2 to <span style='color:#43b581'>${backgroundInfo[val].skills.join('</span>, <span style=\'color:#43b581\'>')}</span>`;
+      } else {
+        bonusDiv.style.display = 'none';
+        bonusDiv.innerHTML = '';
+      }
+    }
+    document.getElementById('background').addEventListener('change', showBackgroundBonus);
+    showBackgroundBonus();
 
     document.getElementById('genForm').addEventListener('submit', async function(e) {
       e.preventDefault();
