@@ -3,18 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Character Form</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
-  <script src="supabase.js"></script>
+    <title>DND Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+    <script src="supabase.js"></script>
+    <style>
+      body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #23272a;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+      }
+      .login-box {
+        max-width: 400px;
+        margin: 80px auto;
+        background: #2c2f33;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+        padding: 32px;
+        text-align: center;
+      }
+      .login-box h1 {
+        color: #7289da;
+        margin-bottom: 24px;
+      }
+      label {
+        display: block;
+        margin: 16px 0 8px 0;
+        color: #43b581;
+        font-size: 1.1em;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: none;
+        margin-bottom: 16px;
+        font-size: 1em;
+      }
+      button {
+        padding: 10px 24px;
+        background: #7289da;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        cursor: pointer;
+      }
+      .error {
+        color: #ff5555;
+        margin-top: 12px;
+      }
+    </style>
 </head>
 <body>
-    <h1>Character Name Entry</h1>
-    <form id="characterForm">
-        <label for="characterName">Enter Character Name:</label>
-        <input type="text" id="characterName" name="name" required>
-        <button type="submit">Submit</button>
-    </form>
-    <button onclick="window.location.href='character_generator.html'">Generate New Character</button>
+    <div class="login-box">
+      <h1>DND Character Login</h1>
+      <form id="characterForm">
+        <label for="characterName">Username</label>
+        <input type="text" id="characterName" name="name" required placeholder="Enter your username">
+        <button type="submit">Login</button>
+      </form>
+      <button onclick="window.location.href='character_generator.html'" style="margin-top:16px;">Generate New Character</button>
+      <div id="errorMsg" class="error"></div>
+    </div>
     <script>
       document.getElementById('characterForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -24,7 +76,7 @@
         if (character) {
           window.location.href = `character_sheet.html?username=${encodeURIComponent(username)}`;
         } else {
-          alert('Character not found!');
+          document.getElementById('errorMsg').textContent = 'Character not found!';
         }
       });
     </script>
