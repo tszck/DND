@@ -103,7 +103,7 @@
       <div class="stats">
         <div class="section-title">Stats</div>
         <table id="stats-table"></table>
-        <div class="section-title">Add to Character</div>
+        <div class="section-title">Add/Remove</div>
         <form id="addForm" style="margin-bottom:24px;">
           <label for="type">Type:</label>
           <select id="type" name="type">
@@ -118,6 +118,7 @@
           <label for="count">Count:</label>
           <input type="number" id="count" name="count" min="1" value="1" required>
           <button type="submit">Add</button>
+          <button type="button" id="removeBtn" style="background: #f04747; margin-left: 8px;">Remove</button>
         </form>
       </div>
       <div class="inventory">
@@ -198,6 +199,49 @@
       } catch (error) {
         console.error('Error adding item:', error);
         alert('Failed to add item. Please try again.');
+      }
+    });
+
+    // Remove button logic
+    document.getElementById('removeBtn').addEventListener('click', async function(e) {
+      e.preventDefault();
+      const type = document.getElementById('type').value;
+      const name = document.getElementById('suggestion').value.trim();
+      const count = parseInt(document.getElementById('count').value);
+      
+      if (!name || !count || !currentCharacter || !currentUsername) return;
+      
+      try {
+        // Check if item exists and has enough count
+        let items = [];
+        if (type === 'items') items = currentCharacter.items || [];
+        else if (type === 'equipment') items = currentCharacter.equipment || [];
+        else if (type === 'skills') items = currentCharacter.skills || [];
+        else if (type === 'spells') items = currentCharacter.spells || [];
+        
+        const existingItem = items.find(item => item.name === name);
+        if (!existingItem || (existingItem.count || 0) === 0) {
+          alert(`No ${name} to remove.`);
+          return;
+        }
+        
+        // Remove from the character data based on type
+        if (type === 'items') {
+          await removeItemFromCharacter(name, count);
+        } else if (type === 'equipment') {
+          await removeEquipmentFromCharacter(name, count);
+        } else if (type === 'skills') {
+          await removeSkillFromCharacter(name, count);
+        } else if (type === 'spells') {
+          await removeSpellFromCharacter(name, count);
+        }
+        
+        // Reset form
+        document.getElementById('addForm').reset();
+        updateSuggestionsList(document.getElementById('type').value);
+      } catch (error) {
+        console.error('Error removing item:', error);
+        alert('Failed to remove item. Please try again.');
       }
     });
     async function loadData() {
@@ -552,6 +596,58 @@
       const idx = spells.findIndex(sp => sp.name === spellName);
       if (idx > -1) spells[idx].count += count;
       else spells.push({ name: spellName, count });
+      await updateCharacter(currentUsername, { spells });
+      currentCharacter.spells = spells;
+      renderCharacterSheet(currentCharacter);
+    }
+
+    // Remove item and update DB
+    async function removeItemFromCharacter(itemName, count) {
+      if (!currentCharacter || !currentUsername) return;
+      let items = currentCharacter.items || [];
+      const idx = items.findIndex(i => i.name === itemName);
+      if (idx > -1) {
+        items[idx].count = Math.max(0, items[idx].count - count);
+      }
+      await updateCharacter(currentUsername, { items });
+      currentCharacter.items = items;
+      renderCharacterSheet(currentCharacter);
+    }
+
+    // Remove equipment and update DB
+    async function removeEquipmentFromCharacter(equipmentName, count) {
+      if (!currentCharacter || !currentUsername) return;
+      let equipment = currentCharacter.equipment || [];
+      const idx = equipment.findIndex(e => e.name === equipmentName);
+      if (idx > -1) {
+        equipment[idx].count = Math.max(0, equipment[idx].count - count);
+      }
+      await updateCharacter(currentUsername, { equipment });
+      currentCharacter.equipment = equipment;
+      renderCharacterSheet(currentCharacter);
+    }
+
+    // Remove skill and update DB
+    async function removeSkillFromCharacter(skillName, count) {
+      if (!currentCharacter || !currentUsername) return;
+      let skills = currentCharacter.skills || [];
+      const idx = skills.findIndex(s => s.name === skillName);
+      if (idx > -1) {
+        skills[idx].count = Math.max(0, skills[idx].count - count);
+      }
+      await updateCharacter(currentUsername, { skills });
+      currentCharacter.skills = skills;
+      renderCharacterSheet(currentCharacter);
+    }
+
+    // Remove spell and update DB
+    async function removeSpellFromCharacter(spellName, count) {
+      if (!currentCharacter || !currentUsername) return;
+      let spells = currentCharacter.spells || [];
+      const idx = spells.findIndex(sp => sp.name === spellName);
+      if (idx > -1) {
+        spells[idx].count = Math.max(0, spells[idx].count - count);
+      }
       await updateCharacter(currentUsername, { spells });
       currentCharacter.spells = spells;
       renderCharacterSheet(currentCharacter);

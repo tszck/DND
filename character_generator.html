@@ -84,44 +84,44 @@
 
     // Descriptions and bonuses for each option
     const raceInfo = {
-      "Human": { desc: "Versatile and ambitious, humans have built great civilizations and adapt quickly to new challenges.", bonus: { strength: 1, dexterity: 1, constitution: 1, intelligence: 1, wisdom: 1, charisma: 1 } },
+      "Human": { desc: "Versatile and ambitious, humans have built great civilizations and adapt quickly to new challenges.", bonus: { strength: 1, dexterity: 1, constitution: 1 } },
       "Elf": { desc: "Graceful and wise, elves are known for their long lifespans and deep connection to nature and magic.", bonus: { dexterity: 2, intelligence: 1 } },
-      "Dwarf": { desc: "Stout and hardy, dwarves are master craftsmen and fierce warriors from ancient mountain halls.", bonus: { constitution: 2, strength: 2 } },
+      "Dwarf": { desc: "Stout and hardy, dwarves are master craftsmen and fierce warriors from ancient mountain halls.", bonus: { constitution: 2, strength: 1 } },
       "Halfling": { desc: "Cheerful and nimble, halflings value comfort, community, and cleverness above all.", bonus: { dexterity: 2, charisma: 1 } },
       "Dragonborn": { desc: "Proud and honorable, dragonborn possess draconic ancestry and a strong sense of destiny.", bonus: { strength: 2, charisma: 1 } },
-      "Gnome": { desc: "Inventive and curious, gnomes are renowned for their wit, creativity, and magical talents.", bonus: { intelligence: 2, dexterity: 1 } },
-      "Half-Elf": { desc: "Diplomatic and adaptable, half-elves blend the best traits of elves and humans.", bonus: { charisma: 2 } },
+      "Gnome": { desc: "Inventive and curious, gnomes are renowned for their wit, creativity, and magical talents.", bonus: { intelligence: 2, constitution: 1 } },
+      "Half-Elf": { desc: "Diplomatic and adaptable, half-elves blend the best traits of elves and humans.", bonus: { charisma: 2, dexterity: 1 } },
       "Half-Orc": { desc: "Tough and determined, half-orcs are shaped by hardship and excel in strength and endurance.", bonus: { strength: 2, constitution: 1 } },
       "Tiefling": { desc: "Mysterious and charismatic, tieflings bear the mark of infernal heritage and possess innate magic.", bonus: { charisma: 2, intelligence: 1 } }
     };
     const classInfo = {
-      "Fighter": { desc: "Masters of martial combat, fighters excel in battle and adapt to any fighting style." },
-      "Rogue": { desc: "Stealthy and cunning, rogues thrive on agility, trickery, and precision strikes." },
-      "Wizard": { desc: "Scholars of the arcane, wizards wield powerful spells and unravel magical mysteries." },
-      "Cleric": { desc: "Divine agents, clerics channel the power of their gods to heal, protect, and smite foes." },
-      "Barbarian": { desc: "Fierce warriors, barbarians tap into primal rage for unmatched strength and resilience." },
-      "Bard": { desc: "Charismatic performers, bards inspire allies and manipulate magic through music and lore." },
-      "Druid": { desc: "Guardians of nature, druids command the elements and transform into beasts." },
-      "Monk": { desc: "Disciplined martial artists, monks harness inner energy for speed and precision." },
-      "Paladin": { desc: "Holy knights, paladins uphold justice and wield divine power against evil." },
-      "Ranger": { desc: "Skilled hunters and trackers, rangers thrive in the wild and master ranged combat." },
-      "Sorcerer": { desc: "Innate spellcasters, sorcerers unleash raw magical power from within." },
-      "Warlock": { desc: "Pact-bound wielders of eldritch magic, warlocks draw power from mysterious patrons." }
+      "Fighter": { desc: "Masters of martial combat, fighters excel in battle and adapt to any fighting style.", bonus: { strength: 2 } },
+      "Rogue": { desc: "Stealthy and cunning, rogues thrive on agility, trickery, and precision strikes.", bonus: { dexterity: 2 } },
+      "Wizard": { desc: "Scholars of the arcane, wizards wield powerful spells and unravel magical mysteries.", bonus: { intelligence: 2 } },
+      "Cleric": { desc: "Divine agents, clerics channel the power of their gods to heal, protect, and smite foes.", bonus: { wisdom: 2 } },
+      "Barbarian": { desc: "Fierce warriors, barbarians tap into primal rage for unmatched strength and resilience.", bonus: { strength: 1, constitution: 1 } },
+      "Bard": { desc: "Charismatic performers, bards inspire allies and manipulate magic through music and lore.", bonus: { charisma: 2 } },
+      "Druid": { desc: "Guardians of nature, druids command the elements and transform into beasts.", bonus: { wisdom: 1, constitution: 1 } },
+      "Monk": { desc: "Disciplined martial artists, monks harness inner energy for speed and precision.", bonus: { dexterity: 1, wisdom: 1 } },
+      "Paladin": { desc: "Holy knights, paladins uphold justice and wield divine power against evil.", bonus: { strength: 1, charisma: 1 } },
+      "Ranger": { desc: "Skilled hunters and trackers, rangers thrive in the wild and master ranged combat.", bonus: { dexterity: 1, wisdom: 1 } },
+      "Sorcerer": { desc: "Innate spellcasters, sorcerers unleash raw magical power from within.", bonus: { charisma: 1, constitution: 1 } },
+      "Warlock": { desc: "Pact-bound wielders of eldritch magic, warlocks draw power from mysterious patrons.", bonus: { charisma: 1, intelligence: 1 } }
     };
     const backgroundInfo = {
-      "Acolyte": { desc: "Raised in temples, acolytes are devoted to faith and serve as spiritual guides.", skills: ["Insight", "Religion"] },
-      "Charlatan": { desc: "Quick-witted tricksters, charlatans thrive on deception and clever schemes.", skills: ["Deception", "Sleight of Hand"] },
-      "Criminal": { desc: "Living outside the law, criminals are skilled in stealth and underworld dealings.", skills: ["Deception", "Stealth"] },
-      "Entertainer": { desc: "Performers at heart, entertainers captivate audiences with talent and flair.", skills: ["Acrobatics", "Performance"] },
-      "Folk Hero": { desc: "Champions of the common folk, folk heroes rise from humble beginnings.", skills: ["Animal Handling", "Survival"] },
-      "Guild Artisan": { desc: "Skilled craftsmen, guild artisans create and trade goods in bustling markets.", skills: ["Insight", "Persuasion"] },
-      "Hermit": { desc: "Hermits seek solitude and wisdom, often living far from civilization.", skills: ["Medicine", "Religion"] },
-      "Noble": { desc: "Born to privilege, nobles wield influence and uphold family traditions.", skills: ["History", "Persuasion"] },
-      "Outlander": { desc: "Wanderers of the wild, outlanders survive in untamed lands.", skills: ["Athletics", "Survival"] },
-      "Sage": { desc: "Seekers of knowledge, sages dedicate their lives to study and research.", skills: ["Arcana", "History"] },
-      "Sailor": { desc: "Adventurers of the sea, sailors are at home on ships and coastal towns.", skills: ["Athletics", "Perception"] },
-      "Soldier": { desc: "Disciplined and battle-hardened, soldiers serve in organized armies.", skills: ["Athletics", "Intimidation"] },
-      "Urchin": { desc: "Streetwise survivors, urchins navigate city alleys and hidden paths.", skills: ["Sleight of Hand", "Stealth"] }
+      "Acolyte": { desc: "Raised in temples, acolytes are devoted to faith and serve as spiritual guides.", skills: ["Insight", "Religion"], bonus: { wisdom: 1 } },
+      "Charlatan": { desc: "Quick-witted tricksters, charlatans thrive on deception and clever schemes.", skills: ["Deception", "Sleight of Hand"], bonus: { charisma: 1 } },
+      "Criminal": { desc: "Living outside the law, criminals are skilled in stealth and underworld dealings.", skills: ["Deception", "Stealth"], bonus: { dexterity: 1 } },
+      "Entertainer": { desc: "Performers at heart, entertainers captivate audiences with talent and flair.", skills: ["Acrobatics", "Performance"], bonus: { charisma: 1 } },
+      "Folk Hero": { desc: "Champions of the common folk, folk heroes rise from humble beginnings.", skills: ["Animal Handling", "Survival"], bonus: { constitution: 1 } },
+      "Guild Artisan": { desc: "Skilled craftsmen, guild artisans create and trade goods in bustling markets.", skills: ["Insight", "Persuasion"], bonus: { intelligence: 1 } },
+      "Hermit": { desc: "Hermits seek solitude and wisdom, often living far from civilization.", skills: ["Medicine", "Religion"], bonus: { wisdom: 1 } },
+      "Noble": { desc: "Born to privilege, nobles wield influence and uphold family traditions.", skills: ["History", "Persuasion"], bonus: { charisma: 1 } },
+      "Outlander": { desc: "Wanderers of the wild, outlanders survive in untamed lands.", skills: ["Athletics", "Survival"], bonus: { constitution: 1 } },
+      "Sage": { desc: "Seekers of knowledge, sages dedicate their lives to study and research.", skills: ["Arcana", "History"], bonus: { intelligence: 1 } },
+      "Sailor": { desc: "Adventurers of the sea, sailors are at home on ships and coastal towns.", skills: ["Athletics", "Perception"], bonus: { strength: 1 } },
+      "Soldier": { desc: "Disciplined and battle-hardened, soldiers serve in organized armies.", skills: ["Athletics", "Intimidation"], bonus: { strength: 1 } },
+      "Urchin": { desc: "Streetwise survivors, urchins navigate city alleys and hidden paths.", skills: ["Sleight of Hand", "Stealth"], bonus: { dexterity: 1 } }
     };
     // Show descriptions on change
     function updateDesc(selectId, descId, infoObj) {
@@ -169,9 +169,10 @@
       const select = document.getElementById('class');
       const bonusDiv = document.getElementById('class-bonus');
       const val = select.value;
-      if (classInfo[val] && classInfo[val].desc) {
+      if (classInfo[val] && classInfo[val].bonus) {
+        const bonuses = Object.entries(classInfo[val].bonus).map(([stat, amt]) => `+${amt} <span style='color:#43b581'>${stat.charAt(0).toUpperCase() + stat.slice(1)}</span>`);
         bonusDiv.style.display = 'block';
-        bonusDiv.innerHTML = `<b>Bonuses:</b> <span style='color:#43b581'>${classInfo[val].desc.replace(/\+([0-9]) ([A-Za-z ]+)/g, '+$1 <span style=\'color:#43b581\'>$2</span>').replace(/\./g, '')}</span>`;
+        bonusDiv.innerHTML = `<b>Bonuses:</b> ${bonuses.join(', ')}`;
       } else {
         bonusDiv.style.display = 'none';
         bonusDiv.innerHTML = '';
@@ -184,9 +185,22 @@
       const select = document.getElementById('background');
       const bonusDiv = document.getElementById('background-bonus');
       const val = select.value;
-      if (backgroundInfo[val] && Array.isArray(backgroundInfo[val].skills)) {
-        bonusDiv.style.display = 'block';
-        bonusDiv.innerHTML = `<b>Bonuses:</b> +2 to <span style='color:#43b581'>${backgroundInfo[val].skills.join('</span>, <span style=\'color:#43b581\'>')}</span>`;
+      if (backgroundInfo[val]) {
+        let bonusText = '';
+        if (backgroundInfo[val].bonus) {
+          const statBonuses = Object.entries(backgroundInfo[val].bonus).map(([stat, amt]) => `+${amt} <span style='color:#43b581'>${stat.charAt(0).toUpperCase() + stat.slice(1)}</span>`);
+          bonusText += `<b>Stat Bonus:</b> ${statBonuses.join(', ')}<br>`;
+        }
+        if (Array.isArray(backgroundInfo[val].skills)) {
+          bonusText += `<b>Skill Bonus:</b> +2 to <span style='color:#43b581'>${backgroundInfo[val].skills.join('</span>, <span style=\'color:#43b581\'>')}</span>`;
+        }
+        if (bonusText) {
+          bonusDiv.style.display = 'block';
+          bonusDiv.innerHTML = bonusText;
+        } else {
+          bonusDiv.style.display = 'none';
+          bonusDiv.innerHTML = '';
+        }
       } else {
         bonusDiv.style.display = 'none';
         bonusDiv.innerHTML = '';
@@ -229,13 +243,16 @@
         });
       }
       // Apply class bonuses
-      if (classInfo[charClass]) {
-        if (classInfo[charClass].desc.includes('Strength')) stats.strength += 1;
-        if (classInfo[charClass].desc.includes('Dexterity')) stats.dexterity += 1;
-        if (classInfo[charClass].desc.includes('Constitution')) stats.constitution += 1;
-        if (classInfo[charClass].desc.includes('Intelligence')) stats.intelligence += 1;
-        if (classInfo[charClass].desc.includes('Wisdom')) stats.wisdom += 1;
-        if (classInfo[charClass].desc.includes('Charisma')) stats.charisma += 1;
+      if (classInfo[charClass] && classInfo[charClass].bonus) {
+        Object.entries(classInfo[charClass].bonus).forEach(([stat, val]) => {
+          stats[stat] += val;
+        });
+      }
+      // Apply background bonuses
+      if (backgroundInfo[background] && backgroundInfo[background].bonus) {
+        Object.entries(backgroundInfo[background].bonus).forEach(([stat, val]) => {
+          stats[stat] += val;
+        });
       }
       // Skill bonuses
       function addSkillBonus(skills, skillName, amt) {
