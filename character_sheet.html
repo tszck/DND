@@ -39,32 +39,43 @@
     }
     .top-row {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       gap: 32px;
       width: 100%;
-      flex: 1 1 0;
+      flex: 0 0 auto;
       min-height: 0;
     }
     .profile, .stats {
-      flex: 0 1 45%;
+      flex: 1 1 0;
       min-width: 0;
       min-height: 0;
       display: flex;
       flex-direction: column;
-      max-width: 45%;
+      max-width: 48%;
     }
     .bottom-row {
-      flex: 1 1 0;
+      flex: 0 0 auto;
       min-height: 0;
       display: flex;
       flex-direction: column;
       gap: 24px;
       width: 100%;
-      margin-top: 16px;
+      margin-top: 32px;
     }
     .profile {
       text-align: center;
-      background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;box-sizing:border-box;
+      background: #23272a;
+      padding: 24px 24px 18px 24px;
+      border-radius: 16px;
+      box-sizing: border-box;
+      min-height: 400px;
+    }
+    .stats {
+      background: #23272a;
+      padding: 24px 24px 18px 24px;
+      border-radius: 16px;
+      box-sizing: border-box;
+      min-height: 400px;
     }
     .stats table {
       width: 100%;
@@ -93,7 +104,20 @@
     .inventory, .abilities {
       margin-bottom: 24px;
       text-align: left;
-      background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;box-sizing:border-box;overflow:visible;
+      background: #23272a;
+      padding: 24px 24px 18px 24px;
+      border-radius: 16px;
+      box-sizing: border-box;
+      overflow: visible;
+      width: 100%;
+    }
+    .add-remove {
+      background: #23272a;
+      padding: 18px 24px 18px 24px;
+      border-radius: 16px;
+      width: 100%;
+      margin: 0 0 24px 0;
+      box-sizing: border-box;
     }
     .section-title {
       font-size: 1.2em;
@@ -131,7 +155,8 @@
     }
     /* responsive stack on small screens */
     @media (max-width: 900px) {
-      .top-row, .bottom-row { flex-direction: column; }
+      .top-row { flex-direction: column; }
+      .profile, .stats { max-width: 100%; }
       .dashboard { padding: 16px; }
     }
   </style>
@@ -166,7 +191,7 @@
       </div>
     </div>
     <div class="bottom-row">
-      <div class="add-remove" style="background:#23272a;padding:18px 24px 18px 24px;border-radius:16px;max-width:900px;width:100%;margin:0 auto 0 auto;box-sizing:border-box;">
+      <div class="add-remove">
         <div class="section-title">Add/Remove</div>
         <form id="addForm" style="margin-bottom:24px;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;">
           <label for="type" style="margin:0 4px 0 0;">Type:</label>
