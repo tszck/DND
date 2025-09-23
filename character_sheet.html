@@ -686,10 +686,32 @@
   // Editable bio
   const bioEdit = document.getElementById('bio-edit');
   if (bioEdit) bioEdit.value = character.bio && character.bio.trim() ? character.bio : '';
-  document.getElementById('char-bio').textContent = character.bio && character.bio.trim() ? character.bio : 'The tale of this adventurer is yet to be written...';
-  // Story-driven bio (GM only, not editable)
+
+  const charBioDiv = document.getElementById('char-bio');
   const storyBioDiv = document.getElementById('story-bio');
-  if (storyBioDiv) storyBioDiv.textContent = character.story_bio || '';
+  // hide the separate story-bio container so it won't show twice
+  if (storyBioDiv) storyBioDiv.style.display = 'none';
+
+  // helper to escape HTML
+  function escHtml(s) {
+    return (s || '').toString()
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  const mainBioText = character.bio && character.bio.trim() ? character.bio : 'The tale of this adventurer is yet to be written...';
+  const storyBioText = character.story_bio && character.story_bio.trim() ? character.story_bio : '';
+
+  if (storyBioText) {
+    // show story-driven bio immediately after the main bio inside the same container
+    charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>') +
+      `<div style="margin-top:12px;color:#faa61a;white-space:pre-line;"><strong>Story Bio (GM):</strong><br>${escHtml(storyBioText).replace(/\n/g, '<br>')}</div>`;
+  } else {
+    charBioDiv.innerHTML = escHtml(mainBioText).replace(/\n/g, '<br>');
+  }
 
       // Bonus logic
       const raceInfo = {
