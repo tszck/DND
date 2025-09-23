@@ -85,7 +85,7 @@
         if (!username) return;
         if (username === 'gamemaster') {
           localStorage.setItem('dnd_username', username);
-          window.location.href = 'gm_interface.html';
+          window.location.href = 'gm_character_manager.html';
           return;
         }
         const character = await fetchCharacter(username);
