@@ -64,6 +64,7 @@
     }
     .profile {
       text-align: center;
+      background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;box-sizing:border-box;overflow:visible;
     }
     .profile img {
       width: 120px;
@@ -79,6 +80,7 @@
     .stats, .inventory, .abilities {
       margin-bottom: 24px;
       text-align: left;
+      background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;box-sizing:border-box;overflow:visible;
     }
     .stats table {
       width: 100%;
@@ -127,39 +129,44 @@
       max-width: 320px;
       display: none;
     }
+    /* responsive stack on small screens */
+    @media (max-width: 900px) {
+      .top-row, .bottom-row { flex-direction: column; }
+      .dashboard { padding: 16px; }
+    }
   </style>
 </head>
 <body>
   <div class="dashboard">
     <div class="top-row">
-  <div class="profile" style="background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-height:600px;box-sizing:border-box;overflow:visible;display:flex;flex-direction:column;align-items:center;">
-  <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="this.onerror=null;this.src='avatar.jpg';">
-    <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
-    <div id="avatar-fallback" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#2b2f33;color:#ffd166;">
-      <div style="margin-bottom:6px;"><strong>Avatar upload failed because the storage bucket appears to be missing.</strong></div>
-      <div style="font-size:0.95em;margin-bottom:8px;color:#ddd;">You can either create a storage bucket named <code>avatars</code> in your Supabase project (Storage → Create bucket → public), or provide a direct image URL below to use as the avatar.</div>
-      <input id="avatar-url-input" type="url" placeholder="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg" style="width:68%;padding:6px;border-radius:4px;border:1px solid #444;background:#111;color:#fff;" />
-      <button id="avatar-url-save" style="padding:6px 10px;margin-left:8px;">Use Image URL</button>
-    </div>
-      <h2 id="char-name"></h2>
-      <p id="char-class"></p>
-      <div id="char-summary" style="margin-top:10px;color:#43b581;font-size:1em;"></div>
-      <div id="char-bio" style="margin-top:18px;padding:10px;background:#23272a;border-radius:8px;color:#b9bbbe;font-size:1em;white-space:pre-line;"></div>
-      <div style="margin-top:18px;">
-        <label for="bio-edit" style="color:#43b581;font-size:1em;">Bio / Notes:</label>
-        <textarea id="bio-edit" rows="3" style="width:100%;margin-top:4px;border-radius:4px;padding:8px;background:#23272a;color:#b9bbbe;font-size:1em;"></textarea>
-        <button id="save-bio-btn" style="margin-top:6px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Save Bio</button>
-      </div>
-      <button id="printSheetBtn" style="margin-top:18px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Print Character Sheet</button>
-    </div>
-      <!-- Avatar removed: file not found -->
-    </div>
-  <div class="stats" style="text-align:left;background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-height:600px;box-sizing:border-box;overflow:visible;">
+      <div class="profile" style="background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;min-height:600px;box-sizing:border-box;overflow:visible;display:flex;flex-direction:column;align-items:center;">
+      <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="this.onerror=null;this.src='avatar.jpg';">
+        <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
+        <div id="avatar-fallback" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#2b2f33;color:#ffd166;">
+          <div style="margin-bottom:6px;"><strong>Avatar upload failed because the storage bucket appears to be missing.</strong></div>
+          <div style="font-size:0.95em;margin-bottom:8px;color:#ddd;">You can either create a storage bucket named <code>avatars</code> in your Supabase project (Storage → Create bucket → public), or provide a direct image URL below to use as the avatar.</div>
+          <input id="avatar-url-input" type="url" placeholder="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg" style="width:68%;padding:6px;border-radius:4px;border:1px solid #444;background:#111;color:#fff;" />
+          <button id="avatar-url-save" style="padding:6px 10px;margin-left:8px;">Use Image URL</button>
+        </div>
+          <h2 id="char-name"></h2>
+          <p id="char-class"></p>
+        <div id="char-summary" style="margin-top:10px;color:#43b581;font-size:1em;"></div>
+        <div id="char-bio" style="margin-top:18px;padding:10px;background:#23272a;border-radius:8px;color:#b9bbbe;font-size:1em;white-space:pre-line;"></div>
+          <div style="margin-top:18px;">
+            <label for="bio-edit" style="color:#43b581;font-size:1em;">Bio / Notes:</label>
+            <textarea id="bio-edit" rows="3" style="width:100%;margin-top:4px;border-radius:4px;padding:8px;background:#23272a;color:#b9bbbe;font-size:1em;"></textarea>
+            <button id="save-bio-btn" style="margin-top:6px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Save Bio</button>
+          </div>
+          <button id="printSheetBtn" style="margin-top:18px;background:#7289da;color:#fff;border:none;border-radius:6px;padding:6px 16px;cursor:pointer;">Print Character Sheet</button>
+        </div>
+          <!-- Avatar removed: file not found -->
+        </div>
+      <div class="stats">
         <div class="section-title">Stats</div>
         <table id="stats-table"></table>
       </div>
     </div>
-    <div class="bottom-row" style="display:flex;flex-direction:column;gap:24px;width:100%;margin-top:16px;">
+    <div class="bottom-row">
       <div class="add-remove" style="background:#23272a;padding:18px 24px 18px 24px;border-radius:16px;max-width:900px;width:100%;margin:0 auto 0 auto;box-sizing:border-box;">
         <div class="section-title">Add/Remove</div>
         <form id="addForm" style="margin-bottom:24px;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;">
@@ -182,7 +189,7 @@
           <button type="button" id="removeBtn" style="background: #f04747; margin-left: 2px;">Remove</button>
         </form>
       </div>
-      <div class="inventory" style="background:#23272a;padding:18px 24px 18px 24px;border-radius:16px;max-width:900px;width:100%;margin:0 auto 0 auto;box-sizing:border-box;">
+      <div class="inventory">
         <div class="section-title" style="text-align:left;">Weapons</div>
         <table id="weapons-table" style="width:100%;margin-bottom:12px;"></table>
         <div class="section-title">Armor</div>
@@ -190,7 +197,7 @@
         <div class="section-title">Items</div>
         <table id="items-table" style="width:100%;margin-bottom:12px;"></table>
       </div>
-      <div class="abilities" style="background:#23272a;padding:18px 24px 18px 24px;border-radius:16px;max-width:900px;width:100%;margin:0 auto 0 auto;box-sizing:border-box;">
+      <div class="abilities">
         <div class="section-title" style="text-align:left;">Skills</div>
         <table id="skills-table" style="width:100%;margin-bottom:12px;"></table>
         <div class="section-title">Spells</div>
