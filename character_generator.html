@@ -18,6 +18,10 @@
 <body>
   <div class="form-box">
     <h2>Generate New Character</h2>
+    <div style="text-align:center;margin-bottom:12px;">
+      <img id="avatar-preview" src="avatar.png" alt="Avatar Preview" style="width:96px;height:96px;border-radius:50%;border:3px solid #7289da;object-fit:cover;display:block;margin:0 auto 8px;">
+      <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-bottom:8px;">
+    </div>
     <form id="genForm">
   <label for="username">Username:</label>
   <input type="text" id="username" name="username" pattern="[a-z0-9]+" title="Username must contain only lowercase letters and numbers" placeholder="e.g. player123" required>
@@ -79,6 +83,50 @@
     <button id="downloadBtn" style="display:none;">Print Character Sheet</button>
   </div>
   <script>
+    // Avatar upload logic
+    let avatarBlob = null;
+    let avatarFileType = null;
+    document.getElementById('avatar-upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!['image/jpeg','image/png'].includes(file.type)) {
+        alert('Only JPEG and PNG images allowed.');
+        return;
+      }
+      if (file.size > 200*1024) {
+        alert('Image must be under 200KB.');
+        return;
+      }
+      // Resize image to max 256x256px
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const maxDim = 256;
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round(h * (maxDim / w));
+            w = maxDim;
+          } else {
+            w = Math.round(w * (maxDim / h));
+            h = maxDim;
+          }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob(function(blob) {
+          avatarBlob = blob;
+          avatarFileType = file.type;
+          // Show preview
+          document.getElementById('avatar-preview').src = canvas.toDataURL(file.type, 0.92);
+        }, file.type, 0.92);
+      };
+      const reader = new FileReader();
+      reader.onload = function(ev) { img.src = ev.target.result; };
+      reader.readAsDataURL(file);
+    });
     let generatedBlob = null;
     function randomStat() { return Math.floor(Math.random() * 10) + 8; }
 
@@ -273,6 +321,22 @@
         });
       }
 
+      let avatarUrl = '';
+      if (avatarBlob && avatarFileType) {
+        // Upload avatar to Supabase Storage
+        const fileExt = avatarFileType === 'image/png' ? 'png' : 'jpg';
+        const fileName = `avatar_${username}.${fileExt}`;
+        const { data: uploadData, error: uploadError } = await supabaseClient.storage.from('avatars').upload(fileName, avatarBlob, {
+          upsert: true,
+          contentType: avatarFileType
+        });
+        if (uploadError) {
+          alert('Avatar upload failed: ' + uploadError.message);
+        } else {
+          const { publicURL } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
+          avatarUrl = publicURL;
+        }
+      }
       const character = {
         username: username,
         name: name,
@@ -292,6 +356,7 @@
         skills: Array.isArray(skills) ? skills : [],
         spells: Array.isArray(dndData.spells) ? initEntries(dndData.spells) : [],
         bio: bio,
+        avatar_url: avatarUrl,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -529,7 +594,7 @@
           <div class="section">
             <div class="section-title">Notes</div>
             <div style="height: 150px; border: 1px solid #ccc; padding: 10px;">
-              ${character.bio || 'No notes yet...'}
+              ${character.bio || 'The tale of this adventurer is yet to be written...'}
             </div>
           </div>
         </body>

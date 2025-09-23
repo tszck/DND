@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GM Character Manager</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script src="supabase.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #23272a; color: #fff; margin: 0; }
+    .container { max-width: 1100px; margin: 40px auto; background: #2c2f33; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.4); padding: 32px; }
+    h2 { color: #7289da; }
+    .char-list { margin-bottom: 32px; }
+    .char-list select { padding: 8px; border-radius: 6px; border: none; background: #23272a; color: #fff; font-size: 1em; }
+    .gm-form label { display: block; margin-top: 12px; color: #43b581; }
+    .gm-form input, .gm-form select, .gm-form textarea { width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: none; background: #23272a; color: #fff; }
+    .gm-form textarea { resize: vertical; }
+    .gm-form button { margin-top: 16px; padding: 10px 20px; background: #7289da; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+    .avatar-preview { width: 96px; height: 96px; border-radius: 50%; border: 3px solid #7289da; object-fit: cover; display: block; margin: 0 auto 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Game Master Character Manager</h2>
+    <div class="char-list">
+      <label for="char-select">Select Character:</label>
+      <select id="char-select"></select>
+    </div>
+    <form id="gmForm" class="gm-form">
+      <div style="text-align:center;margin-bottom:12px;">
+        <img id="avatar-preview" src="avatar.png" alt="Avatar Preview" class="avatar-preview">
+        <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-bottom:8px;">
+      </div>
+      <label for="name">Character Name:</label>
+      <input type="text" id="name" name="name">
+      <label for="bio">Bio / Notes:</label>
+      <textarea id="bio" name="bio" rows="3"></textarea>
+      <label for="story-bio">Story Bio (GM only):</label>
+      <textarea id="story-bio" name="story-bio" rows="3"></textarea>
+      <label for="race">Race:</label>
+      <input type="text" id="race" name="race">
+      <label for="class">Class:</label>
+      <input type="text" id="class" name="class">
+      <label for="background">Background:</label>
+      <input type="text" id="background" name="background">
+      <label for="level">Level:</label>
+      <input type="number" id="level" name="level" min="1">
+      <label for="xp">XP:</label>
+      <input type="number" id="xp" name="xp" min="0">
+      <label for="free_stat_points">Free Stat Points:</label>
+      <input type="number" id="free_stat_points" name="free_stat_points" min="0">
+      <label for="strength">Strength:</label>
+      <input type="number" id="strength" name="strength" min="0">
+      <label for="dexterity">Dexterity:</label>
+      <input type="number" id="dexterity" name="dexterity" min="0">
+      <label for="constitution">Constitution:</label>
+      <input type="number" id="constitution" name="constitution" min="0">
+      <label for="intelligence">Intelligence:</label>
+      <input type="number" id="intelligence" name="intelligence" min="0">
+      <label for="wisdom">Wisdom:</label>
+      <input type="number" id="wisdom" name="wisdom" min="0">
+      <label for="charisma">Charisma:</label>
+      <input type="number" id="charisma" name="charisma" min="0">
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+  <script>
+    let characters = [];
+    let selectedChar = null;
+    let avatarBlob = null;
+    let avatarFileType = null;
+    async function fetchCharacters() {
+      const { data, error } = await supabaseClient.from('characters').select('*');
+      if (error) {
+        alert('Failed to fetch characters: ' + error.message);
+        return;
+      }
+      characters = data || [];
+      const select = document.getElementById('char-select');
+      select.innerHTML = '';
+      characters.forEach((char, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `${char.name || char.username || 'Unnamed'} (${char.username})`;
+        select.appendChild(opt);
+      });
+      if (characters.length > 0) {
+        select.value = 0;
+        loadCharacter(0);
+      }
+    }
+    function loadCharacter(idx) {
+      selectedChar = characters[idx];
+      if (!selectedChar) return;
+      document.getElementById('avatar-preview').src = selectedChar.avatar_url || 'avatar.png';
+      document.getElementById('name').value = selectedChar.name || '';
+      document.getElementById('bio').value = selectedChar.bio || '';
+      document.getElementById('story-bio').value = selectedChar.story_bio || '';
+      document.getElementById('race').value = selectedChar.race || '';
+      document.getElementById('class').value = selectedChar.class || '';
+      document.getElementById('background').value = selectedChar.background || '';
+      document.getElementById('level').value = selectedChar.level || 1;
+      document.getElementById('xp').value = selectedChar.xp || 0;
+      document.getElementById('free_stat_points').value = selectedChar.free_stat_points || 0;
+      document.getElementById('strength').value = selectedChar.strength || 0;
+      document.getElementById('dexterity').value = selectedChar.dexterity || 0;
+      document.getElementById('constitution').value = selectedChar.constitution || 0;
+      document.getElementById('intelligence').value = selectedChar.intelligence || 0;
+      document.getElementById('wisdom').value = selectedChar.wisdom || 0;
+      document.getElementById('charisma').value = selectedChar.charisma || 0;
+      avatarBlob = null;
+      avatarFileType = null;
+    }
+    document.getElementById('char-select').addEventListener('change', function(e) {
+      loadCharacter(e.target.value);
+    });
+    document.getElementById('avatar-upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!['image/jpeg','image/png'].includes(file.type)) {
+        alert('Only JPEG and PNG images allowed.');
+        return;
+      }
+      if (file.size > 200*1024) {
+        alert('Image must be under 200KB.');
+        return;
+      }
+      // Resize image to max 256x256px
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const maxDim = 256;
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round(h * (maxDim / w));
+            w = maxDim;
+          } else {
+            w = Math.round(w * (maxDim / h));
+            h = maxDim;
+          }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob(function(blob) {
+          avatarBlob = blob;
+          avatarFileType = file.type;
+          document.getElementById('avatar-preview').src = canvas.toDataURL(file.type, 0.92);
+        }, file.type, 0.92);
+      };
+      const reader = new FileReader();
+      reader.onload = function(ev) { img.src = ev.target.result; };
+      reader.readAsDataURL(file);
+    });
+    document.getElementById('gmForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!selectedChar) return;
+      let avatarUrl = selectedChar.avatar_url || '';
+      if (avatarBlob && avatarFileType) {
+        const fileExt = avatarFileType === 'image/png' ? 'png' : 'jpg';
+        const fileName = `avatar_${selectedChar.username}.${fileExt}`;
+        const { data: uploadData, error: uploadError } = await supabaseClient.storage.from('avatars').upload(fileName, avatarBlob, {
+          upsert: true,
+          contentType: avatarFileType
+        });
+        if (uploadError) {
+          alert('Avatar upload failed: ' + uploadError.message);
+        } else {
+          const { publicURL } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
+          avatarUrl = publicURL;
+        }
+      }
+      const updated = {
+        name: document.getElementById('name').value.trim(),
+        bio: document.getElementById('bio').value.trim(),
+        story_bio: document.getElementById('story-bio').value.trim(),
+        race: document.getElementById('race').value.trim(),
+        class: document.getElementById('class').value.trim(),
+        background: document.getElementById('background').value.trim(),
+        level: parseInt(document.getElementById('level').value) || 1,
+        xp: parseInt(document.getElementById('xp').value) || 0,
+        free_stat_points: parseInt(document.getElementById('free_stat_points').value) || 0,
+        strength: parseInt(document.getElementById('strength').value) || 0,
+        dexterity: parseInt(document.getElementById('dexterity').value) || 0,
+        constitution: parseInt(document.getElementById('constitution').value) || 0,
+        intelligence: parseInt(document.getElementById('intelligence').value) || 0,
+        wisdom: parseInt(document.getElementById('wisdom').value) || 0,
+        charisma: parseInt(document.getElementById('charisma').value) || 0,
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString()
+      };
+      const { error } = await supabaseClient.from('characters').update(updated).eq('username', selectedChar.username);
+      if (error) {
+        alert('Failed to update character: ' + error.message);
+      } else {
+        alert('Character updated!');
+        await fetchCharacters();
+      }
+    });
+    // Only allow access if username is 'gamemaster'
+    function checkGM() {
+      let username = localStorage.getItem('dnd_username');
+      if (!username || username !== 'gamemaster') {
+        window.location.href = 'index.html';
+      }
+    }
+    checkGM();
+    fetchCharacters();
+  </script>
+</body>
+</html>
