@@ -41,17 +41,18 @@
       display: flex;
       flex-direction: row;
       gap: 32px;
-      align-items: stretch;
+      align-items: normal;
       width: 100%;
       flex: 1 1 0;
       min-height: 0;
     }
     .profile, .stats {
-      flex: 1 1 0;
+      flex: 0 1 45%;
       min-width: 0;
       min-height: 0;
       display: flex;
       flex-direction: column;
+      max-width: 45%;
     }
     .bottom-row {
       flex: 1 1 0;
@@ -64,23 +65,7 @@
     }
     .profile {
       text-align: center;
-      background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;box-sizing:border-box;overflow:visible;
-    }
-    .profile img {
-      width: 120px;
-      border-radius: 50%;
-      border: 4px solid #7289da;
-      margin-bottom: 16px;
-    }
-    .profile h2 {
-      margin: 0;
-      font-size: 2em;
-      color: #7289da;
-    }
-    .stats, .inventory, .abilities {
-      margin-bottom: 24px;
-      text-align: left;
-      background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;box-sizing:border-box;overflow:visible;
+      background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;box-sizing:border-box;
     }
     .stats table {
       width: 100%;
@@ -95,6 +80,22 @@
     .stats th:first-child { width: 30%; }
     .stats th:nth-child(2) { width: 20%; }
     .stats th:nth-child(3) { width: 50%; }
+    .profile img {
+      width: 120px;
+      border-radius: 50%;
+      border: 4px solid #7289da;
+      margin-bottom: 16px;
+    }
+    .profile h2 {
+      margin: 0;
+      font-size: 2em;
+      color: #7289da;
+    }
+    .inventory, .abilities {
+      margin-bottom: 24px;
+      text-align: left;
+      background:#23272a;padding:24px 24px 18px 24px;border-radius:16px;box-sizing:border-box;overflow:visible;
+    }
     .section-title {
       font-size: 1.2em;
       color: #43b581;
