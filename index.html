@@ -68,8 +68,19 @@
       <div id="errorMsg" class="error"></div>
     </div>
     <script>
+      function checkSupabaseReady() {
+        if (typeof fetchCharacter !== 'function') {
+          document.getElementById('errorMsg').textContent = 'Supabase is not loaded. Please check your internet connection or script order.';
+          document.querySelector('button[type="submit"]').disabled = true;
+          return false;
+        }
+        document.querySelector('button[type="submit"]').disabled = false;
+        return true;
+      }
+      checkSupabaseReady();
       document.getElementById('characterForm').addEventListener('submit', async function(e) {
         e.preventDefault();
+        if (!checkSupabaseReady()) return;
         const username = document.getElementById('characterName').value.trim();
         if (!username) return;
         const character = await fetchCharacter(username);
