@@ -1,3 +1,37 @@
+      <label for="background">Background:</label>
+      <select id="background" name="background">
+        <option>Acolyte</option>
+        <option>Charlatan</option>
+        <option>Criminal</option>
+        <option>Entertainer</option>
+        <option>Folk Hero</option>
+        <option>Guild Artisan</option>
+        <option>Hermit</option>
+        <option>Noble</option>
+        <option>Outlander</option>
+        <option>Sage</option>
+        <option>Sailor</option>
+        <option>Soldier</option>
+        <option>Urchin</option>
+      </select>
+      <div id="background-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
+    const backgroundInfo = {
+      "Acolyte": "Proficient in Insight & Religion.",
+      "Charlatan": "Proficient in Deception & Sleight of Hand.",
+      "Criminal": "Proficient in Stealth & Deception.",
+      "Entertainer": "Proficient in Acrobatics & Performance.",
+      "Folk Hero": "Proficient in Animal Handling & Survival.",
+      "Guild Artisan": "Proficient in Insight & Persuasion.",
+      "Hermit": "Proficient in Medicine & Religion.",
+      "Noble": "Proficient in History & Persuasion.",
+      "Outlander": "Proficient in Athletics & Survival.",
+      "Sage": "Proficient in Arcana & History.",
+      "Sailor": "Proficient in Athletics & Perception.",
+      "Soldier": "Proficient in Athletics & Intimidation.",
+      "Urchin": "Proficient in Sleight of Hand & Stealth."
+    };
+    updateDesc('background', 'background-desc', backgroundInfo);
+  const background = document.getElementById('background').value;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,6 +66,7 @@
         <option>Half-Orc</option>
         <option>Tiefling</option>
       </select>
+      <div id="race-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
       <label for="class">Class:</label>
       <select id="class" name="class">
         <option>Fighter</option>
@@ -47,34 +82,7 @@
         <option>Sorcerer</option>
         <option>Warlock</option>
       </select>
-      <label for="background">Background:</label>
-      <select id="background" name="background">
-        <option>Acolyte</option>
-        <option>Charlatan</option>
-        <option>Criminal</option>
-        <option>Entertainer</option>
-        <option>Folk Hero</option>
-        <option>Guild Artisan</option>
-        <option>Hermit</option>
-        <option>Noble</option>
-        <option>Outlander</option>
-        <option>Sage</option>
-        <option>Sailor</option>
-        <option>Soldier</option>
-        <option>Urchin</option>
-      </select>
-      <label for="alignment">Alignment:</label>
-      <select id="alignment" name="alignment">
-        <option>Lawful Good</option>
-        <option>Neutral Good</option>
-        <option>Chaotic Good</option>
-        <option>Lawful Neutral</option>
-        <option>True Neutral</option>
-        <option>Chaotic Neutral</option>
-        <option>Lawful Evil</option>
-        <option>Neutral Evil</option>
-        <option>Chaotic Evil</option>
-      </select>
+      <div id="class-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
       <label for="level">Level:</label>
       <input type="number" id="level" name="level" min="1" max="20" value="1" required>
       <button type="submit">Generate</button>
@@ -84,55 +92,130 @@
   <script>
     let generatedBlob = null;
     function randomStat() { return Math.floor(Math.random() * 10) + 8; }
+
+    // Descriptions and bonuses for each option
+    const raceInfo = {
+      "Human": { desc: "+1 to all stats.", bonus: { strength: 1, dexterity: 1, constitution: 1, intelligence: 1, wisdom: 1, charisma: 1 } },
+      "Elf": { desc: "+2 Dexterity, +1 Intelligence.", bonus: { dexterity: 2, intelligence: 1 } },
+      "Dwarf": { desc: "+2 Constitution, +2 Strength.", bonus: { constitution: 2, strength: 2 } },
+      "Halfling": { desc: "+2 Dexterity, +1 Charisma.", bonus: { dexterity: 2, charisma: 1 } },
+      "Dragonborn": { desc: "+2 Strength, +1 Charisma.", bonus: { strength: 2, charisma: 1 } },
+      "Gnome": { desc: "+2 Intelligence, +1 Dexterity.", bonus: { intelligence: 2, dexterity: 1 } },
+      "Half-Elf": { desc: "+2 Charisma, +1 to two other stats.", bonus: { charisma: 2 } },
+      "Half-Orc": { desc: "+2 Strength, +1 Constitution.", bonus: { strength: 2, constitution: 1 } },
+      "Tiefling": { desc: "+2 Charisma, +1 Intelligence.", bonus: { charisma: 2, intelligence: 1 } }
+    };
+    const classInfo = {
+      "Fighter": { desc: "+2 Athletics, +1 Strength." },
+      "Rogue": { desc: "+2 Stealth, +1 Dexterity." },
+      "Wizard": { desc: "+2 Arcana, +1 Intelligence." },
+      "Cleric": { desc: "+2 Religion, +1 Wisdom." },
+      "Barbarian": { desc: "+2 Athletics, +1 Constitution." },
+      "Bard": { desc: "+2 Performance, +1 Charisma." },
+      "Druid": { desc: "+2 Nature, +1 Wisdom." },
+      "Monk": { desc: "+2 Acrobatics, +1 Dexterity." },
+      "Paladin": { desc: "+2 Persuasion, +1 Strength." },
+      "Ranger": { desc: "+2 Survival, +1 Dexterity." },
+      "Sorcerer": { desc: "+2 Arcana, +1 Charisma." },
+      "Warlock": { desc: "+2 Intimidation, +1 Charisma." }
+    };
+    // Show descriptions on change
+    function updateDesc(selectId, descId, infoObj) {
+      const select = document.getElementById(selectId);
+      const descDiv = document.getElementById(descId);
+      function setDesc() {
+        const val = select.value;
+        if (typeof infoObj[val] === 'string') descDiv.textContent = infoObj[val];
+        else if (infoObj[val] && infoObj[val].desc) descDiv.textContent = infoObj[val].desc;
+        else descDiv.textContent = '';
+      }
+      select.addEventListener('change', setDesc);
+      setDesc();
+    }
+    updateDesc('race', 'race-desc', raceInfo);
+    updateDesc('class', 'class-desc', classInfo);
+
     document.getElementById('genForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const name = document.getElementById('name').value.trim();
       const race = document.getElementById('race').value;
       const charClass = document.getElementById('class').value;
-      const background = document.getElementById('background').value;
-      const alignment = document.getElementById('alignment').value;
       const level = parseInt(document.getElementById('level').value);
-      const character = {
-        username: name.toLowerCase(),
-        name,
-        race,
-        class: charClass,
-        background,
-        alignment,
-        level,
+
+      // Load dnd_data.json for full item/equipment/skill/spell lists
+      const res = await fetch('dnd_data.json');
+      const dndData = await res.json();
+
+      // Helper to initialize all entries with count 0
+      function initEntries(list) {
+        return (list || []).map(e => ({ name: e.name, count: 0 }));
+      }
+
+      // Stat base
+      let stats = {
         strength: randomStat(),
         dexterity: randomStat(),
         constitution: randomStat(),
         intelligence: randomStat(),
         wisdom: randomStat(),
-        charisma: randomStat(),
-        items: [
-          { name: "Longsword", count: Math.floor(Math.random()*2) },
-          { name: "Health Potion", count: Math.floor(Math.random()*3) }
-        ],
-        equipment: [
-          { name: "Shield", count: Math.floor(Math.random()*2) },
-          { name: "Leather Armor", count: Math.floor(Math.random()*2) },
-          { name: "Backpack", count: 1 },
-          { name: "Bedroll", count: 1 },
-          { name: "Mess kit", count: 1 },
-          { name: "Rope (50 ft)", count: Math.floor(Math.random()*2) },
-          { name: "Rations (10 days)", count: Math.floor(Math.random()*3) },
-          { name: "Waterskin", count: 1 },
-          { name: "Torch (10)", count: Math.floor(Math.random()*4) },
-          { name: "Tinderbox", count: 1 }
-        ],
-        skills: [
-          { name: "Athletics", count: Math.floor(Math.random()*2) },
-          { name: "Perception", count: Math.floor(Math.random()*2) },
-          { name: "Stealth", count: Math.floor(Math.random()*2) },
-          { name: "Arcana", count: Math.floor(Math.random()*2) }
-        ],
-        spells: [
-          { name: "Fireball", count: Math.floor(Math.random()*2) },
-          { name: "Cure Wounds", count: Math.floor(Math.random()*2) },
-          { name: "Mage Armor", count: Math.floor(Math.random()*2) }
-        ]
+        charisma: randomStat()
+      };
+      // Apply race bonuses
+      if (raceInfo[race] && raceInfo[race].bonus) {
+        Object.entries(raceInfo[race].bonus).forEach(([stat, val]) => {
+          stats[stat] += val;
+        });
+      }
+      // Apply class bonuses
+      if (classInfo[charClass]) {
+        if (classInfo[charClass].desc.includes('Strength')) stats.strength += 1;
+        if (classInfo[charClass].desc.includes('Dexterity')) stats.dexterity += 1;
+        if (classInfo[charClass].desc.includes('Constitution')) stats.constitution += 1;
+        if (classInfo[charClass].desc.includes('Intelligence')) stats.intelligence += 1;
+        if (classInfo[charClass].desc.includes('Wisdom')) stats.wisdom += 1;
+        if (classInfo[charClass].desc.includes('Charisma')) stats.charisma += 1;
+      }
+      // Skill bonuses
+      function addSkillBonus(skills, skillName, amt) {
+        const idx = skills.findIndex(s => s.name === skillName);
+        if (idx > -1) skills[idx].count += amt;
+      }
+      let skills = initEntries(dndData.skills);
+      // Class skill bonuses
+      if (classInfo[charClass]) {
+        const match = classInfo[charClass].desc.match(/\+2 ([A-Za-z ]+)/);
+        if (match) addSkillBonus(skills, match[1], 2);
+      }
+      // Background skill proficiencies
+      if (backgroundInfo[background]) {
+        // Parse skills from description string
+        const desc = backgroundInfo[background];
+        // Example: "Proficient in Insight & Religion."
+        let skillStr = desc.replace('Proficient in ', '').replace('.', '');
+        skillStr.split('&').forEach(s => {
+          const skillName = s.trim();
+          if (skillName) addSkillBonus(skills, skillName, 2);
+        });
+      }
+
+      const character = {
+        username: name.toLowerCase(),
+        name,
+        race,
+        class: charClass,
+  background,
+  // alignment removed
+        level,
+        strength: stats.strength,
+        dexterity: stats.dexterity,
+        constitution: stats.constitution,
+        intelligence: stats.intelligence,
+        wisdom: stats.wisdom,
+        charisma: stats.charisma,
+        items: initEntries(dndData.items),
+        equipment: initEntries(dndData.equipment),
+        skills,
+        spells: initEntries(dndData.spells)
       };
       // Save to Supabase
       const { data, error } = await supabase.from('characters').insert([character]);

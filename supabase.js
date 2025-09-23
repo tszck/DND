@@ -31,8 +31,6 @@ async function updateCharacter(username, updates) {
   return data;
 }
 
-// Real-time sync (optional)
-
 // Polling for character updates (call this from your UI after login)
 window.startCharacterPolling = function(username, updateCallback, intervalMs = 5000) {
   let polling = setInterval(async () => {
