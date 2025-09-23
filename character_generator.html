@@ -11,6 +11,7 @@
       .form-box { background: #2c2f33; padding: 24px; border-radius: 10px; max-width: 400px; margin: 40px auto; }
       label { display: block; margin-top: 12px; }
       input, select { width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: none; }
+      input::placeholder { color: #99aab5; font-style: italic; }
       button { margin-top: 16px; padding: 10px 20px; background: #7289da; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
     </style>
 </head>
@@ -18,8 +19,10 @@
   <div class="form-box">
     <h2>Generate New Character</h2>
     <form id="genForm">
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" pattern="[a-z0-9]+" title="Username must contain only lowercase letters and numbers" placeholder="e.g. player123" required>
+      <label for="name">Character Name:</label>
+      <input type="text" id="name" name="name" placeholder="e.g. Aragorn the Brave" required>
       <label for="race">Race:</label>
       <select id="race" name="race">
         <option>Human</option>
@@ -70,7 +73,7 @@
   <div id="background-desc" style="margin-bottom:8px;color:#43b581;font-size:0.95em;"></div>
   <div id="background-bonus" style="background:#23272a;border-left:4px solid #43b581;padding:8px 12px;margin-bottom:12px;border-radius:6px;display:none;font-size:0.98em;"></div>
       <label for="level">Level:</label>
-      <input type="number" id="level" name="level" min="1" max="20" value="1" required>
+      <input type="number" id="level" name="level" min="1" max="20" value="1" placeholder="Character level (1-20)" required>
       <button type="submit">Generate</button>
     </form>
     <button id="downloadBtn" style="display:none;">Download Character JSON</button>
@@ -137,6 +140,13 @@
     updateDesc('class', 'class-desc', classInfo);
     updateDesc('background', 'background-desc', backgroundInfo);
 
+    // Username validation and formatting
+    document.getElementById('username').addEventListener('input', function(e) {
+      // Convert to lowercase and remove invalid characters
+      let value = e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '');
+      e.target.value = value;
+    });
+
     // Show race bonuses below menu
     function showRaceBonus() {
       const select = document.getElementById('race');
@@ -187,9 +197,11 @@
 
     document.getElementById('genForm').addEventListener('submit', async function(e) {
       e.preventDefault();
+      const username = document.getElementById('username').value.trim();
       const name = document.getElementById('name').value.trim();
       const race = document.getElementById('race').value;
       const charClass = document.getElementById('class').value;
+      const background = document.getElementById('background').value;
       const level = parseInt(document.getElementById('level').value);
 
       // Load dnd_data.json for full item/equipment/skill/spell lists
@@ -244,7 +256,7 @@
       }
 
       const character = {
-        username: name.toLowerCase(),
+        username: username,
         name: name,
         race: race,
         class: charClass,
@@ -263,7 +275,7 @@
         bio: ''
       };
       // Save to Supabase
-      const { data, error } = await supabase.from('characters').insert([character]);
+      const { data, error } = await supabaseClient.from('characters').insert([character]);
       if (error) {
         alert('Error saving character: ' + error.message);
       } else {
@@ -274,10 +286,11 @@
     });
     document.getElementById('downloadBtn').addEventListener('click', function() {
       if (generatedBlob) {
+        const username = document.getElementById('username').value.trim();
         const name = document.getElementById('name').value.trim();
         const a = document.createElement('a');
         a.href = URL.createObjectURL(generatedBlob);
-        a.download = `${name}.json`;
+        a.download = `${username}_${name}.json`;
         a.click();
       }
     });

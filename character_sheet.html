@@ -44,12 +44,16 @@
     .stats table {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed;
     }
     .stats th, .stats td {
       padding: 8px;
       text-align: left;
       border-bottom: 1px solid #444;
     }
+    .stats th:first-child { width: 30%; }
+    .stats th:nth-child(2) { width: 20%; }
+    .stats th:nth-child(3) { width: 50%; }
     .section-title {
       font-size: 1.2em;
       color: #43b581;
@@ -168,34 +172,33 @@
       });
     }
     // Manual add logic
-    document.getElementById('addForm').addEventListener('submit', function(e) {
+    document.getElementById('addForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const type = document.getElementById('type').value;
       const name = document.getElementById('suggestion').value.trim();
       const count = parseInt(document.getElementById('count').value);
-      if (!name || !count) return;
-      // Add to UI
-      let ul;
-      if (type === 'items') ul = document.getElementById('items-list');
-      else if (type === 'equipment') ul = document.getElementById('gears-list');
-      else if (type === 'skills') ul = document.getElementById('skills-list');
-      else if (type === 'spells') ul = document.getElementById('spells-list');
-      // Check if already exists
-      let found = false;
-      ul.querySelectorAll('li').forEach(li => {
-        if (li.textContent.startsWith(name + ' x')) {
-          let parts = li.textContent.split(' x');
-          li.textContent = `${name} x${parseInt(parts[1]) + count}`;
-          found = true;
+      
+      if (!name || !count || !currentCharacter || !currentUsername) return;
+      
+      try {
+        // Update the character data based on type
+        if (type === 'items') {
+          await addItemToCharacter(name, count);
+        } else if (type === 'equipment') {
+          await addEquipmentToCharacter(name, count);
+        } else if (type === 'skills') {
+          await addSkillToCharacter(name, count);
+        } else if (type === 'spells') {
+          await addSpellToCharacter(name, count);
         }
-      });
-      if (!found) {
-        const li = document.createElement('li');
-        li.textContent = `${name} x${count}`;
-        ul.appendChild(li);
+        
+        // Reset form
+        this.reset();
+        updateSuggestionsList(document.getElementById('type').value);
+      } catch (error) {
+        console.error('Error adding item:', error);
+        alert('Failed to add item. Please try again.');
       }
-      this.reset();
-      updateSuggestionsList(document.getElementById('type').value);
     });
     async function loadData() {
       // Removed due to CORS issues and not being used
@@ -286,7 +289,7 @@
 
       // Stats
       const statsTable = document.getElementById('stats-table');
-      statsTable.innerHTML = '<tr><th>Stat</th><th>Total</th><th>Breakdown</th></tr>';
+      statsTable.innerHTML = '<tr><th style="width:30%;">Stat</th><th style="width:20%;">Total</th><th style="width:50%;">Breakdown</th></tr>';
       const statKeys = ['strength','dexterity','constitution','intelligence','wisdom','charisma'];
       statKeys.forEach(key => {
         let base = character[key] ?? 0;
@@ -320,9 +323,9 @@
       const weaponsTable = document.getElementById('weapons-table');
       const armorTable = document.getElementById('armor-table');
       const itemsTable = document.getElementById('items-table');
-      weaponsTable.innerHTML = '<tr><th>Name</th><th>Type</th><th>Damage</th><th>Quantity</th></tr>';
-      armorTable.innerHTML = '<tr><th>Name</th><th>Type</th><th>AC</th><th>Quantity</th></tr>';
-      itemsTable.innerHTML = '<tr><th>Name</th><th>Quantity</th></tr>';
+      weaponsTable.innerHTML = '<tr><th style="width:40%;">Name</th><th style="width:25%;">Type</th><th style="width:20%;">Damage</th><th style="width:15%;">Quantity</th></tr>';
+      armorTable.innerHTML = '<tr><th style="width:40%;">Name</th><th style="width:25%;">Type</th><th style="width:20%;">AC</th><th style="width:15%;">Quantity</th></tr>';
+      itemsTable.innerHTML = '<tr><th style="width:70%;">Name</th><th style="width:30%;">Quantity</th></tr>';
       // Items
       (Array.isArray(character.items) ? character.items : []).forEach(item => {
         if ((item.count ?? 0) > 0) {
@@ -395,7 +398,7 @@
       });
       // Spells
       const spellsTable = document.getElementById('spells-table');
-      spellsTable.innerHTML = '<tr><th>Name</th><th>Level</th></tr>';
+      spellsTable.innerHTML = '<tr><th style="width:70%;">Name</th><th style="width:30%;">Level</th></tr>';
       (Array.isArray(character.spells) ? character.spells : []).forEach(spell => {
         if ((spell.count ?? 0) > 0) {
           const row = document.createElement('tr');
@@ -414,7 +417,7 @@
       });
       // Skills
       const skillsTable = document.getElementById('skills-table');
-      skillsTable.innerHTML = '<tr><th>Name</th><th>Level</th></tr>';
+      skillsTable.innerHTML = '<tr><th style="width:100%;">Name</th></tr>';
       (Array.isArray(character.skills) ? character.skills : []).forEach(skill => {
         let bonus = 0;
         let sources = [];
@@ -438,10 +441,7 @@
           nameCell.textContent = display;
           nameCell.setAttribute('data-type', 'skills');
           nameCell.setAttribute('data-name', skill.name);
-          const lvlCell = document.createElement('td');
-          lvlCell.textContent = skill.level ?? skill.count ?? '';
           row.appendChild(nameCell);
-          row.appendChild(lvlCell);
           skillsTable.appendChild(row);
         }
       });
@@ -518,6 +518,42 @@
       else items.push({ name: itemName, count });
       await updateCharacter(currentUsername, { items });
       currentCharacter.items = items;
+      renderCharacterSheet(currentCharacter);
+    }
+
+    // Add equipment and update DB
+    async function addEquipmentToCharacter(equipmentName, count) {
+      if (!currentCharacter || !currentUsername) return;
+      let equipment = currentCharacter.equipment || [];
+      const idx = equipment.findIndex(e => e.name === equipmentName);
+      if (idx > -1) equipment[idx].count += count;
+      else equipment.push({ name: equipmentName, count });
+      await updateCharacter(currentUsername, { equipment });
+      currentCharacter.equipment = equipment;
+      renderCharacterSheet(currentCharacter);
+    }
+
+    // Add skill and update DB
+    async function addSkillToCharacter(skillName, count) {
+      if (!currentCharacter || !currentUsername) return;
+      let skills = currentCharacter.skills || [];
+      const idx = skills.findIndex(s => s.name === skillName);
+      if (idx > -1) skills[idx].count += count;
+      else skills.push({ name: skillName, count });
+      await updateCharacter(currentUsername, { skills });
+      currentCharacter.skills = skills;
+      renderCharacterSheet(currentCharacter);
+    }
+
+    // Add spell and update DB
+    async function addSpellToCharacter(spellName, count) {
+      if (!currentCharacter || !currentUsername) return;
+      let spells = currentCharacter.spells || [];
+      const idx = spells.findIndex(sp => sp.name === spellName);
+      if (idx > -1) spells[idx].count += count;
+      else spells.push({ name: spellName, count });
+      await updateCharacter(currentUsername, { spells });
+      currentCharacter.spells = spells;
       renderCharacterSheet(currentCharacter);
     }
   </script>
