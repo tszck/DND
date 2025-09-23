@@ -32,14 +32,17 @@ async function updateCharacter(username, updates) {
 }
 
 // Real-time sync (optional)
-supabaseClient
-  .from('characters')
-  .on('UPDATE', payload => {
-    fetchCharacter(payload.new.username).then(character => {
-      if (character) updateUI(character);
-    });
-  })
-  .subscribe();
+
+// Polling for character updates (call this from your UI after login)
+window.startCharacterPolling = function(username, updateCallback, intervalMs = 5000) {
+  let polling = setInterval(async () => {
+    const character = await fetchCharacter(username);
+    if (character && typeof updateCallback === 'function') {
+      updateCallback(character);
+    }
+  }, intervalMs);
+  return () => clearInterval(polling); // returns a function to stop polling
+};
 
 // Expose functions globally
 window.fetchCharacter = fetchCharacter;
