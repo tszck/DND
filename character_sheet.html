@@ -1469,10 +1469,12 @@ if (typeof attachTooltipListeners !== 'function') {
         return;
       }
       // res should be the updated character row
-      currentCharacter = res;
-      renderCharacterSheet(currentCharacter);
-      if (leveledUp) {
-        alert(`Congratulations! You've reached level ${currentLevel} and earned ${statPoints} free stat points!`);
+      if (res) {
+        currentCharacter = res;
+        renderCharacterSheet(currentCharacter);
+        if (leveledUp) {
+          alert(`Congratulations! You've reached level ${currentLevel} and earned ${statPoints} free stat points!`);
+        }
       }
     }
 
