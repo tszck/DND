@@ -81,44 +81,44 @@
 
     // Descriptions and bonuses for each option
     const raceInfo = {
-      "Human": { desc: "+1 to all stats.", bonus: { strength: 1, dexterity: 1, constitution: 1, intelligence: 1, wisdom: 1, charisma: 1 } },
-      "Elf": { desc: "+2 Dexterity, +1 Intelligence.", bonus: { dexterity: 2, intelligence: 1 } },
-      "Dwarf": { desc: "+2 Constitution, +2 Strength.", bonus: { constitution: 2, strength: 2 } },
-      "Halfling": { desc: "+2 Dexterity, +1 Charisma.", bonus: { dexterity: 2, charisma: 1 } },
-      "Dragonborn": { desc: "+2 Strength, +1 Charisma.", bonus: { strength: 2, charisma: 1 } },
-      "Gnome": { desc: "+2 Intelligence, +1 Dexterity.", bonus: { intelligence: 2, dexterity: 1 } },
-      "Half-Elf": { desc: "+2 Charisma, +1 to two other stats.", bonus: { charisma: 2 } },
-      "Half-Orc": { desc: "+2 Strength, +1 Constitution.", bonus: { strength: 2, constitution: 1 } },
-      "Tiefling": { desc: "+2 Charisma, +1 Intelligence.", bonus: { charisma: 2, intelligence: 1 } }
+      "Human": { desc: "Versatile and ambitious, humans have built great civilizations and adapt quickly to new challenges.", bonus: { strength: 1, dexterity: 1, constitution: 1, intelligence: 1, wisdom: 1, charisma: 1 } },
+      "Elf": { desc: "Graceful and wise, elves are known for their long lifespans and deep connection to nature and magic.", bonus: { dexterity: 2, intelligence: 1 } },
+      "Dwarf": { desc: "Stout and hardy, dwarves are master craftsmen and fierce warriors from ancient mountain halls.", bonus: { constitution: 2, strength: 2 } },
+      "Halfling": { desc: "Cheerful and nimble, halflings value comfort, community, and cleverness above all.", bonus: { dexterity: 2, charisma: 1 } },
+      "Dragonborn": { desc: "Proud and honorable, dragonborn possess draconic ancestry and a strong sense of destiny.", bonus: { strength: 2, charisma: 1 } },
+      "Gnome": { desc: "Inventive and curious, gnomes are renowned for their wit, creativity, and magical talents.", bonus: { intelligence: 2, dexterity: 1 } },
+      "Half-Elf": { desc: "Diplomatic and adaptable, half-elves blend the best traits of elves and humans.", bonus: { charisma: 2 } },
+      "Half-Orc": { desc: "Tough and determined, half-orcs are shaped by hardship and excel in strength and endurance.", bonus: { strength: 2, constitution: 1 } },
+      "Tiefling": { desc: "Mysterious and charismatic, tieflings bear the mark of infernal heritage and possess innate magic.", bonus: { charisma: 2, intelligence: 1 } }
     };
     const classInfo = {
-      "Fighter": { desc: "+2 Athletics, +1 Strength." },
-      "Rogue": { desc: "+2 Stealth, +1 Dexterity." },
-      "Wizard": { desc: "+2 Arcana, +1 Intelligence." },
-      "Cleric": { desc: "+2 Religion, +1 Wisdom." },
-      "Barbarian": { desc: "+2 Athletics, +1 Constitution." },
-      "Bard": { desc: "+2 Performance, +1 Charisma." },
-      "Druid": { desc: "+2 Nature, +1 Wisdom." },
-      "Monk": { desc: "+2 Acrobatics, +1 Dexterity." },
-      "Paladin": { desc: "+2 Persuasion, +1 Strength." },
-      "Ranger": { desc: "+2 Survival, +1 Dexterity." },
-      "Sorcerer": { desc: "+2 Arcana, +1 Charisma." },
-      "Warlock": { desc: "+2 Intimidation, +1 Charisma." }
+      "Fighter": { desc: "Masters of martial combat, fighters excel in battle and adapt to any fighting style." },
+      "Rogue": { desc: "Stealthy and cunning, rogues thrive on agility, trickery, and precision strikes." },
+      "Wizard": { desc: "Scholars of the arcane, wizards wield powerful spells and unravel magical mysteries." },
+      "Cleric": { desc: "Divine agents, clerics channel the power of their gods to heal, protect, and smite foes." },
+      "Barbarian": { desc: "Fierce warriors, barbarians tap into primal rage for unmatched strength and resilience." },
+      "Bard": { desc: "Charismatic performers, bards inspire allies and manipulate magic through music and lore." },
+      "Druid": { desc: "Guardians of nature, druids command the elements and transform into beasts." },
+      "Monk": { desc: "Disciplined martial artists, monks harness inner energy for speed and precision." },
+      "Paladin": { desc: "Holy knights, paladins uphold justice and wield divine power against evil." },
+      "Ranger": { desc: "Skilled hunters and trackers, rangers thrive in the wild and master ranged combat." },
+      "Sorcerer": { desc: "Innate spellcasters, sorcerers unleash raw magical power from within." },
+      "Warlock": { desc: "Pact-bound wielders of eldritch magic, warlocks draw power from mysterious patrons." }
     };
     const backgroundInfo = {
-      "Acolyte": { desc: "Skill Proficiencies: Insight, Religion.", skills: ["Insight", "Religion"] },
-      "Charlatan": { desc: "Skill Proficiencies: Deception, Sleight of Hand.", skills: ["Deception", "Sleight of Hand"] },
-      "Criminal": { desc: "Skill Proficiencies: Deception, Stealth.", skills: ["Deception", "Stealth"] },
-      "Entertainer": { desc: "Skill Proficiencies: Acrobatics, Performance.", skills: ["Acrobatics", "Performance"] },
-      "Folk Hero": { desc: "Skill Proficiencies: Animal Handling, Survival.", skills: ["Animal Handling", "Survival"] },
-      "Guild Artisan": { desc: "Skill Proficiencies: Insight, Persuasion.", skills: ["Insight", "Persuasion"] },
-      "Hermit": { desc: "Skill Proficiencies: Medicine, Religion.", skills: ["Medicine", "Religion"] },
-      "Noble": { desc: "Skill Proficiencies: History, Persuasion.", skills: ["History", "Persuasion"] },
-      "Outlander": { desc: "Skill Proficiencies: Athletics, Survival.", skills: ["Athletics", "Survival"] },
-      "Sage": { desc: "Skill Proficiencies: Arcana, History.", skills: ["Arcana", "History"] },
-      "Sailor": { desc: "Skill Proficiencies: Athletics, Perception.", skills: ["Athletics", "Perception"] },
-      "Soldier": { desc: "Skill Proficiencies: Athletics, Intimidation.", skills: ["Athletics", "Intimidation"] },
-      "Urchin": { desc: "Skill Proficiencies: Sleight of Hand, Stealth.", skills: ["Sleight of Hand", "Stealth"] }
+      "Acolyte": { desc: "Raised in temples, acolytes are devoted to faith and serve as spiritual guides.", skills: ["Insight", "Religion"] },
+      "Charlatan": { desc: "Quick-witted tricksters, charlatans thrive on deception and clever schemes.", skills: ["Deception", "Sleight of Hand"] },
+      "Criminal": { desc: "Living outside the law, criminals are skilled in stealth and underworld dealings.", skills: ["Deception", "Stealth"] },
+      "Entertainer": { desc: "Performers at heart, entertainers captivate audiences with talent and flair.", skills: ["Acrobatics", "Performance"] },
+      "Folk Hero": { desc: "Champions of the common folk, folk heroes rise from humble beginnings.", skills: ["Animal Handling", "Survival"] },
+      "Guild Artisan": { desc: "Skilled craftsmen, guild artisans create and trade goods in bustling markets.", skills: ["Insight", "Persuasion"] },
+      "Hermit": { desc: "Hermits seek solitude and wisdom, often living far from civilization.", skills: ["Medicine", "Religion"] },
+      "Noble": { desc: "Born to privilege, nobles wield influence and uphold family traditions.", skills: ["History", "Persuasion"] },
+      "Outlander": { desc: "Wanderers of the wild, outlanders survive in untamed lands.", skills: ["Athletics", "Survival"] },
+      "Sage": { desc: "Seekers of knowledge, sages dedicate their lives to study and research.", skills: ["Arcana", "History"] },
+      "Sailor": { desc: "Adventurers of the sea, sailors are at home on ships and coastal towns.", skills: ["Athletics", "Perception"] },
+      "Soldier": { desc: "Disciplined and battle-hardened, soldiers serve in organized armies.", skills: ["Athletics", "Intimidation"] },
+      "Urchin": { desc: "Streetwise survivors, urchins navigate city alleys and hidden paths.", skills: ["Sleight of Hand", "Stealth"] }
     };
     // Show descriptions on change
     function updateDesc(selectId, descId, infoObj) {
@@ -135,6 +135,8 @@
     }
     updateDesc('race', 'race-desc', raceInfo);
     updateDesc('class', 'class-desc', classInfo);
+    updateDesc('background', 'background-desc', backgroundInfo);
+
     // Show race bonuses below menu
     function showRaceBonus() {
       const select = document.getElementById('race');

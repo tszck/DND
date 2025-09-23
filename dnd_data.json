@@ -4,10 +4,13 @@
     {"name": "Shortsword", "type": "Weapon", "damage": "1d6 piercing", "properties": ["Finesse", "Light"]},
     {"name": "Dagger", "type": "Weapon", "damage": "1d4 piercing", "properties": ["Finesse", "Light", "Thrown"]},
     {"name": "Greatsword", "type": "Weapon", "damage": "2d6 slashing", "properties": ["Heavy", "Two-Handed"]},
-    {"name": "Mace", "type": "Weapon", "damage": "1d6 bludgeoning"},
-    {"name": "Quarterstaff", "type": "Weapon", "damage": "1d6 bludgeoning", "properties": ["Versatile"]},
-    {"name": "Crossbow, Light", "type": "Weapon", "damage": "1d8 piercing", "properties": ["Ammunition", "Loading", "Two-Handed"]},
-    {"name": "Shortbow", "type": "Weapon", "damage": "1d6 piercing", "properties": ["Ammunition", "Two-Handed"]},
+    {"name": "Warhammer", "type": "Weapon", "damage": "1d8 bludgeoning", "properties": ["Versatile"]},
+    {"name": "Handaxe", "type": "Weapon", "damage": "1d6 slashing", "properties": ["Light", "Thrown"]},
+    {"name": "Sling", "type": "Weapon", "damage": "1d4 bludgeoning", "properties": ["Ammunition"]},
+    {"name": "Potion of Strength", "type": "Consumable", "effect": "Grants +2 Strength for 1 hour"},
+    {"name": "Scroll of Fireball", "type": "Consumable", "effect": "Casts Fireball spell"},
+    {"name": "Thieves' Tools", "type": "Tool", "effect": "Used for lockpicking"},
+    {"name": "Explorer's Pack", "type": "Gear", "effect": "Contains basic adventuring supplies"},
     {"name": "Health Potion", "type": "Consumable", "effect": "Heals 2d4+2 HP"},
     {"name": "Antitoxin", "type": "Consumable", "effect": "Removes poison"},
     {"name": "Alchemist's Fire", "type": "Consumable", "effect": "Deals 1d4 fire damage per round"},
@@ -21,6 +24,8 @@
     {"name": "Chain Mail", "type": "Armor", "ac": 16, "strength_req": 13, "stealth_disadvantage": true},
     {"name": "Plate Armor", "type": "Armor", "ac": 18, "strength_req": 15, "stealth_disadvantage": true},
     {"name": "Studded Leather Armor", "type": "Armor", "ac": 12, "dex_bonus": true},
+    {"name": "Ring of Protection", "type": "Magic Item", "ac_bonus": 1, "effect": "Grants +1 to all saving throws"},
+    {"name": "Boots of Elvenkind", "type": "Magic Item", "effect": "Advantage on Stealth checks"},
     {"name": "Backpack", "type": "Gear"},
     {"name": "Bedroll", "type": "Gear"},
     {"name": "Mess kit", "type": "Gear"},
@@ -68,6 +73,63 @@
     {"name": "Healing Word", "level": 1, "school": "Evocation", "description": "A creature of your choice that you can see within range regains hit points."},
     {"name": "Thunderwave", "level": 1, "school": "Evocation", "description": "A wave of thunderous force sweeps out from you."},
     {"name": "Sleep", "level": 1, "school": "Enchantment", "description": "This spell sends creatures into a magical slumber."},
-    {"name": "Burning Hands", "level": 1, "school": "Evocation", "description": "As you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips."}
+    {"name": "Burning Hands", "level": 1, "school": "Evocation", "description": "As you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips."},
+    {"name": "Lightning Bolt", "level": 3, "school": "Evocation", "description": "A stroke of lightning blasts out from you."},
+    {"name": "Invisibility", "level": 2, "school": "Illusion", "description": "A creature becomes invisible until the spell ends."},
+    {"name": "Polymorph", "level": 4, "school": "Transmutation", "description": "Transforms a creature into a new form."},
+    {"name": "Raise Dead", "level": 5, "school": "Necromancy", "description": "Returns a dead creature to life."}
+  ],
+  "monsters": [
+    {"name": "Goblin", "hp": 7, "ac": 15, "attack": "Scimitar +4 (1d6+2)", "abilities": ["Nimble Escape"]},
+    {"name": "Orc", "hp": 15, "ac": 13, "attack": "Greataxe +5 (1d12+3)", "abilities": ["Aggressive"]},
+    {"name": "Dragon", "hp": 200, "ac": 19, "attack": "Multiattack, Fire Breath", "abilities": ["Legendary Resistance", "Fly"]}
+  ],
+  "backgrounds": [
+    {"name": "Acolyte", "desc": "Raised in temples, devoted to faith."},
+    {"name": "Charlatan", "desc": "Quick-witted trickster, master of deception."},
+    {"name": "Criminal", "desc": "Living outside the law, skilled in stealth."},
+    {"name": "Entertainer", "desc": "Captivates audiences with talent and flair."},
+    {"name": "Folk Hero", "desc": "Champions of the common folk."},
+    {"name": "Guild Artisan", "desc": "Skilled craftsmen and traders."},
+    {"name": "Hermit", "desc": "Seeks solitude and wisdom."},
+    {"name": "Noble", "desc": "Born to privilege, wields influence."},
+    {"name": "Outlander", "desc": "Survives in untamed lands."},
+    {"name": "Sage", "desc": "Dedicated to study and research."},
+    {"name": "Sailor", "desc": "Adventurer of the sea."},
+    {"name": "Soldier", "desc": "Disciplined and battle-hardened."},
+    {"name": "Urchin", "desc": "Streetwise survivor."}
+  ],
+  "races": [
+    {"name": "Human", "desc": "Versatile and ambitious."},
+    {"name": "Elf", "desc": "Graceful and wise."},
+    {"name": "Dwarf", "desc": "Stout and hardy."},
+    {"name": "Halfling", "desc": "Cheerful and nimble."},
+    {"name": "Dragonborn", "desc": "Proud and honorable."},
+    {"name": "Gnome", "desc": "Inventive and curious."},
+    {"name": "Half-Elf", "desc": "Diplomatic and adaptable."},
+    {"name": "Half-Orc", "desc": "Tough and determined."},
+    {"name": "Tiefling", "desc": "Mysterious and charismatic."}
+  ],
+  "classes": [
+    {"name": "Fighter", "desc": "Master of martial combat."},
+    {"name": "Rogue", "desc": "Stealthy and cunning."},
+    {"name": "Wizard", "desc": "Scholar of the arcane."},
+    {"name": "Cleric", "desc": "Divine agent and healer."},
+    {"name": "Barbarian", "desc": "Fierce warrior."},
+    {"name": "Bard", "desc": "Charismatic performer."},
+    {"name": "Druid", "desc": "Guardian of nature."},
+    {"name": "Monk", "desc": "Disciplined martial artist."},
+    {"name": "Paladin", "desc": "Holy knight."},
+    {"name": "Ranger", "desc": "Skilled hunter and tracker."},
+    {"name": "Sorcerer", "desc": "Innate spellcaster."},
+    {"name": "Warlock", "desc": "Pact-bound wielder of eldritch magic."}
+  ],
+  "feats": [
+    {"name": "Alert", "desc": "Always on the lookout for danger."},
+    {"name": "Tough", "desc": "Increase hit points."}
+  ],
+  "conditions": [
+    {"name": "Blinded", "desc": "Can't see, fails sight checks."},
+    {"name": "Poisoned", "desc": "Disadvantage on attack rolls and ability checks."}
   ]
 }
