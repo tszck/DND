@@ -212,6 +212,7 @@
               // Always use .jpg and canonical name
               const fileName = `avatar_${currentUsername}.jpg`;
               try {
+                // Always use upsert:true to replace old avatar
                 const { data, error } = await supabaseClient.storage.from('avatars').upload(fileName, blob, {
                   upsert: true,
                   contentType: 'image/jpeg'
@@ -226,7 +227,11 @@
                   return;
                 }
                 currentCharacter = res;
-                document.getElementById('avatar-img').src = publicURL;
+                // Force reload image to avoid browser cache
+                const avatarImg = document.getElementById('avatar-img');
+                if (avatarImg) {
+                  avatarImg.src = publicURL + '?t=' + Date.now();
+                }
                 alert('Avatar updated!');
               } catch (err) {
                 console.error('Avatar upload error:', err);
