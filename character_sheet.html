@@ -20,9 +20,9 @@
       border-radius: 12px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.4);
       padding: 32px;
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 32px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 32px;
     }
     .profile {
       text-align: center;
@@ -39,7 +39,8 @@
       color: #7289da;
     }
     .stats, .inventory, .abilities {
-      margin-bottom: 24px;
+  margin-bottom: 24px;
+  text-align: left;
     }
     .stats table {
       width: 100%;
@@ -101,7 +102,7 @@
     </div>
       <!-- Avatar removed: file not found -->
     <div>
-      <div class="stats">
+  <div class="stats" style="text-align:left;">
         <div class="section-title">Stats</div>
         <table id="stats-table"></table>
         <div class="section-title">Add/Remove</div>
@@ -119,13 +120,13 @@
           <input type="text" id="suggestion" name="suggestion" list="suggestions" autocomplete="off" required>
           <datalist id="suggestions"></datalist>
           <label for="count">Count:</label>
-          <input type="number" id="count" name="count" min="1" value="1" required>
+          <input type="number" id="count" name="count" min="1" value="1" required style="width:70px;max-width:90px;">
           <button type="submit" style="background: #43b581;">Add</button>
           <button type="button" id="removeBtn" style="background: #f04747; margin-left: 8px;">Remove</button>
         </form>
       </div>
       <div class="inventory">
-  <div class="section-title">Weapons</div>
+  <div class="section-title" style="text-align:left;">Weapons</div>
   <table id="weapons-table" style="width:100%;margin-bottom:12px;"></table>
   <div class="section-title">Armor</div>
   <table id="armor-table" style="width:100%;margin-bottom:12px;"></table>
@@ -133,7 +134,7 @@
   <table id="items-table" style="width:100%;margin-bottom:12px;"></table>
       </div>
       <div class="abilities">
-  <div class="section-title">Skills</div>
+  <div class="section-title" style="text-align:left;">Skills</div>
   <table id="skills-table" style="width:100%;margin-bottom:12px;"></table>
   <div class="section-title">Spells</div>
   <table id="spells-table" style="width:100%;margin-bottom:12px;"></table>
@@ -423,7 +424,7 @@
       xpTd.textContent = character.xp ?? 0;
       const xpBreakdown = document.createElement('td');
       const currentLevel = character.level ?? 1;
-      const xpForNextLevel = 100 * currentLevel;
+      const xpForNextLevel = 100 * (currentLevel + 1);
       const currentXP = character.xp ?? 0;
       xpBreakdown.textContent = `[${xpForNextLevel - currentXP} needed for level ${currentLevel + 1}]`;
       xpRow.appendChild(xpTh);
