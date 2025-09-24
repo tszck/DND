@@ -218,63 +218,54 @@
             </div>
             <div>
               <label for="race">Race:</label>
-              <div style="color:#aaa;font-size:0.97em;margin-bottom:2px;">Current: <span id="race-current-text"></span></div>
-              <select id="race" name="race" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:2px;">
-                <option value="">-- Select Race --</option>
-                <option value="Human">Human</option>
-                <option value="Elf">Elf</option>
-                <option value="Dwarf">Dwarf</option>
-                <option value="Halfling">Halfling</option>
-                <option value="Gnome">Gnome</option>
-                <option value="Half-Orc">Half-Orc</option>
-                <option value="Tiefling">Tiefling</option>
-                <option value="Dragonborn">Dragonborn</option>
-                <option value="Other">Other (type below)</option>
-              </select>
-              <input type="text" id="race-other" name="race-other" placeholder="Custom race..." style="display:none;margin-top:6px;">
+              <input type="text" id="race" name="race" list="race-suggestions" autocomplete="off">
+              <datalist id="race-suggestions">
+                <option value="Human">
+                <option value="Elf">
+                <option value="Dwarf">
+                <option value="Halfling">
+                <option value="Gnome">
+                <option value="Half-Orc">
+                <option value="Tiefling">
+                <option value="Dragonborn">
+              </datalist>
             </div>
             <div>
               <label for="class">Class:</label>
-              <div style="color:#aaa;font-size:0.97em;margin-bottom:2px;">Current: <span id="class-current-text"></span></div>
-              <select id="class" name="class" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:2px;">
-                <option value="">-- Select Class --</option>
-                <option value="Fighter">Fighter</option>
-                <option value="Wizard">Wizard</option>
-                <option value="Cleric">Cleric</option>
-                <option value="Rogue">Rogue</option>
-                <option value="Ranger">Ranger</option>
-                <option value="Paladin">Paladin</option>
-                <option value="Bard">Bard</option>
-                <option value="Druid">Druid</option>
-                <option value="Barbarian">Barbarian</option>
-                <option value="Monk">Monk</option>
-                <option value="Sorcerer">Sorcerer</option>
-                <option value="Warlock">Warlock</option>
-                <option value="Other">Other (type below)</option>
-              </select>
-              <input type="text" id="class-other" name="class-other" placeholder="Custom class..." style="display:none;margin-top:6px;">
+              <input type="text" id="class" name="class" list="class-suggestions" autocomplete="off">
+              <datalist id="class-suggestions">
+                <option value="Fighter">
+                <option value="Wizard">
+                <option value="Cleric">
+                <option value="Rogue">
+                <option value="Ranger">
+                <option value="Paladin">
+                <option value="Bard">
+                <option value="Druid">
+                <option value="Barbarian">
+                <option value="Monk">
+                <option value="Sorcerer">
+                <option value="Warlock">
+              </datalist>
             </div>
             <div>
               <label for="background">Background:</label>
-              <div style="color:#aaa;font-size:0.97em;margin-bottom:2px;">Current: <span id="background-current-text"></span></div>
-              <select id="background" name="background" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:2px;">
-                <option value="">-- Select Background --</option>
-                <option value="Acolyte">Acolyte</option>
-                <option value="Charlatan">Charlatan</option>
-                <option value="Criminal">Criminal</option>
-                <option value="Entertainer">Entertainer</option>
-                <option value="Folk Hero">Folk Hero</option>
-                <option value="Guild Artisan">Guild Artisan</option>
-                <option value="Hermit">Hermit</option>
-                <option value="Noble">Noble</option>
-                <option value="Outlander">Outlander</option>
-                <option value="Sage">Sage</option>
-                <option value="Sailor">Sailor</option>
-                <option value="Soldier">Soldier</option>
-                <option value="Urchin">Urchin</option>
-                <option value="Other">Other (type below)</option>
-              </select>
-              <input type="text" id="background-other" name="background-other" placeholder="Custom background..." style="display:none;margin-top:6px;">
+              <input type="text" id="background" name="background" list="background-suggestions" autocomplete="off">
+              <datalist id="background-suggestions">
+                <option value="Acolyte">
+                <option value="Charlatan">
+                <option value="Criminal">
+                <option value="Entertainer">
+                <option value="Folk Hero">
+                <option value="Guild Artisan">
+                <option value="Hermit">
+                <option value="Noble">
+                <option value="Outlander">
+                <option value="Sage">
+                <option value="Sailor">
+                <option value="Soldier">
+                <option value="Urchin">
+              </datalist>
             </div>
             <div>
               <label for="xp">XP:</label>
@@ -321,54 +312,54 @@
 
           </div>
           
-          <div class="section-title" style="margin-top: 24px;">Ability Scores</div>
+          <div class="section-title" style="margin-top: 24px;">Stats</div>
           <div class="stats-grid">
             <div class="stat-input-group">
               <label for="strength">Strength:</label>
-              <div style="display:flex;align-items:center;gap:4px;">
-                <button type="button" class="stat-btn" data-stat="strength" data-delta="-1">-</button>
-                <input type="number" id="strength" name="strength" min="0" style="flex:1;max-width:60px;">
-                <button type="button" class="stat-btn" data-stat="strength" data-delta="1">+</button>
+              <div style="display:flex;align-items:center;gap:0;">
+                <button type="button" class="stat-btn" data-stat="strength" data-delta="-1" style="width:32px;height:32px;font-size:1.2em;">-</button>
+                <input type="number" id="strength" name="strength" min="0" style="width:80px;height:32px;text-align:center;font-size:1.1em;" readonly>
+                <button type="button" class="stat-btn" data-stat="strength" data-delta="1" style="width:32px;height:32px;font-size:1.2em;">+</button>
               </div>
             </div>
             <div class="stat-input-group">
               <label for="dexterity">Dexterity:</label>
-              <div style="display:flex;align-items:center;gap:4px;">
-                <button type="button" class="stat-btn" data-stat="dexterity" data-delta="-1">-</button>
-                <input type="number" id="dexterity" name="dexterity" min="0" style="flex:1;max-width:60px;">
-                <button type="button" class="stat-btn" data-stat="dexterity" data-delta="1">+</button>
+              <div style="display:flex;align-items:center;gap:0;">
+                <button type="button" class="stat-btn" data-stat="dexterity" data-delta="-1" style="width:32px;height:32px;font-size:1.2em;">-</button>
+                <input type="number" id="dexterity" name="dexterity" min="0" style="width:80px;height:32px;text-align:center;font-size:1.1em;" readonly>
+                <button type="button" class="stat-btn" data-stat="dexterity" data-delta="1" style="width:32px;height:32px;font-size:1.2em;">+</button>
               </div>
             </div>
             <div class="stat-input-group">
               <label for="constitution">Constitution:</label>
-              <div style="display:flex;align-items:center;gap:4px;">
-                <button type="button" class="stat-btn" data-stat="constitution" data-delta="-1">-</button>
-                <input type="number" id="constitution" name="constitution" min="0" style="flex:1;max-width:60px;">
-                <button type="button" class="stat-btn" data-stat="constitution" data-delta="1">+</button>
+              <div style="display:flex;align-items:center;gap:0;">
+                <button type="button" class="stat-btn" data-stat="constitution" data-delta="-1" style="width:32px;height:32px;font-size:1.2em;">-</button>
+                <input type="number" id="constitution" name="constitution" min="0" style="width:80px;height:32px;text-align:center;font-size:1.1em;" readonly>
+                <button type="button" class="stat-btn" data-stat="constitution" data-delta="1" style="width:32px;height:32px;font-size:1.2em;">+</button>
               </div>
             </div>
             <div class="stat-input-group">
               <label for="intelligence">Intelligence:</label>
-              <div style="display:flex;align-items:center;gap:4px;">
-                <button type="button" class="stat-btn" data-stat="intelligence" data-delta="-1">-</button>
-                <input type="number" id="intelligence" name="intelligence" min="0" style="flex:1;max-width:60px;">
-                <button type="button" class="stat-btn" data-stat="intelligence" data-delta="1">+</button>
+              <div style="display:flex;align-items:center;gap:0;">
+                <button type="button" class="stat-btn" data-stat="intelligence" data-delta="-1" style="width:32px;height:32px;font-size:1.2em;">-</button>
+                <input type="number" id="intelligence" name="intelligence" min="0" style="width:80px;height:32px;text-align:center;font-size:1.1em;" readonly>
+                <button type="button" class="stat-btn" data-stat="intelligence" data-delta="1" style="width:32px;height:32px;font-size:1.2em;">+</button>
               </div>
             </div>
             <div class="stat-input-group">
               <label for="wisdom">Wisdom:</label>
-              <div style="display:flex;align-items:center;gap:4px;">
-                <button type="button" class="stat-btn" data-stat="wisdom" data-delta="-1">-</button>
-                <input type="number" id="wisdom" name="wisdom" min="0" style="flex:1;max-width:60px;">
-                <button type="button" class="stat-btn" data-stat="wisdom" data-delta="1">+</button>
+              <div style="display:flex;align-items:center;gap:0;">
+                <button type="button" class="stat-btn" data-stat="wisdom" data-delta="-1" style="width:32px;height:32px;font-size:1.2em;">-</button>
+                <input type="number" id="wisdom" name="wisdom" min="0" style="width:80px;height:32px;text-align:center;font-size:1.1em;" readonly>
+                <button type="button" class="stat-btn" data-stat="wisdom" data-delta="1" style="width:32px;height:32px;font-size:1.2em;">+</button>
               </div>
             </div>
             <div class="stat-input-group">
               <label for="charisma">Charisma:</label>
-              <div style="display:flex;align-items:center;gap:4px;">
-                <button type="button" class="stat-btn" data-stat="charisma" data-delta="-1">-</button>
-                <input type="number" id="charisma" name="charisma" min="0" style="flex:1;max-width:60px;">
-                <button type="button" class="stat-btn" data-stat="charisma" data-delta="1">+</button>
+              <div style="display:flex;align-items:center;gap:0;">
+                <button type="button" class="stat-btn" data-stat="charisma" data-delta="-1" style="width:32px;height:32px;font-size:1.2em;">-</button>
+                <input type="number" id="charisma" name="charisma" min="0" style="width:80px;height:32px;text-align:center;font-size:1.1em;" readonly>
+                <button type="button" class="stat-btn" data-stat="charisma" data-delta="1" style="width:32px;height:32px;font-size:1.2em;">+</button>
               </div>
             </div>
           </div>
@@ -541,71 +532,15 @@
       }
       document.getElementById('name').value = selectedChar.name || '';
       document.getElementById('bio').value = selectedChar.bio || '';
-      document.getElementById('story-bio').value = selectedChar.story_bio || '';
-      // Race dropdown and custom
-      const raceSel = document.getElementById('race');
-      const raceOther = document.getElementById('race-other');
-      const raceCurrentText = document.getElementById('race-current-text');
-      if (raceSel && raceOther && raceCurrentText) {
-        raceCurrentText.textContent = selectedChar.race || '';
-        if (raceSel.querySelector(`option[value="${selectedChar.race}"]`)) {
-          raceSel.value = selectedChar.race;
-          raceOther.style.display = 'none';
-          raceOther.value = '';
-        } else if (selectedChar.race) {
-          raceSel.value = 'Other';
-          raceOther.style.display = '';
-          raceOther.value = selectedChar.race;
-        } else {
-          raceSel.value = '';
-          raceOther.style.display = 'none';
-          raceOther.value = '';
-        }
-      }
-      // Class dropdown and custom
-      const classSel = document.getElementById('class');
-      const classOther = document.getElementById('class-other');
-      const classCurrentText = document.getElementById('class-current-text');
-      if (classSel && classOther && classCurrentText) {
-        classCurrentText.textContent = selectedChar.class || '';
-        if (classSel.querySelector(`option[value="${selectedChar.class}"]`)) {
-          classSel.value = selectedChar.class;
-          classOther.style.display = 'none';
-          classOther.value = '';
-        } else if (selectedChar.class) {
-          classSel.value = 'Other';
-          classOther.style.display = '';
-          classOther.value = selectedChar.class;
-        } else {
-          classSel.value = '';
-          classOther.style.display = 'none';
-          classOther.value = '';
-        }
-      }
-      // Background dropdown and custom
-      const backgroundSel = document.getElementById('background');
-      const backgroundOther = document.getElementById('background-other');
-      const backgroundCurrentText = document.getElementById('background-current-text');
-      if (backgroundSel && backgroundOther && backgroundCurrentText) {
-        backgroundCurrentText.textContent = selectedChar.background || '';
-        if (backgroundSel.querySelector(`option[value="${selectedChar.background}"]`)) {
-          backgroundSel.value = selectedChar.background;
-          backgroundOther.style.display = 'none';
-          backgroundOther.value = '';
-        } else if (selectedChar.background) {
-          backgroundSel.value = 'Other';
-          backgroundOther.style.display = '';
-          backgroundOther.value = selectedChar.background;
-        } else {
-          backgroundSel.value = '';
-          backgroundOther.style.display = 'none';
-          backgroundOther.value = '';
-        }
-      }
+      if (document.getElementById('story-bio')) document.getElementById('story-bio').value = selectedChar.story_bio || '';
+      // Set text input values directly
+      document.getElementById('race').value = selectedChar.race || '';
+      document.getElementById('class').value = selectedChar.class || '';
+      document.getElementById('background').value = selectedChar.background || '';
       document.getElementById('level').value = selectedChar.level || 1;
       document.getElementById('xp').value = selectedChar.xp || 0;
       document.getElementById('gold').value = selectedChar.gold || 0;
-      document.getElementById('free_stat_points').value = selectedChar.free_stat_points || 0;
+      if (document.getElementById('free_stat_points')) document.getElementById('free_stat_points').value = selectedChar.free_stat_points || 0;
       document.getElementById('strength').value = selectedChar.strength || 0;
       document.getElementById('dexterity').value = selectedChar.dexterity || 0;
       document.getElementById('constitution').value = selectedChar.constitution || 0;
@@ -656,7 +591,7 @@
           if (updated) {
             selectedChar.status_effects = effects;
             renderStatusEffectsList(effects);
-            addSessionLog(`Added status effect: ${eff.name}`);
+            addSessionLog(`Added status effect: ${eff.name}`, selectedChar);
           }
         });
       }
@@ -676,7 +611,7 @@
           if (updated) {
             selectedChar.status_effects = effects;
             renderStatusEffectsList(effects);
-            addSessionLog(`Removed status effect: ${effName}`);
+            addSessionLog(`Removed status effect: ${effName}`, selectedChar);
           }
         });
       }
@@ -693,17 +628,23 @@
           val += delta;
           if (val < 0) val = 0;
           input.value = val;
-          addSessionLog(`Adjusted ${stat} by ${delta > 0 ? '+' : ''}${delta}. New value: ${val}`);
+          addSessionLog(`Adjusted ${stat} by ${delta > 0 ? '+' : ''}${delta}. New value: ${val}`, selectedChar);
         }
       }
     });
 
     // --- Session Log ---
     let sessionLog = [];
-    function addSessionLog(msg) {
+    function addSessionLog(msg, char) {
       const now = new Date();
       const time = now.toLocaleTimeString();
-      sessionLog.unshift(`[${time}] ${msg}`);
+      let charLabel = '';
+      if (char && (char.name || char.username)) {
+        charLabel = ` [${char.name || char.username}]`;
+      } else if (selectedChar && (selectedChar.name || selectedChar.username)) {
+        charLabel = ` [${selectedChar.name || selectedChar.username}]`;
+      }
+      sessionLog.unshift(`[${time}]${charLabel} ${msg}`);
       if (sessionLog.length > 50) sessionLog = sessionLog.slice(0, 50);
       renderSessionLog();
     }
