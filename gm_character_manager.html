@@ -6,6 +6,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
   <script src="supabase.js"></script>
   <style>
+  .buff-indicator { margin-left:4px; color:#43b581; font-size:1.1em; cursor:help; }
+  .debuff-indicator { margin-left:4px; color:#f04747; font-size:1.1em; cursor:help; }
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       background: #23272a;
@@ -465,16 +467,16 @@
     }
     // Predefined status effects (can be extended)
     const STATUS_EFFECTS = [
-      { name: 'Inspired', desc: 'Advantage on one ability check, attack roll, or saving throw.', buff: '+1d6 to a roll', debuff: '', duration: '1 use', notes: '' },
-      { name: 'Bleeding', desc: 'Loses HP each turn until healed.', buff: '', debuff: '-1 HP/turn', duration: 'Until healed', notes: '' },
-      { name: 'Poisoned', desc: 'Disadvantage on attack rolls and ability checks.', buff: '', debuff: 'Disadvantage on attacks/checks', duration: 'Varies', notes: '' },
-      { name: 'Blessed', desc: 'Add 1d4 to attack rolls and saving throws.', buff: '+1d4 to attacks/saves', debuff: '', duration: '1 min', notes: '' },
-      { name: 'Cursed', desc: 'Disadvantage on all rolls.', buff: '', debuff: 'Disadvantage on all rolls', duration: 'Varies', notes: '' },
-      { name: 'Stunned', desc: 'Can’t move, can speak only falteringly.', buff: '', debuff: 'No actions/movement', duration: '1 round', notes: '' },
-      { name: 'Invisible', desc: 'Cannot be seen without magic.', buff: 'Cannot be targeted', debuff: '', duration: 'Varies', notes: '' },
-      { name: 'Frightened', desc: 'Disadvantage on ability checks and attack rolls while source of fear is in line of sight.', buff: '', debuff: 'Disadvantage, cannot approach', duration: 'Varies', notes: '' },
-      { name: 'Paralyzed', desc: 'Incapacitated, can’t move or speak.', buff: '', debuff: 'No actions/movement', duration: 'Varies', notes: '' },
-      { name: 'Charmed', desc: 'Cannot attack charmer, charmer has advantage on social checks.', buff: '', debuff: 'Cannot attack charmer', duration: 'Varies', notes: '' }
+  { name: 'Inspired', desc: 'Advantage on one ability check, attack roll, or saving throw.', buff: '+1d6 to a roll', debuff: '', duration: 'sustained', notes: '' },
+  { name: 'Bleeding', desc: 'Loses HP each turn until healed.', buff: '', debuff: '-1 HP/turn', duration: 'sustained', notes: '' },
+  { name: 'Poisoned', desc: 'Disadvantage on attack rolls and ability checks.', buff: '', debuff: 'Disadvantage on attacks/checks', duration: 'sustained', notes: '' },
+  { name: 'Blessed', desc: 'Add 1d4 to attack rolls and saving throws.', buff: '+1d4 to attacks/saves', debuff: '', duration: 'sustained', notes: '' },
+  { name: 'Cursed', desc: 'Disadvantage on all rolls.', buff: '', debuff: 'Disadvantage on all rolls', duration: 'sustained', notes: '' },
+  { name: 'Stunned', desc: 'Can’t move, can speak only falteringly.', buff: '', debuff: 'No actions/movement', duration: 'sustained', notes: '' },
+  { name: 'Invisible', desc: 'Cannot be seen without magic.', buff: 'Cannot be targeted', debuff: '', duration: 'sustained', notes: '' },
+  { name: 'Frightened', desc: 'Disadvantage on ability checks and attack rolls while source of fear is in line of sight.', buff: '', debuff: 'Disadvantage, cannot approach', duration: 'sustained', notes: '' },
+  { name: 'Paralyzed', desc: 'Incapacitated, can’t move or speak.', buff: '', debuff: 'No actions/movement', duration: 'sustained', notes: '' },
+  { name: 'Charmed', desc: 'Cannot attack charmer, charmer has advantage on social checks.', buff: '', debuff: 'Cannot attack charmer', duration: 'sustained', notes: '' }
     ];
 
     function renderStatusEffectsList(effects) {
@@ -485,7 +487,7 @@
         return;
       }
       listDiv.innerHTML = effects.map(eff =>
-        `<span style="display:inline-block;background:#444;color:#fff;padding:4px 10px;margin:2px 4px 2px 0;border-radius:8px;font-size:0.98em;">${eff.name}${eff.duration ? ` <span style='color:#faa61a;font-size:0.9em;'>(${eff.duration})</span>` : ''}</span>`
+  `<span style="display:inline-block;background:#444;color:#fff;padding:4px 10px;margin:2px 4px 2px 0;border-radius:8px;font-size:0.98em;">${eff.name}${eff.duration ? ` <span style='color:#faa61a;font-size:0.9em;'>(sustained)</span>` : ''}</span>`
       ).join('');
     }
 
@@ -507,7 +509,7 @@
       if (!select || !descDiv) return;
       const eff = STATUS_EFFECTS.find(e => e.name === select.value);
       if (eff) {
-        descDiv.innerHTML = `<b>${eff.name}:</b> ${eff.desc} ${eff.buff ? `<span style='color:#43b581;'>[Buff: ${eff.buff}]</span>` : ''} ${eff.debuff ? `<span style='color:#f04747;'>[Debuff: ${eff.debuff}]</span>` : ''} <span style='color:#faa61a;'>${eff.duration ? `[Duration: ${eff.duration}]` : ''}</span>`;
+  descDiv.innerHTML = `<b>${eff.name}:</b> ${eff.desc} ${eff.buff ? `<span style='color:#43b581;'>[Buff: ${eff.buff}]</span>` : ''} ${eff.debuff ? `<span style='color:#f04747;'>[Debuff: ${eff.debuff}]</span>` : ''} <span style='color:#faa61a;'>[Sustained]</span>`;
       } else {
         descDiv.textContent = '';
       }
