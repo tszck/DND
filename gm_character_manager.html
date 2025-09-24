@@ -170,13 +170,11 @@
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <div class="top-row">
-      <!-- Character Selection Block -->
-      <div class="char-selection">
-        <div class="section-title">Game Master Character Manager</div>
-        <div class="char-list">
-          <label>Select Character(s):</label>
+    <div class="dashboard">
+      <!-- Top bulk action and character selection panel -->
+      <div style="display:flex;flex-direction:row;gap:32px;width:100%;align-items:flex-start;">
+        <div style="flex:2 1 0;min-width:0;">
+          <div class="section-title">Game Master Character Manager</div>
           <div id="bulk-action-bar" style="margin-bottom:10px;display:flex;gap:8px;align-items:center;">
             <button type="button" id="bulk-xp-btn">Grant XP</button>
             <button type="button" id="bulk-gold-btn">Grant Gold</button>
@@ -184,39 +182,12 @@
             <span id="bulk-action-msg" style="color:#43b581;font-size:0.95em;margin-left:8px;"></span>
           </div>
           <div id="char-checkbox-list" style="max-height:220px;overflow-y:auto;border:1px solid #404549;border-radius:6px;padding:8px 0 8px 0;background:#23272a;"></div>
-        </div>
-        <div style="margin-top: 24px; padding: 16px; border: 2px dashed #404549; border-radius: 8px; text-align: center; color: #72767d;">
-          <p>Bulk actions: Select multiple characters above and use the buttons to grant XP, gold, or status (placeholder).</p>
-        </div>
-      </div>
-      
-      <!-- Character Preview Block -->
-          <div id="bulk-action-bar" style="margin-bottom:10px;display:flex;gap:8px;align-items:center;">
-            <button type="button" id="bulk-xp-btn">Grant XP</button>
-            <button type="button" id="bulk-gold-btn">Grant Gold</button>
-            <button type="button" id="bulk-status-btn">Set Status (placeholder)</button>
-            <span id="bulk-action-msg" style="color:#43b581;font-size:0.95em;margin-left:8px;"></span>
+          <div style="margin-top: 16px; padding: 12px; border: 2px dashed #404549; border-radius: 8px; text-align: center; color: #72767d;">
+            <p>Bulk actions: Select multiple characters above and use the buttons to grant XP, gold, or status (placeholder).</p>
           </div>
-          <div id="char-checkbox-list" style="max-height:220px;overflow-y:auto;border:1px solid #404549;border-radius:6px;padding:8px 0 8px 0;background:#23272a;"></div>
         </div>
-        <!-- Space reserved for additional GM controls -->
-        <div style="margin-top: 24px; padding: 16px; border: 2px dashed #404549; border-radius: 8px; text-align: center; color: #72767d;">
-          <p>Bulk actions: Select multiple characters above and use the buttons to grant XP, gold, or status (placeholder).</p>
-        </div>
-      <div class="char-preview">
-        <div class="section-title">Character Preview</div>
-        <div style="text-align: center;">
-          <img id="avatar-preview" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg" alt="Avatar Preview" class="avatar-preview">
-          <input type="file" id="avatar-upload" accept="image/jpg, image/jpeg" style="margin-bottom: 16px;">
-        </div>
-        
-        <!-- Space reserved for character quick info -->
-        <div style="margin-top: 16px; padding: 16px; border: 2px dashed #404549; border-radius: 8px; text-align: center; color: #72767d;">
-          <p>Space reserved for character quick info</p>
-          <p style="font-size: 0.9em;">Future features: Level, class, quick stats display</p>
-        </div>
+        <!-- Character Preview panel removed: avatar will be moved into Basic Information section -->
       </div>
-    </div>
 
     <div class="bottom-row">
   <form id="gmForm" class="gm-form">
@@ -228,6 +199,14 @@
         <!-- Basic Information Section -->
         <div class="gm-form-section">
           <div class="section-title">Basic Information</div>
+          <div style="margin-bottom:16px;">
+            <label for="single-char-select">Choose Character:</label>
+            <select id="single-char-select" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:6px;"></select>
+          </div>
+          <div style="text-align:center;margin-bottom:16px;">
+            <img id="avatar-preview" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg" alt="Avatar Preview" class="avatar-preview">
+            <input type="file" id="avatar-upload" accept="image/jpg, image/jpeg" style="margin-bottom: 8px;display:block;margin-left:auto;margin-right:auto;">
+          </div>
           <div class="basic-info-grid">
             <div>
               <label for="name">Character Name:</label>
@@ -302,53 +281,51 @@
           <div class="stats-grid">
             <div class="stat-input-group">
               <label for="strength">Strength:</label>
-                <div style="display:flex;align-items:center;gap:4px;">
-                  <button type="button" class="stat-btn" data-stat="strength" data-delta="-1">-</button>
-                  <input type="number" id="strength" name="strength" min="0" style="flex:1;">
-                  <button type="button" class="stat-btn" data-stat="strength" data-delta="1">+</button>
-                </div>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <button type="button" class="stat-btn" data-stat="strength" data-delta="-1">-</button>
+                <input type="number" id="strength" name="strength" min="0" style="flex:1;max-width:60px;">
+                <button type="button" class="stat-btn" data-stat="strength" data-delta="1">+</button>
+              </div>
             </div>
             <div class="stat-input-group">
               <label for="dexterity">Dexterity:</label>
-              <input type="number" id="dexterity" name="dexterity" min="0">
-                <div style="display:flex;align-items:center;gap:4px;">
-                  <button type="button" class="stat-btn" data-stat="dexterity" data-delta="-1">-</button>
-                  <input type="number" id="dexterity" name="dexterity" min="0" style="flex:1;">
-                  <button type="button" class="stat-btn" data-stat="dexterity" data-delta="1">+</button>
-                </div>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <button type="button" class="stat-btn" data-stat="dexterity" data-delta="-1">-</button>
+                <input type="number" id="dexterity" name="dexterity" min="0" style="flex:1;max-width:60px;">
+                <button type="button" class="stat-btn" data-stat="dexterity" data-delta="1">+</button>
+              </div>
             </div>
             <div class="stat-input-group">
               <label for="constitution">Constitution:</label>
-                <div style="display:flex;align-items:center;gap:4px;">
-                  <button type="button" class="stat-btn" data-stat="constitution" data-delta="-1">-</button>
-                  <input type="number" id="constitution" name="constitution" min="0" style="flex:1;">
-                  <button type="button" class="stat-btn" data-stat="constitution" data-delta="1">+</button>
-                </div>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <button type="button" class="stat-btn" data-stat="constitution" data-delta="-1">-</button>
+                <input type="number" id="constitution" name="constitution" min="0" style="flex:1;max-width:60px;">
+                <button type="button" class="stat-btn" data-stat="constitution" data-delta="1">+</button>
+              </div>
             </div>
             <div class="stat-input-group">
               <label for="intelligence">Intelligence:</label>
-              <input type="number" id="intelligence" name="intelligence" min="0">
-                <div style="display:flex;align-items:center;gap:4px;">
-                  <button type="button" class="stat-btn" data-stat="intelligence" data-delta="-1">-</button>
-                  <input type="number" id="intelligence" name="intelligence" min="0" style="flex:1;">
-                  <button type="button" class="stat-btn" data-stat="intelligence" data-delta="1">+</button>
-                </div>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <button type="button" class="stat-btn" data-stat="intelligence" data-delta="-1">-</button>
+                <input type="number" id="intelligence" name="intelligence" min="0" style="flex:1;max-width:60px;">
+                <button type="button" class="stat-btn" data-stat="intelligence" data-delta="1">+</button>
+              </div>
             </div>
             <div class="stat-input-group">
               <label for="wisdom">Wisdom:</label>
-                <div style="display:flex;align-items:center;gap:4px;">
-                  <button type="button" class="stat-btn" data-stat="wisdom" data-delta="-1">-</button>
-                  <input type="number" id="wisdom" name="wisdom" min="0" style="flex:1;">
-                  <button type="button" class="stat-btn" data-stat="wisdom" data-delta="1">+</button>
-                </div>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <button type="button" class="stat-btn" data-stat="wisdom" data-delta="-1">-</button>
+                <input type="number" id="wisdom" name="wisdom" min="0" style="flex:1;max-width:60px;">
+                <button type="button" class="stat-btn" data-stat="wisdom" data-delta="1">+</button>
+              </div>
             </div>
             <div class="stat-input-group">
               <label for="charisma">Charisma:</label>
-                <div style="display:flex;align-items:center;gap:4px;">
-                  <button type="button" class="stat-btn" data-stat="charisma" data-delta="-1">-</button>
-                  <input type="number" id="charisma" name="charisma" min="0" style="flex:1;">
-                  <button type="button" class="stat-btn" data-stat="charisma" data-delta="1">+</button>
-                </div>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <button type="button" class="stat-btn" data-stat="charisma" data-delta="-1">-</button>
+                <input type="number" id="charisma" name="charisma" min="0" style="flex:1;max-width:60px;">
+                <button type="button" class="stat-btn" data-stat="charisma" data-delta="1">+</button>
+              </div>
             </div>
           </div>
           
@@ -396,6 +373,7 @@
           // If only one selected, load it
           if (selectedCharIndexes.length === 1) {
             loadCharacter(selectedCharIndexes[0]);
+            updateSingleCharSelect(selectedCharIndexes[0]);
           }
         });
         const label = document.createElement('label');
@@ -404,6 +382,33 @@
         wrapper.appendChild(label);
         listDiv.appendChild(wrapper);
       });
+      updateSingleCharSelect(selectedCharIndexes.length === 1 ? selectedCharIndexes[0] : null);
+    }
+
+    function renderSingleCharSelect() {
+      const select = document.getElementById('single-char-select');
+      if (!select) return;
+      select.innerHTML = '';
+      characters.forEach((char, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `${char.name || char.username || 'Unnamed'} (${char.username})`;
+        select.appendChild(opt);
+      });
+      // Set selected option to the first selectedCharIndexes[0] if available
+      if (selectedCharIndexes.length === 1) {
+        select.value = selectedCharIndexes[0];
+      }
+    }
+
+    function updateSingleCharSelect(idx) {
+      const select = document.getElementById('single-char-select');
+      if (!select) return;
+      if (idx !== null && idx !== undefined) {
+        select.value = idx;
+      } else {
+        select.selectedIndex = -1;
+      }
     }
     let characters = [];
     let selectedChar = null;
@@ -418,6 +423,7 @@
       characters = data || [];
       selectedCharIndexes = characters.length > 0 ? [0] : [];
       renderCharCheckboxList();
+      renderSingleCharSelect();
       if (characters.length > 0) {
         loadCharacter(0);
       }
@@ -514,6 +520,18 @@
     }
     // Status Effects UI logic
     document.addEventListener('DOMContentLoaded', function() {
+      // Single character dropdown event
+      const singleCharSelect = document.getElementById('single-char-select');
+      if (singleCharSelect) {
+        singleCharSelect.addEventListener('change', function() {
+          const idx = parseInt(this.value);
+          if (!isNaN(idx)) {
+            selectedCharIndexes = [idx];
+            loadCharacter(idx);
+            renderCharCheckboxList();
+          }
+        });
+      }
       updateStatusEffectSelect();
       showStatusEffectDesc();
       const select = document.getElementById('status-effect-select');
