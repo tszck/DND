@@ -193,19 +193,7 @@
   <section class="guide-section" id="status">
     <h2>Status Effects</h2>
 
-// Dropdown navigation logic
-document.addEventListener('DOMContentLoaded', function() {
-  const jump = document.getElementById('section-jump');
-  if (jump) {
-    jump.addEventListener('change', function() {
-      const val = jump.value;
-      const section = document.getElementById(val);
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  }
-});
+
     <p><b>Status effects</b> are special conditions (positive or negative) that can affect your character during play. They are applied and removed by the GM as the story or combat unfolds. Some grant buffs, others impose penalties. Effects are visible on your character sheet.</p>
     <table style="width:100%;font-size:0.98em;background:#23272a;color:#fff;border-radius:8px;overflow:hidden;">
       <thead>
@@ -270,5 +258,20 @@ document.addEventListener('DOMContentLoaded', function() {
     <p style="font-size:0.97em;color:#b9bbbe;margin-top:8px;">This is not a complete list. Many skills and spells can be affected by multiple status effects. See your character sheet for real-time indicators.</p>
   </section>
 </main>
+<script>
+// Dropdown navigation logic (moved to end of body for reliability)
+document.addEventListener('DOMContentLoaded', function() {
+  const jump = document.getElementById('section-jump');
+  if (jump) {
+    jump.addEventListener('change', function() {
+      const val = jump.value;
+      const section = document.getElementById(val);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+});
+</script>
 </body>
 </html>
