@@ -922,11 +922,23 @@
   if (effects.length === 0) {
     statusDiv.innerHTML = '<span style="color:#888;">No status effects</span>';
   } else {
-    statusDiv.innerHTML = effects.map(eff =>
-      `<span class="status-chip" title="${eff.desc ? eff.desc.replace(/\"/g,'&quot;') : ''}${eff.buff ? '\nBuff: ' + eff.buff : ''}${eff.debuff ? '\nDebuff: ' + eff.debuff : ''}${eff.notes ? '\nNotes: ' + eff.notes : ''}">`
-      + eff.name + ` <span style='color:#faa61a;font-size:0.9em;'>(sustained)</span>` +
-      `</span>`
-    ).join('');
+    statusDiv.innerHTML = effects.map(eff => {
+      // Find effect in dndData if possible
+      let effData = null;
+      if (typeof dndData !== 'undefined' && dndData && dndData.status_effects) {
+        effData = dndData.status_effects.find(e => e.name === eff.name);
+      }
+      let desc = effData && effData.desc ? effData.desc : (eff.desc || '');
+      let buff = effData && effData.buff ? effData.buff : (eff.buff || '');
+      let debuff = effData && effData.debuff ? effData.debuff : (eff.debuff || '');
+      let notes = effData && effData.notes ? effData.notes : (eff.notes || '');
+      let tooltip = '';
+      if (desc) tooltip += desc;
+      if (buff) tooltip += (tooltip ? '\n' : '') + 'Buff: ' + buff;
+      if (debuff) tooltip += (tooltip ? '\n' : '') + 'Debuff: ' + debuff;
+      if (notes) tooltip += (tooltip ? '\n' : '') + 'Notes: ' + notes;
+      return `<span class="status-chip" title="${tooltip.replace(/"/g,'&quot;')}">${eff.name}${eff.duration ? ` <span style='color:#faa61a;font-size:0.9em;'>(sustained)</span>` : ''}</span>`;
+    }).join('');
   }
   // Add style for status chips
   (function addStatusChipStyle() {

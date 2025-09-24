@@ -502,9 +502,23 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
         listDiv.innerHTML = '<span style="color:#888;">No status effects.</span>';
         return;
       }
-      listDiv.innerHTML = effects.map(eff =>
-  `<span style="display:inline-block;background:#444;color:#fff;padding:4px 10px;margin:2px 4px 2px 0;border-radius:8px;font-size:0.98em;">${eff.name}${eff.duration ? ` <span style='color:#faa61a;font-size:0.9em;'>(sustained)</span>` : ''}</span>`
-      ).join('');
+      listDiv.innerHTML = effects.map(eff => {
+        // Find effect in dndData if possible
+        let effData = null;
+        if (dndData && dndData.status_effects) {
+          effData = dndData.status_effects.find(e => e.name === eff.name);
+        }
+        let desc = effData && effData.desc ? effData.desc : (eff.desc || '');
+        let buff = effData && effData.buff ? effData.buff : (eff.buff || '');
+        let debuff = effData && effData.debuff ? effData.debuff : (eff.debuff || '');
+        let notes = effData && effData.notes ? effData.notes : (eff.notes || '');
+        let tooltip = '';
+        if (desc) tooltip += desc;
+        if (buff) tooltip += (tooltip ? '\n' : '') + 'Buff: ' + buff;
+        if (debuff) tooltip += (tooltip ? '\n' : '') + 'Debuff: ' + debuff;
+        if (notes) tooltip += (tooltip ? '\n' : '') + 'Notes: ' + notes;
+        return `<span class="status-chip" title="${tooltip.replace(/"/g,'&quot;')}">${eff.name}${eff.duration ? ` <span style='color:#faa61a;font-size:0.9em;'>(sustained)</span>` : ''}</span>`;
+      }).join('');
     }
 
     function updateStatusEffectSelect() {
@@ -663,10 +677,12 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
             if (bonus > 0) bracket = ` [${sources.join(', ')}]`;
             if (buffs.length > 0) label += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
             if (debuffs.length > 0) label += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
-            // Tooltip: show description, bonuses, buffs, debuffs
+            // Tooltip: use dndData for description, bonuses, buffs, debuffs
             let tooltip = '';
             if (skillData && skillData.description) tooltip += skillData.description;
             if (bonus > 0) tooltip += (tooltip ? '\n' : '') + 'Bonuses: ' + sources.join(', ');
+            if (skillData && skillData.buffs && skillData.buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Possible Buffs: ' + skillData.buffs.join(', ');
+            if (skillData && skillData.debuffs && skillData.debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Possible Debuffs: ' + skillData.debuffs.join(', ');
             if (buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Buffed by: ' + buffs.join(', ');
             if (debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Debuffed by: ' + debuffs.join(', ');
             const chip = document.createElement('span');
@@ -692,10 +708,12 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
             if (level) bracket = ` [Level ${level}]`;
             if (buffs.length > 0) label += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
             if (debuffs.length > 0) label += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
-            // Tooltip: show description, level, buffs, debuffs
+            // Tooltip: use dndData for description, level, buffs, debuffs
             let tooltip = '';
             if (spellData && spellData.description) tooltip += spellData.description;
             if (level) tooltip += (tooltip ? '\n' : '') + 'Level: ' + level;
+            if (spellData && spellData.buffs && spellData.buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Possible Buffs: ' + spellData.buffs.join(', ');
+            if (spellData && spellData.debuffs && spellData.debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Possible Debuffs: ' + spellData.debuffs.join(', ');
             if (buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Buffed by: ' + buffs.join(', ');
             if (debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Debuffed by: ' + debuffs.join(', ');
             const chip = document.createElement('span');
