@@ -549,8 +549,18 @@
       document.getElementById('charisma').value = selectedChar.charisma || 0;
       avatarBlob = null;
       avatarFileType = null;
-      // Status effects
-      renderStatusEffectsList(selectedChar.status_effects || []);
+      // Defensive: ensure status_effects is always an array
+      if (typeof selectedChar.status_effects === 'string') {
+        try {
+          selectedChar.status_effects = JSON.parse(selectedChar.status_effects);
+        } catch (e) {
+          selectedChar.status_effects = [];
+        }
+      }
+      if (!Array.isArray(selectedChar.status_effects)) {
+        selectedChar.status_effects = [];
+      }
+      renderStatusEffectsList(selectedChar.status_effects);
       updateStatusEffectSelect();
       showStatusEffectDesc();
     }
@@ -589,9 +599,16 @@
           effects.push({ ...eff });
           const updated = await updateCharacter(selectedChar.username, { status_effects: effects });
           if (updated) {
-            selectedChar.status_effects = effects;
-            renderStatusEffectsList(effects);
-            addSessionLog(`Added status effect: ${eff.name}`, selectedChar);
+            // Always re-fetch character from Supabase to ensure DB and UI are in sync
+            const freshChar = await fetchCharacter(selectedChar.username);
+            if (freshChar) {
+              selectedChar = freshChar;
+              renderStatusEffectsList(selectedChar.status_effects || []);
+              addSessionLog(`Added status effect: ${eff.name}`, selectedChar);
+            } else {
+              renderStatusEffectsList(effects);
+              addSessionLog(`Added status effect: ${eff.name}`, selectedChar);
+            }
           }
         });
       }
@@ -609,9 +626,16 @@
           effects.splice(idx, 1);
           const updated = await updateCharacter(selectedChar.username, { status_effects: effects });
           if (updated) {
-            selectedChar.status_effects = effects;
-            renderStatusEffectsList(effects);
-            addSessionLog(`Removed status effect: ${effName}`, selectedChar);
+            // Always re-fetch character from Supabase to ensure DB and UI are in sync
+            const freshChar = await fetchCharacter(selectedChar.username);
+            if (freshChar) {
+              selectedChar = freshChar;
+              renderStatusEffectsList(selectedChar.status_effects || []);
+              addSessionLog(`Removed status effect: ${effName}`, selectedChar);
+            } else {
+              renderStatusEffectsList(effects);
+              addSessionLog(`Removed status effect: ${effName}`, selectedChar);
+            }
           }
         });
       }
