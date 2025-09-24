@@ -365,6 +365,10 @@
               </div>
             </div>
           </div>
+          <div class="section-title" style="margin-top: 24px;">Skills</div>
+          <div id="gm-skills-list" style="margin-bottom:16px;"></div>
+          <div class="section-title">Spells</div>
+          <div id="gm-spells-list" style="margin-bottom:16px;"></div>
           
           <!-- Space reserved for additional stats -->
           <div style="margin-top: 24px; padding: 16px; border: 2px dashed #404549; border-radius: 8px; text-align: center; color: #72767d;">
@@ -448,6 +452,18 @@
       }
     }
     let characters = [];
+let dndData = null;
+// Load dnd_data.json for skills/spells info
+async function loadDndData() {
+  try {
+    const res = await fetch('dnd_data.json');
+    dndData = await res.json();
+  } catch (err) {
+    console.error('Failed to load dnd_data.json:', err);
+    dndData = {};
+  }
+}
+window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
     let selectedChar = null;
     let avatarBlob = null;
     let avatarFileType = null;
