@@ -5,6 +5,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Fetch character by username
+// Now supports status_effects (array of objects: {name, desc, buff, debuff, duration, notes})
 async function fetchCharacter(username) {
   const { data, error } = await supabaseClient
     .from('characters')
@@ -15,14 +16,23 @@ async function fetchCharacter(username) {
     alert('Character not found!');
     return null;
   }
+  // Ensure status_effects is always an array
+  if (!data.status_effects || !Array.isArray(data.status_effects)) {
+    data.status_effects = [];
+  }
   return data;
 }
 
-// Update character (e.g., add item, change stat)
+// Update character (e.g., add item, change stat, status_effects)
+// To update status_effects, pass { status_effects: [...] } in updates
 async function updateCharacter(username, updates) {
   // Try update and return the updated row. Retry once on transient failure.
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
+      // Ensure status_effects is always an array if present
+      if (updates && updates.status_effects && !Array.isArray(updates.status_effects)) {
+        updates.status_effects = [];
+      }
       const resp = await supabaseClient
         .from('characters')
         .update(updates)
@@ -31,7 +41,7 @@ async function updateCharacter(username, updates) {
         .single();
       const { data, error } = resp;
       if (error) {
-        // If the error appears to be caused by a missing column on the server (e.g. 'gold'),
+        // If the error appears to be caused by a missing column on the server (e.g. 'gold' or 'status_effects'),
         // remove that key from the updates and retry once. This makes client code resilient
         // when the database schema hasn't been migrated yet.
         try {
@@ -47,9 +57,20 @@ async function updateCharacter(username, updates) {
               .select()
               .single();
             if (!retryResp.error) return retryResp.data;
-            // If retry returned error, fall through to the existing verification flow so we still attempt
-            // to verify whether the update actually applied.
-            updates = updatesNoGold; // continue verification using the reduced payload
+            updates = updatesNoGold;
+          }
+          // Handle missing status_effects column
+          if (updates && Object.prototype.hasOwnProperty.call(updates, 'status_effects') && msg.includes('could not find') && msg.includes('status_effects')) {
+            console.warn('Server reports missing status_effects column; retrying update without status_effects...');
+            const { status_effects, ...updatesNoStatus } = updates;
+            const retryResp = await supabaseClient
+              .from('characters')
+              .update(updatesNoStatus)
+              .eq('username', username)
+              .select()
+              .single();
+            if (!retryResp.error) return retryResp.data;
+            updates = updatesNoStatus;
           }
         } catch (e) {
           console.warn('Error while handling missing-column fallback:', e);
@@ -73,7 +94,6 @@ async function updateCharacter(username, updates) {
               if (typeof val === 'object') {
                 if (JSON.stringify(val) !== JSON.stringify(fetchedVal)) { match = false; break; }
               } else {
-                // treat numbers and strings loosely (coerce)
                 if ((fetchedVal === undefined && val !== undefined) || String(fetchedVal) !== String(val)) { match = false; break; }
               }
             }
@@ -89,9 +109,12 @@ async function updateCharacter(username, updates) {
         alert('Update failed: ' + (error.message || JSON.stringify(error)));
         return null;
       }
+      // Ensure status_effects is always an array
+      if (data && (!data.status_effects || !Array.isArray(data.status_effects))) {
+        data.status_effects = [];
+      }
       return data;
     } catch (ex) {
-      // Network or unexpected error
       if (attempt === 1) {
         console.warn(`updateCharacter attempt ${attempt} threw, retrying...`, ex);
         await new Promise(r => setTimeout(r, 200));

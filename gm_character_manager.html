@@ -176,18 +176,33 @@
       <div class="char-selection">
         <div class="section-title">Game Master Character Manager</div>
         <div class="char-list">
-          <label for="char-select">Select Character:</label>
-          <select id="char-select"></select>
+          <label>Select Character(s):</label>
+          <div id="bulk-action-bar" style="margin-bottom:10px;display:flex;gap:8px;align-items:center;">
+            <button type="button" id="bulk-xp-btn">Grant XP</button>
+            <button type="button" id="bulk-gold-btn">Grant Gold</button>
+            <button type="button" id="bulk-status-btn">Set Status (placeholder)</button>
+            <span id="bulk-action-msg" style="color:#43b581;font-size:0.95em;margin-left:8px;"></span>
+          </div>
+          <div id="char-checkbox-list" style="max-height:220px;overflow-y:auto;border:1px solid #404549;border-radius:6px;padding:8px 0 8px 0;background:#23272a;"></div>
         </div>
-        
-        <!-- Space reserved for additional GM controls -->
         <div style="margin-top: 24px; padding: 16px; border: 2px dashed #404549; border-radius: 8px; text-align: center; color: #72767d;">
-          <p>Space reserved for additional GM controls</p>
-          <p style="font-size: 0.9em;">Future features: Quick actions, character notes, etc.</p>
+          <p>Bulk actions: Select multiple characters above and use the buttons to grant XP, gold, or status (placeholder).</p>
         </div>
       </div>
       
       <!-- Character Preview Block -->
+          <div id="bulk-action-bar" style="margin-bottom:10px;display:flex;gap:8px;align-items:center;">
+            <button type="button" id="bulk-xp-btn">Grant XP</button>
+            <button type="button" id="bulk-gold-btn">Grant Gold</button>
+            <button type="button" id="bulk-status-btn">Set Status (placeholder)</button>
+            <span id="bulk-action-msg" style="color:#43b581;font-size:0.95em;margin-left:8px;"></span>
+          </div>
+          <div id="char-checkbox-list" style="max-height:220px;overflow-y:auto;border:1px solid #404549;border-radius:6px;padding:8px 0 8px 0;background:#23272a;"></div>
+        </div>
+        <!-- Space reserved for additional GM controls -->
+        <div style="margin-top: 24px; padding: 16px; border: 2px dashed #404549; border-radius: 8px; text-align: center; color: #72767d;">
+          <p>Bulk actions: Select multiple characters above and use the buttons to grant XP, gold, or status (placeholder).</p>
+        </div>
       <div class="char-preview">
         <div class="section-title">Character Preview</div>
         <div style="text-align: center;">
@@ -204,7 +219,12 @@
     </div>
 
     <div class="bottom-row">
-      <form id="gmForm" class="gm-form">
+  <form id="gmForm" class="gm-form">
+    <!-- Session Log Panel -->
+    <div class="gm-form-section" id="session-log-panel" style="background:#202225;margin-top:0;">
+      <div class="section-title" style="margin-bottom:8px;">Session Log</div>
+      <div id="session-log" style="max-height:120px;overflow-y:auto;font-size:0.97em;background:#18191c;padding:10px 12px;border-radius:8px;color:#ccc;"></div>
+    </div>
         <!-- Basic Information Section -->
         <div class="gm-form-section">
           <div class="section-title">Basic Information</div>
@@ -244,7 +264,19 @@
           
           <label for="story-bio">Story Bio (GM only):</label>
           <textarea id="story-bio" name="story-bio" rows="3"></textarea>
-          
+
+          <!-- Status Effects Management -->
+          <div style="margin-top:24px;">
+            <div class="section-title" style="margin-bottom:8px;">Status Effects</div>
+            <div id="status-effects-list" style="margin-bottom:10px;"></div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <select id="status-effect-select" style="flex:1;max-width:220px;"></select>
+              <button type="button" id="add-status-effect-btn">Add</button>
+              <button type="button" id="remove-status-effect-btn">Remove</button>
+            </div>
+            <div id="status-effect-desc" style="margin-top:6px;color:#b9bbbe;font-size:0.95em;"></div>
+          </div>
+
           <!-- Space reserved for additional character details -->
           <div style="margin-top: 24px; padding: 16px; border: 2px dashed #404549; border-radius: 8px; text-align: center; color: #72767d;">
             <p>Space reserved for additional character details</p>
@@ -270,27 +302,53 @@
           <div class="stats-grid">
             <div class="stat-input-group">
               <label for="strength">Strength:</label>
-              <input type="number" id="strength" name="strength" min="0">
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <button type="button" class="stat-btn" data-stat="strength" data-delta="-1">-</button>
+                  <input type="number" id="strength" name="strength" min="0" style="flex:1;">
+                  <button type="button" class="stat-btn" data-stat="strength" data-delta="1">+</button>
+                </div>
             </div>
             <div class="stat-input-group">
               <label for="dexterity">Dexterity:</label>
               <input type="number" id="dexterity" name="dexterity" min="0">
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <button type="button" class="stat-btn" data-stat="dexterity" data-delta="-1">-</button>
+                  <input type="number" id="dexterity" name="dexterity" min="0" style="flex:1;">
+                  <button type="button" class="stat-btn" data-stat="dexterity" data-delta="1">+</button>
+                </div>
             </div>
             <div class="stat-input-group">
               <label for="constitution">Constitution:</label>
-              <input type="number" id="constitution" name="constitution" min="0">
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <button type="button" class="stat-btn" data-stat="constitution" data-delta="-1">-</button>
+                  <input type="number" id="constitution" name="constitution" min="0" style="flex:1;">
+                  <button type="button" class="stat-btn" data-stat="constitution" data-delta="1">+</button>
+                </div>
             </div>
             <div class="stat-input-group">
               <label for="intelligence">Intelligence:</label>
               <input type="number" id="intelligence" name="intelligence" min="0">
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <button type="button" class="stat-btn" data-stat="intelligence" data-delta="-1">-</button>
+                  <input type="number" id="intelligence" name="intelligence" min="0" style="flex:1;">
+                  <button type="button" class="stat-btn" data-stat="intelligence" data-delta="1">+</button>
+                </div>
             </div>
             <div class="stat-input-group">
               <label for="wisdom">Wisdom:</label>
-              <input type="number" id="wisdom" name="wisdom" min="0">
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <button type="button" class="stat-btn" data-stat="wisdom" data-delta="-1">-</button>
+                  <input type="number" id="wisdom" name="wisdom" min="0" style="flex:1;">
+                  <button type="button" class="stat-btn" data-stat="wisdom" data-delta="1">+</button>
+                </div>
             </div>
             <div class="stat-input-group">
               <label for="charisma">Charisma:</label>
-              <input type="number" id="charisma" name="charisma" min="0">
+                <div style="display:flex;align-items:center;gap:4px;">
+                  <button type="button" class="stat-btn" data-stat="charisma" data-delta="-1">-</button>
+                  <input type="number" id="charisma" name="charisma" min="0" style="flex:1;">
+                  <button type="button" class="stat-btn" data-stat="charisma" data-delta="1">+</button>
+                </div>
             </div>
           </div>
           
@@ -315,6 +373,38 @@
     </div>
   </div>
   <script>
+    // --- Bulk Actions and Character List ---
+    let selectedCharIndexes = [0];
+    function renderCharCheckboxList() {
+      const listDiv = document.getElementById('char-checkbox-list');
+      listDiv.innerHTML = '';
+      characters.forEach((char, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.gap = '6px';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.value = idx;
+        cb.checked = selectedCharIndexes.includes(idx);
+        cb.addEventListener('change', function() {
+          if (cb.checked) {
+            if (!selectedCharIndexes.includes(idx)) selectedCharIndexes.push(idx);
+          } else {
+            selectedCharIndexes = selectedCharIndexes.filter(i => i !== idx);
+          }
+          // If only one selected, load it
+          if (selectedCharIndexes.length === 1) {
+            loadCharacter(selectedCharIndexes[0]);
+          }
+        });
+        const label = document.createElement('label');
+        label.textContent = `${char.name || char.username || 'Unnamed'} (${char.username})`;
+        wrapper.appendChild(cb);
+        wrapper.appendChild(label);
+        listDiv.appendChild(wrapper);
+      });
+    }
     let characters = [];
     let selectedChar = null;
     let avatarBlob = null;
@@ -326,19 +416,62 @@
         return;
       }
       characters = data || [];
-      const select = document.getElementById('char-select');
-      select.innerHTML = '';
-      characters.forEach((char, idx) => {
-        const opt = document.createElement('option');
-        opt.value = idx;
-        opt.textContent = `${char.name || char.username || 'Unnamed'} (${char.username})`;
-        select.appendChild(opt);
-      });
+      selectedCharIndexes = characters.length > 0 ? [0] : [];
+      renderCharCheckboxList();
       if (characters.length > 0) {
-        select.value = 0;
         loadCharacter(0);
       }
     }
+    // Predefined status effects (can be extended)
+    const STATUS_EFFECTS = [
+      { name: 'Inspired', desc: 'Advantage on one ability check, attack roll, or saving throw.', buff: '+1d6 to a roll', debuff: '', duration: '1 use', notes: '' },
+      { name: 'Bleeding', desc: 'Loses HP each turn until healed.', buff: '', debuff: '-1 HP/turn', duration: 'Until healed', notes: '' },
+      { name: 'Poisoned', desc: 'Disadvantage on attack rolls and ability checks.', buff: '', debuff: 'Disadvantage on attacks/checks', duration: 'Varies', notes: '' },
+      { name: 'Blessed', desc: 'Add 1d4 to attack rolls and saving throws.', buff: '+1d4 to attacks/saves', debuff: '', duration: '1 min', notes: '' },
+      { name: 'Cursed', desc: 'Disadvantage on all rolls.', buff: '', debuff: 'Disadvantage on all rolls', duration: 'Varies', notes: '' },
+      { name: 'Stunned', desc: 'Can’t move, can speak only falteringly.', buff: '', debuff: 'No actions/movement', duration: '1 round', notes: '' },
+      { name: 'Invisible', desc: 'Cannot be seen without magic.', buff: 'Cannot be targeted', debuff: '', duration: 'Varies', notes: '' },
+      { name: 'Frightened', desc: 'Disadvantage on ability checks and attack rolls while source of fear is in line of sight.', buff: '', debuff: 'Disadvantage, cannot approach', duration: 'Varies', notes: '' },
+      { name: 'Paralyzed', desc: 'Incapacitated, can’t move or speak.', buff: '', debuff: 'No actions/movement', duration: 'Varies', notes: '' },
+      { name: 'Charmed', desc: 'Cannot attack charmer, charmer has advantage on social checks.', buff: '', debuff: 'Cannot attack charmer', duration: 'Varies', notes: '' }
+    ];
+
+    function renderStatusEffectsList(effects) {
+      const listDiv = document.getElementById('status-effects-list');
+      if (!listDiv) return;
+      if (!effects || effects.length === 0) {
+        listDiv.innerHTML = '<span style="color:#888;">No status effects.</span>';
+        return;
+      }
+      listDiv.innerHTML = effects.map(eff =>
+        `<span style="display:inline-block;background:#444;color:#fff;padding:4px 10px;margin:2px 4px 2px 0;border-radius:8px;font-size:0.98em;">${eff.name}${eff.duration ? ` <span style='color:#faa61a;font-size:0.9em;'>(${eff.duration})</span>` : ''}</span>`
+      ).join('');
+    }
+
+    function updateStatusEffectSelect() {
+      const select = document.getElementById('status-effect-select');
+      if (!select) return;
+      select.innerHTML = '';
+      STATUS_EFFECTS.forEach(eff => {
+        const opt = document.createElement('option');
+        opt.value = eff.name;
+        opt.textContent = eff.name;
+        select.appendChild(opt);
+      });
+    }
+
+    function showStatusEffectDesc() {
+      const select = document.getElementById('status-effect-select');
+      const descDiv = document.getElementById('status-effect-desc');
+      if (!select || !descDiv) return;
+      const eff = STATUS_EFFECTS.find(e => e.name === select.value);
+      if (eff) {
+        descDiv.innerHTML = `<b>${eff.name}:</b> ${eff.desc} ${eff.buff ? `<span style='color:#43b581;'>[Buff: ${eff.buff}]</span>` : ''} ${eff.debuff ? `<span style='color:#f04747;'>[Debuff: ${eff.debuff}]</span>` : ''} <span style='color:#faa61a;'>${eff.duration ? `[Duration: ${eff.duration}]` : ''}</span>`;
+      } else {
+        descDiv.textContent = '';
+      }
+    }
+
     function loadCharacter(idx) {
       selectedChar = characters[idx];
       if (!selectedChar) return;
@@ -364,7 +497,7 @@
       document.getElementById('background').value = selectedChar.background || '';
       document.getElementById('level').value = selectedChar.level || 1;
       document.getElementById('xp').value = selectedChar.xp || 0;
-  document.getElementById('gold').value = selectedChar.gold || 0;
+      document.getElementById('gold').value = selectedChar.gold || 0;
       document.getElementById('free_stat_points').value = selectedChar.free_stat_points || 0;
       document.getElementById('strength').value = selectedChar.strength || 0;
       document.getElementById('dexterity').value = selectedChar.dexterity || 0;
@@ -374,10 +507,128 @@
       document.getElementById('charisma').value = selectedChar.charisma || 0;
       avatarBlob = null;
       avatarFileType = null;
+      // Status effects
+      renderStatusEffectsList(selectedChar.status_effects || []);
+      updateStatusEffectSelect();
+      showStatusEffectDesc();
     }
-    document.getElementById('char-select').addEventListener('change', function(e) {
-      loadCharacter(e.target.value);
+    // Status Effects UI logic
+    document.addEventListener('DOMContentLoaded', function() {
+      updateStatusEffectSelect();
+      showStatusEffectDesc();
+      const select = document.getElementById('status-effect-select');
+      if (select) {
+        select.addEventListener('change', showStatusEffectDesc);
+      }
+      const addBtn = document.getElementById('add-status-effect-btn');
+      if (addBtn) {
+        addBtn.addEventListener('click', async function() {
+          if (!selectedChar) return;
+          const effName = document.getElementById('status-effect-select').value;
+          const eff = STATUS_EFFECTS.find(e => e.name === effName);
+          if (!eff) return;
+          let effects = Array.isArray(selectedChar.status_effects) ? [...selectedChar.status_effects] : [];
+          if (effects.find(e => e.name === eff.name)) {
+            alert('Effect already present.');
+            return;
+          }
+          effects.push({ ...eff });
+          const updated = await updateCharacter(selectedChar.username, { status_effects: effects });
+          if (updated) {
+            selectedChar.status_effects = effects;
+            renderStatusEffectsList(effects);
+            addSessionLog(`Added status effect: ${eff.name}`);
+          }
+        });
+      }
+      const removeBtn = document.getElementById('remove-status-effect-btn');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', async function() {
+          if (!selectedChar) return;
+          const effName = document.getElementById('status-effect-select').value;
+          let effects = Array.isArray(selectedChar.status_effects) ? [...selectedChar.status_effects] : [];
+          const idx = effects.findIndex(e => e.name === effName);
+          if (idx === -1) {
+            alert('Effect not present.');
+            return;
+          }
+          effects.splice(idx, 1);
+          const updated = await updateCharacter(selectedChar.username, { status_effects: effects });
+          if (updated) {
+            selectedChar.status_effects = effects;
+            renderStatusEffectsList(effects);
+            addSessionLog(`Removed status effect: ${effName}`);
+          }
+        });
+      }
     });
+    // No longer needed: char-select dropdown
+    // Quick Stat Adjustment Buttons
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('stat-btn')) {
+        const stat = e.target.getAttribute('data-stat');
+        const delta = parseInt(e.target.getAttribute('data-delta'));
+        const input = document.getElementById(stat);
+        if (input) {
+          let val = parseInt(input.value) || 0;
+          val += delta;
+          if (val < 0) val = 0;
+          input.value = val;
+          addSessionLog(`Adjusted ${stat} by ${delta > 0 ? '+' : ''}${delta}. New value: ${val}`);
+        }
+      }
+    });
+
+    // --- Session Log ---
+    let sessionLog = [];
+    function addSessionLog(msg) {
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+      sessionLog.unshift(`[${time}] ${msg}`);
+      if (sessionLog.length > 50) sessionLog = sessionLog.slice(0, 50);
+      renderSessionLog();
+    }
+    function renderSessionLog() {
+      document.getElementById('session-log').innerHTML = sessionLog.map(e => `<div>${e}</div>`).join('');
+    }
+
+    // --- Bulk Action Buttons ---
+    document.getElementById('bulk-xp-btn').addEventListener('click', async function() {
+      const amt = prompt('Grant how much XP to selected characters?');
+      const xp = parseInt(amt);
+      if (isNaN(xp) || xp === 0) return;
+      for (const idx of selectedCharIndexes) {
+        const char = characters[idx];
+        if (!char) continue;
+        const newXP = (char.xp || 0) + xp;
+        await supabaseClient.from('characters').update({ xp: newXP, updated_at: new Date().toISOString() }).eq('username', char.username);
+        addSessionLog(`Granted ${xp} XP to ${char.name || char.username}`);
+      }
+      await fetchCharacters();
+      document.getElementById('bulk-action-msg').textContent = `Granted ${xp} XP to selected.`;
+      setTimeout(()=>{document.getElementById('bulk-action-msg').textContent='';},2000);
+    });
+    document.getElementById('bulk-gold-btn').addEventListener('click', async function() {
+      const amt = prompt('Grant how much gold to selected characters?');
+      const gold = parseInt(amt);
+      if (isNaN(gold) || gold === 0) return;
+      for (const idx of selectedCharIndexes) {
+        const char = characters[idx];
+        if (!char) continue;
+        const newGold = (char.gold || 0) + gold;
+        await supabaseClient.from('characters').update({ gold: newGold, updated_at: new Date().toISOString() }).eq('username', char.username);
+        addSessionLog(`Granted ${gold} gold to ${char.name || char.username}`);
+      }
+      await fetchCharacters();
+      document.getElementById('bulk-action-msg').textContent = `Granted ${gold} gold to selected.`;
+      setTimeout(()=>{document.getElementById('bulk-action-msg').textContent='';},2000);
+    });
+    document.getElementById('bulk-status-btn').addEventListener('click', function() {
+      alert('Status bulk action coming soon!');
+      addSessionLog('Bulk status action placeholder triggered.');
+    });
+  sessionLog = [];
+  renderSessionLog();
     document.getElementById('avatar-upload').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -450,6 +701,38 @@ if (typeof attachTooltipListeners !== 'function') {
           const { publicURL } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
           avatarUrl = publicURL;
         }
+      // --- Bulk Actions and Character List ---
+      let selectedCharIndexes = [0];
+      function renderCharCheckboxList() {
+        const listDiv = document.getElementById('char-checkbox-list');
+        listDiv.innerHTML = '';
+        characters.forEach((char, idx) => {
+          const wrapper = document.createElement('div');
+          wrapper.style.display = 'flex';
+          wrapper.style.alignItems = 'center';
+          wrapper.style.gap = '6px';
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.value = idx;
+          cb.checked = selectedCharIndexes.includes(idx);
+          cb.addEventListener('change', function() {
+            if (cb.checked) {
+              if (!selectedCharIndexes.includes(idx)) selectedCharIndexes.push(idx);
+            } else {
+              selectedCharIndexes = selectedCharIndexes.filter(i => i !== idx);
+            }
+            // If only one selected, load it
+            if (selectedCharIndexes.length === 1) {
+              loadCharacter(selectedCharIndexes[0]);
+            }
+          });
+          const label = document.createElement('label');
+          label.textContent = `${char.name || char.username || 'Unnamed'} (${char.username})`;
+          wrapper.appendChild(cb);
+          wrapper.appendChild(label);
+          listDiv.appendChild(wrapper);
+        });
+      }
       }
       const updated = {
         name: document.getElementById('name').value.trim(),
@@ -489,6 +772,7 @@ if (typeof attachTooltipListeners !== 'function') {
       }
     }
     checkGM();
+      // No longer needed: char-select dropdown
     fetchCharacters();
   </script>
 </body>

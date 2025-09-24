@@ -5,6 +5,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Starter RPG Player Guide</title>
   <link rel="stylesheet" href="rpg_style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #23272a;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .guide-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 2vw 32px 2vw;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .guide-section {
+      background: #23272a;
+      padding: 24px 24px 18px 24px;
+      border-radius: 16px;
+      margin-bottom: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    .guide-section h2, .guide-section h3 {
+      color: #43b581;
+      margin-top: 0;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #43b581;
+      display: inline-block;
+      padding-bottom: 2px;
+    }
+    .guide-section h3 {
+      color: #faa61a;
+      border-bottom: 2px solid #faa61a;
+    }
+    .guide-section ul, .guide-section table {
+      margin-bottom: 0;
+    }
+    .guide-section table {
+      background: #18191c;
+      color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .guide-section th {
+      background: #23272a;
+      color: #43b581;
+      padding: 6px 8px;
+    }
+    .guide-section td {
+      padding: 6px 8px;
+    }
+    .dropdown-nav {
+      width: 100%;
+      background: #2c2f33;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    }
+    .dropdown-nav label {
+      color: #43b581;
+      font-weight: bold;
+      margin-right: 8px;
+      font-size: 1em;
+    }
+    .dropdown-nav select {
+      background: #23272a;
+      color: #fff;
+      border: 1px solid #43b581;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 1em;
+    }
+    @media (max-width: 900px) {
+      .guide-container { padding: 12px; }
+      .guide-section { padding: 14px 8px 12px 8px; }
+      .dropdown-nav { padding: 8px 6px; }
+    }
+  </style>
 </head>
 <body>
 <header class="nav">
@@ -14,13 +98,27 @@
     <a href="player_guide.html">Player Guide</a>
   </nav>
 </header>
-<main class="grid">
-  <section class="card">
+<div class="dropdown-nav">
+  <label for="section-jump">Jump to section:</label>
+  <select id="section-jump">
+    <option value="core-rules">Core Rules</option>
+    <option value="abilities">Abilities</option>
+    <option value="skills">Skills</option>
+    <option value="items">Common Items & Gear</option>
+    <option value="spells">Basic Spells</option>
+    <option value="combat">Combat</option>
+    <option value="resting">Resting</option>
+    <option value="leveling">Leveling</option>
+    <option value="status">Status Effects</option>
+  </select>
+</div>
+<main class="guide-container">
+  <section class="guide-section" id="core-rules">
     <h2>Core Rules</h2>
     <p>Roll <b>d20 + ability modifier + proficiency</b> vs. DC. DCs: 10 easy, 13 moderate, 16 hard, 19 very hard, 22 nearly impossible.</p>
     <p><b>Advantage/Disadvantage:</b> Roll 2d20, take higher/lower.</p>
   </section>
-  <section class="card">
+  <section class="guide-section" id="abilities">
     <h2>Abilities</h2>
     <ul>
       <li><b>Strength (STR):</b> Physical power, lifting, melee damage.</li>
@@ -31,7 +129,7 @@
       <li><b>Charisma (CHA):</b> Persuasion, performance, spellcasting (Bards/Sorcerers/Warlocks).</li>
     </ul>
   </section>
-  <section class="card">
+  <section class="guide-section" id="skills">
     <h2>Skills</h2>
     <ul>
       <li><b>Acrobatics</b> (Dexterity)</li>
@@ -54,7 +152,7 @@
       <li><b>Survival</b> (Wisdom)</li>
     </ul>
   </section>
-  <section class="card">
+  <section class="guide-section" id="items">
     <h2>Common Items & Gear</h2>
     <ul>
       <li><b>Weapons:</b> Longsword (1d8 slashing), Shortbow (1d6 piercing), Dagger (1d4 piercing), Greatsword (2d6 slashing)</li>
@@ -64,7 +162,7 @@
       <li><b>Tools & Gear:</b> Backpack, Rope (50 ft), Crowbar, Torch, Healer's Kit</li>
     </ul>
   </section>
-  <section class="card">
+  <section class="guide-section" id="spells">
     <h2>Basic Spells</h2>
     <ul>
       <li><b>Fireball</b> (Evocation, L3): Explosion of flame at range.</li>
@@ -80,17 +178,96 @@
       <li><b>Burning Hands</b> (Evocation, L1): Sheet of flame from hands.</li>
     </ul>
   </section>
-  <section class="card">
+  <section class="guide-section" id="combat">
     <h2>Combat</h2>
     <p>Roll initiative (d20 + AGI). On your turn: move + action (+ bonus action). One reaction per round.</p>
   </section>
-  <section class="card">
+  <section class="guide-section" id="resting">
     <h2>Resting</h2>
     <p><b>Short Rest:</b> 1 hr; spend hit dice to heal. <b>Long Rest:</b> 8 hr; restore HP/resources.</p>
   </section>
-  <section class="card">
+  <section class="guide-section" id="leveling">
     <h2>Leveling</h2>
     <p>Proficiency Bonus +2 at L1; increases at 5, 9, 13.</p>
+  </section>
+  <section class="guide-section" id="status">
+    <h2>Status Effects</h2>
+
+// Dropdown navigation logic
+document.addEventListener('DOMContentLoaded', function() {
+  const jump = document.getElementById('section-jump');
+  if (jump) {
+    jump.addEventListener('change', function() {
+      const val = jump.value;
+      const section = document.getElementById(val);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+});
+    <p><b>Status effects</b> are special conditions (positive or negative) that can affect your character during play. They are applied and removed by the GM as the story or combat unfolds. Some grant buffs, others impose penalties. Effects are visible on your character sheet.</p>
+    <table style="width:100%;font-size:0.98em;background:#23272a;color:#fff;border-radius:8px;overflow:hidden;">
+      <thead>
+        <tr style="background:#23272a;color:#43b581;">
+          <th style="padding:6px 8px;text-align:left;">Effect</th>
+          <th style="padding:6px 8px;text-align:left;">Description</th>
+          <th style="padding:6px 8px;text-align:left;">Buff/Debuff</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Inspired</td><td>Advantage on one ability check, attack roll, or saving throw.</td><td style="color:#43b581;">+1d6 to a roll</td></tr>
+        <tr><td>Bleeding</td><td>Loses HP each turn until healed.</td><td style="color:#f04747;">-1 HP/turn</td></tr>
+        <tr><td>Poisoned</td><td>Disadvantage on attack rolls and ability checks.</td><td style="color:#f04747;">Disadvantage on attacks/checks</td></tr>
+        <tr><td>Blessed</td><td>Add 1d4 to attack rolls and saving throws.</td><td style="color:#43b581;">+1d4 to attacks/saves</td></tr>
+        <tr><td>Cursed</td><td>Disadvantage on all rolls.</td><td style="color:#f04747;">Disadvantage on all rolls</td></tr>
+        <tr><td>Stunned</td><td>Can’t move, can speak only falteringly.</td><td style="color:#f04747;">No actions/movement</td></tr>
+        <tr><td>Invisible</td><td>Cannot be seen without magic.</td><td style="color:#43b581;">Cannot be targeted</td></tr>
+        <tr><td>Frightened</td><td>Disadvantage on ability checks and attack rolls while source of fear is in line of sight.</td><td style="color:#f04747;">Disadvantage, cannot approach</td></tr>
+        <tr><td>Paralyzed</td><td>Incapacitated, can’t move or speak.</td><td style="color:#f04747;">No actions/movement</td></tr>
+        <tr><td>Charmed</td><td>Cannot attack charmer, charmer has advantage on social checks.</td><td style="color:#f04747;">Cannot attack charmer</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.97em;color:#b9bbbe;margin-top:8px;">Ask your GM if you have questions about a specific effect. Status effects are not chosen during character creation and are only managed by the GM.</p>
+    <h3 style="margin-top:18px;">Resolving Buffs and Debuffs</h3>
+    <p>When a character is affected by both a buff and a debuff that apply to the same skill, spell, or action, use the following rules:</p>
+    <ul>
+      <li><b>Advantage & Disadvantage:</b> If you have both, they cancel each other out. If you have multiple sources of advantage and only one source of disadvantage (or vice versa), you still roll only one d20 (no stacking).</li>
+      <li><b>Stacking Bonuses/Penalties:</b> If you have multiple buffs or debuffs that grant a bonus or penalty to the same roll (e.g., +1d4 and +1d6), add all bonuses together before rolling. The same applies to penalties.</li>
+      <li><b>Ongoing Effects:</b> If you have both a buff and a debuff that cause ongoing effects (like healing and damage each round), apply both each round (e.g., heal 1d4 and take 1d4 damage).</li>
+      <li><b>GM Adjudication:</b> If there is any doubt or a unique situation, the GM has the final say on how effects interact.</li>
+    </ul>
+    <h4 style="margin-top:14px;">How Long Do Buffs and Debuffs Last?</h4>
+    <p>Most buffs and debuffs are <b>sustained</b> (continue each round) until removed by a spell, ability, or successful saving throw. At the end of each affected character's turn, they may attempt to end a sustained effect by rolling a saving throw (usually d20 + relevant modifier) against a DC set by the GM or the effect's source. If the roll meets or exceeds the DC, the effect ends. Otherwise, it continues.</p>
+    <ul>
+      <li><b>Example:</b> If you are <b>Burning</b> (taking 1d4 fire damage per round), at the end of your turn you might roll a Dexterity or Constitution saving throw (GM's choice) against DC 13. If you succeed, the burning ends; if not, it continues next round.</li>
+      <li><b>Some effects</b> have a fixed duration (e.g., "lasts 1 minute" or "3 rounds") or end automatically when a condition is met (e.g., healed, submerged in water, etc.).</li>
+      <li><b>Ask your GM</b> for the specific save type and DC for each effect.</li>
+    </ul>
+    <p style="font-size:0.97em;color:#b9bbbe;">The GM may adjust how effects are sustained or ended to fit the story or encounter.</p>
+    <p style="font-size:0.97em;color:#b9bbbe;">If you are unsure how to resolve a combination of effects, ask your GM for clarification.</p>
+    <h3 style="margin-top:18px;">How Status Effects Interact with Skills & Spells</h3>
+    <p>Some status effects directly buff or debuff specific skills and spells. For example, <b>Inspired</b> can buff skills like Performance, Persuasion, or spells like Fireball and Magic Missile. <b>Poisoned</b> can debuff Stealth, Medicine, and healing spells. When a skill or spell is buffed or debuffed by an active status effect, you’ll see a green (🟢) or red (🔴) indicator next to it on your character sheet. Hover for details.</p>
+    <table style="width:100%;font-size:0.97em;background:#18191c;color:#fff;border-radius:8px;overflow:hidden;margin-top:8px;">
+      <thead>
+        <tr style="background:#23272a;color:#43b581;">
+          <th style="padding:6px 8px;text-align:left;">Skill/Spell</th>
+          <th style="padding:6px 8px;text-align:left;">Buffed by</th>
+          <th style="padding:6px 8px;text-align:left;">Debuffed by</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Performance (Skill)</td><td>Inspired, Blessed, Charmed</td><td>Cursed, Frightened</td></tr>
+        <tr><td>Stealth (Skill)</td><td>Blessed, Invisible, Inspired</td><td>Cursed, Poisoned, Stunned</td></tr>
+        <tr><td>Medicine (Skill)</td><td>Blessed</td><td>Poisoned</td></tr>
+        <tr><td>Fireball (Spell)</td><td>Inspired</td><td>Cursed</td></tr>
+        <tr><td>Cure Wounds (Spell)</td><td>Blessed</td><td>Cursed, Poisoned</td></tr>
+        <tr><td>Magic Missile (Spell)</td><td>Inspired</td><td>Cursed</td></tr>
+        <tr><td>Shield (Spell)</td><td>Blessed, Inspired</td><td>Cursed</td></tr>
+        <tr><td>Persuasion (Skill)</td><td>Inspired, Blessed, Charmed</td><td>Cursed, Frightened</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.97em;color:#b9bbbe;margin-top:8px;">This is not a complete list. Many skills and spells can be affected by multiple status effects. See your character sheet for real-time indicators.</p>
   </section>
 </main>
 </body>

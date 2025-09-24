@@ -43,46 +43,91 @@
     {"name": "Healer's Kit", "type": "Tool"}
   ],
   "skills": [
-    {"name": "Acrobatics", "ability": "Dexterity"},
-    {"name": "Animal Handling", "ability": "Wisdom"},
-    {"name": "Arcana", "ability": "Intelligence"},
-    {"name": "Athletics", "ability": "Strength"},
-    {"name": "Deception", "ability": "Charisma"},
-    {"name": "History", "ability": "Intelligence"},
-    {"name": "Insight", "ability": "Wisdom"},
-    {"name": "Intimidation", "ability": "Charisma"},
-    {"name": "Investigation", "ability": "Intelligence"},
-    {"name": "Medicine", "ability": "Wisdom"},
-    {"name": "Nature", "ability": "Intelligence"},
-    {"name": "Perception", "ability": "Wisdom"},
-    {"name": "Performance", "ability": "Charisma"},
-    {"name": "Persuasion", "ability": "Charisma"},
-    {"name": "Religion", "ability": "Intelligence"},
-    {"name": "Sleight of Hand", "ability": "Dexterity"},
-    {"name": "Stealth", "ability": "Dexterity"},
-    {"name": "Survival", "ability": "Wisdom"}
+    {"name": "Acrobatics", "ability": "Dexterity", "buffs": ["Inspired", "Blessed"], "debuffs": ["Cursed", "Stunned", "Paralyzed"]},
+    {"name": "Animal Handling", "ability": "Wisdom", "buffs": ["Inspired"], "debuffs": ["Frightened"]},
+    {"name": "Arcana", "ability": "Intelligence", "buffs": ["Inspired"], "debuffs": ["Cursed"]},
+    {"name": "Athletics", "ability": "Strength", "buffs": ["Inspired", "Blessed"], "debuffs": ["Bleeding", "Cursed", "Paralyzed"]},
+    {"name": "Deception", "ability": "Charisma", "buffs": ["Inspired", "Charmed"], "debuffs": ["Cursed"]},
+    {"name": "History", "ability": "Intelligence", "buffs": ["Inspired"], "debuffs": ["Cursed"]},
+    {"name": "Insight", "ability": "Wisdom", "buffs": ["Inspired"], "debuffs": ["Cursed", "Frightened"]},
+    {"name": "Intimidation", "ability": "Charisma", "buffs": ["Inspired", "Charmed"], "debuffs": ["Cursed", "Frightened"]},
+    {"name": "Investigation", "ability": "Intelligence", "buffs": ["Inspired"], "debuffs": ["Cursed"]},
+    {"name": "Medicine", "ability": "Wisdom", "buffs": ["Blessed"], "debuffs": ["Poisoned"]},
+    {"name": "Nature", "ability": "Intelligence", "buffs": ["Inspired"], "debuffs": ["Cursed"]},
+    {"name": "Perception", "ability": "Wisdom", "buffs": ["Inspired", "Blessed"], "debuffs": ["Blinded", "Cursed", "Invisible"]},
+    {"name": "Performance", "ability": "Charisma", "buffs": ["Inspired", "Blessed", "Charmed"], "debuffs": ["Cursed", "Frightened"]},
+    {"name": "Persuasion", "ability": "Charisma", "buffs": ["Inspired", "Blessed", "Charmed"], "debuffs": ["Cursed", "Frightened"]},
+    {"name": "Religion", "ability": "Intelligence", "buffs": ["Inspired", "Blessed"], "debuffs": ["Cursed"]},
+    {"name": "Sleight of Hand", "ability": "Dexterity", "buffs": ["Inspired"], "debuffs": ["Cursed", "Stunned"]},
+    {"name": "Stealth", "ability": "Dexterity", "buffs": ["Blessed", "Invisible", "Inspired"], "debuffs": ["Cursed", "Poisoned", "Stunned"]},
+    {"name": "Survival", "ability": "Wisdom", "buffs": ["Inspired", "Blessed"], "debuffs": ["Cursed", "Frightened"]}
   ],
   "spells": [
-    {"name": "Fireball", "level": 3, "school": "Evocation", "description": "A bright streak flashes from your pointing finger to a point you choose, then blossoms with a low roar into an explosion of flame."},
-    {"name": "Cure Wounds", "level": 1, "school": "Evocation", "description": "A creature you touch regains a number of hit points equal to 1d8 + your spellcasting ability modifier."},
-    {"name": "Mage Armor", "level": 1, "school": "Abjuration", "description": "You touch a willing creature who isn't wearing armor, and a protective magical force surrounds it until the spell ends."},
-    {"name": "Magic Missile", "level": 1, "school": "Evocation", "description": "You create three glowing darts of magical force."},
-    {"name": "Shield", "level": 1, "school": "Abjuration", "description": "An invisible barrier of magical force appears and protects you."},
-    {"name": "Bless", "level": 1, "school": "Enchantment", "description": "You bless up to three creatures of your choice within range."},
-    {"name": "Detect Magic", "level": 1, "school": "Divination", "description": "For the duration, you sense the presence of magic within 30 feet of you."},
-    {"name": "Healing Word", "level": 1, "school": "Evocation", "description": "A creature of your choice that you can see within range regains hit points."},
-    {"name": "Thunderwave", "level": 1, "school": "Evocation", "description": "A wave of thunderous force sweeps out from you."},
-    {"name": "Sleep", "level": 1, "school": "Enchantment", "description": "This spell sends creatures into a magical slumber."},
-    {"name": "Burning Hands", "level": 1, "school": "Evocation", "description": "As you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips."},
-    {"name": "Lightning Bolt", "level": 3, "school": "Evocation", "description": "A stroke of lightning blasts out from you."},
-    {"name": "Invisibility", "level": 2, "school": "Illusion", "description": "A creature becomes invisible until the spell ends."},
-    {"name": "Polymorph", "level": 4, "school": "Transmutation", "description": "Transforms a creature into a new form."},
-    {"name": "Raise Dead", "level": 5, "school": "Necromancy", "description": "Returns a dead creature to life."}
+  {"name": "Fireball", "level": 3, "school": "Evocation", "description": "A bright streak flashes from your pointing finger to a point you choose, then blossoms with a low roar into an explosion of flame. Effects: Grants debuff(s): Burning (1d6 fire damage per round). Removes debuff(s): Frozen. HP change: 1d6 per round if Burning.", "buffs": ["Inspired"], "debuffs": ["Cursed"], "buffs_granted": [], "debuffs_granted": ["Burning"], "buffs_removed": [], "debuffs_removed": ["Frozen"], "hp_change": "1d6/round (Burning)"},
+  {"name": "Cure Wounds", "level": 1, "school": "Evocation", "description": "A creature you touch regains a number of hit points equal to 1d8 + your spellcasting ability modifier. Effects: Removes debuff(s): Poisoned, Bleeding. HP change: +1d8+mod.", "buffs": ["Blessed"], "debuffs": ["Cursed", "Poisoned"], "buffs_granted": [], "debuffs_granted": [], "buffs_removed": [], "debuffs_removed": ["Poisoned", "Bleeding"], "hp_change": "+1d8+mod"},
+  {"name": "Mage Armor", "level": 1, "school": "Abjuration", "description": "You touch a willing creature who isn't wearing armor, and a protective magical force surrounds it until the spell ends. Effects: Grants buff(s): Mage Armor.", "buffs": ["Blessed"], "debuffs": ["Cursed"], "buffs_granted": ["Mage Armor"], "debuffs_granted": [], "buffs_removed": [], "debuffs_removed": [], "hp_change": 0},
+  {"name": "Magic Missile", "level": 1, "school": "Evocation", "description": "You create three glowing darts of magical force. Effects: Grants debuff(s): Magic Wound (1d4 force damage per round). HP change: 1d4 per round if Magic Wound.", "buffs": ["Inspired"], "debuffs": ["Cursed"], "buffs_granted": [], "debuffs_granted": ["Magic Wound"], "buffs_removed": [], "debuffs_removed": [], "hp_change": "1d4/round (Magic Wound)"},
+  {"name": "Shield", "level": 1, "school": "Abjuration", "description": "An invisible barrier of magical force appears and protects you. Effects: Grants buff(s): Shielded.", "buffs": ["Blessed", "Inspired"], "debuffs": ["Cursed"], "buffs_granted": ["Shielded"], "debuffs_granted": [], "buffs_removed": [], "debuffs_removed": [], "hp_change": 0},
+  {"name": "Bless", "level": 1, "school": "Enchantment", "description": "You bless up to three creatures of your choice within range. Effects: Grants buff(s): Blessed.", "buffs": ["Blessed"], "debuffs": ["Cursed"], "buffs_granted": ["Blessed"], "debuffs_granted": [], "buffs_removed": [], "debuffs_removed": [], "hp_change": 0},
+  {"name": "Detect Magic", "level": 1, "school": "Divination", "description": "For the duration, you sense the presence of magic within 30 feet of you.", "buffs": ["Inspired"], "debuffs": ["Cursed"], "buffs_granted": [], "debuffs_granted": [], "buffs_removed": [], "debuffs_removed": [], "hp_change": 0},
+  {"name": "Healing Word", "level": 1, "school": "Evocation", "description": "A creature of your choice that you can see within range regains hit points. Effects: Removes debuff(s): Poisoned, Bleeding. HP change: +1d4+mod.", "buffs": ["Blessed"], "debuffs": ["Cursed", "Poisoned"], "buffs_granted": [], "debuffs_granted": [], "buffs_removed": [], "debuffs_removed": ["Poisoned", "Bleeding"], "hp_change": "+1d4+mod"},
+  {"name": "Thunderwave", "level": 1, "school": "Evocation", "description": "A wave of thunderous force sweeps out from you. Effects: Grants debuff(s): Deafened (1d4 thunder damage per round). HP change: 1d4 per round if Deafened.", "buffs": ["Inspired"], "debuffs": ["Cursed"], "buffs_granted": [], "debuffs_granted": ["Deafened"], "buffs_removed": [], "debuffs_removed": [], "hp_change": "1d4/round (Deafened)"},
+  {"name": "Sleep", "level": 1, "school": "Enchantment", "description": "This spell sends creatures into a magical slumber. Effects: Grants debuff(s): Asleep. Removes debuff(s): Frightened.", "buffs": ["Blessed"], "debuffs": ["Cursed"], "buffs_granted": [], "debuffs_granted": ["Asleep"], "buffs_removed": [], "debuffs_removed": ["Frightened"], "hp_change": 0},
+  {"name": "Burning Hands", "level": 1, "school": "Evocation", "description": "As you hold your hands with thumbs touching and fingers spread, a thin sheet of flames shoots forth from your outstretched fingertips. Effects: Grants debuff(s): Burning (1d4 fire damage per round). Removes debuff(s): Frozen. HP change: 1d4 per round if Burning.", "buffs": ["Inspired"], "debuffs": ["Cursed"], "buffs_granted": [], "debuffs_granted": ["Burning"], "buffs_removed": [], "debuffs_removed": ["Frozen"], "hp_change": "1d4/round (Burning)"},
+  {"name": "Lightning Bolt", "level": 3, "school": "Evocation", "description": "A stroke of lightning blasts out from you. Effects: Grants debuff(s): Stunned (1d6 lightning damage per round). HP change: 1d6 per round if Stunned.", "buffs": ["Inspired"], "debuffs": ["Cursed"], "buffs_granted": [], "debuffs_granted": ["Stunned"], "buffs_removed": [], "debuffs_removed": [], "hp_change": "1d6/round (Stunned)"},
+  {"name": "Invisibility", "level": 2, "school": "Illusion", "description": "A creature becomes invisible until the spell ends. Effects: Grants buff(s): Invisible. Removes debuff(s): Charmed.", "buffs": ["Invisible", "Inspired"], "debuffs": ["Cursed"], "buffs_granted": ["Invisible"], "debuffs_granted": [], "buffs_removed": [], "debuffs_removed": ["Charmed"], "hp_change": 0},
+  {"name": "Polymorph", "level": 4, "school": "Transmutation", "description": "Transforms a creature into a new form. Effects: Grants buff(s): Polymorphed. Removes debuff(s): Stunned, Paralyzed.", "buffs": ["Inspired"], "debuffs": ["Cursed"], "buffs_granted": ["Polymorphed"], "debuffs_granted": [], "buffs_removed": [], "debuffs_removed": ["Stunned", "Paralyzed"], "hp_change": 0},
+  {"name": "Raise Dead", "level": 5, "school": "Necromancy", "description": "Returns a dead creature to life. Effects: Removes debuff(s): Dead. HP change: +1d10.", "buffs": ["Blessed"], "debuffs": ["Cursed"], "buffs_granted": [], "debuffs_granted": [], "buffs_removed": [], "debuffs_removed": ["Dead"], "hp_change": "+1d10"}
   ],
   "monsters": [
-    {"name": "Goblin", "hp": 7, "ac": 15, "attack": "Scimitar +4 (1d6+2)", "abilities": ["Nimble Escape"]},
-    {"name": "Orc", "hp": 15, "ac": 13, "attack": "Greataxe +5 (1d12+3)", "abilities": ["Aggressive"]},
-    {"name": "Dragon", "hp": 200, "ac": 19, "attack": "Multiattack, Fire Breath", "abilities": ["Legendary Resistance", "Fly"]}
+  {"name": "Goblin", "hp": 7, "ac": 15, "attack": {"name": "Scimitar", "bonus": 4, "damage": "1d6+2", "description": "A quick slash with a scimitar. Effects: Grants debuff(s): Wounded (1d4 slashing damage per round). HP change: 1d4 per round if Wounded.", "buffs_granted": [], "debuffs_granted": ["Wounded"], "buffs_removed": [], "debuffs_removed": [], "hp_change": "1d4/round (Wounded)"}, "abilities": ["Nimble Escape"]},
+  {"name": "Orc", "hp": 15, "ac": 13, "attack": {"name": "Greataxe", "bonus": 5, "damage": "1d12+3", "description": "A heavy swing with a greataxe. Effects: Grants debuff(s): Bleeding (1d6 slashing damage per round). HP change: 1d6 per round if Bleeding.", "buffs_granted": [], "debuffs_granted": ["Bleeding"], "buffs_removed": [], "debuffs_removed": [], "hp_change": "1d6/round (Bleeding)"}, "abilities": ["Aggressive"]},
+    {"name": "Dragon", "hp": 200, "ac": 19, "attack": [
+      {"name": "Claw", "bonus": 8, "damage": "2d6+6", "description": "A vicious claw swipe. Effects: Grants debuff(s): Bleeding (1d6 slashing damage per round). HP change: 1d6 per round if Bleeding.", "buffs_granted": [], "debuffs_granted": ["Bleeding"], "buffs_removed": [], "debuffs_removed": [], "hp_change": "1d6/round (Bleeding)"},
+      {"name": "Fire Breath", "bonus": 0, "damage": "12d6", "description": "A cone of searing fire. Effects: Grants debuff(s): Burning (2d6 fire damage per round). Removes debuff(s): Frozen. HP change: 2d6 per round if Burning.", "buffs_granted": [], "debuffs_granted": ["Burning"], "buffs_removed": [], "debuffs_removed": ["Frozen"], "hp_change": "2d6/round (Burning)"}
+    ], "abilities": ["Legendary Resistance", "Fly"]}
+  ],
+  "terrain": [
+    {
+      "name": "Forest",
+      "description": "Dense trees, undergrowth, and uneven ground.",
+      "skill_buffs": ["Stealth", "Survival"],
+      "skill_debuffs": ["Perception", "Athletics"],
+      "combat_buffs": ["Ranged attacks (cover)", "Ambush"],
+      "combat_debuffs": ["Movement (difficult terrain)"]
+    },
+    {
+      "name": "Swamp",
+      "description": "Wet, muddy, and full of hazards.",
+      "skill_buffs": ["Survival"],
+      "skill_debuffs": ["Athletics", "Stealth"],
+      "combat_buffs": ["Poison effects"],
+      "combat_debuffs": ["Movement", "Fire spells"]
+    },
+    {
+      "name": "Mountain Pass",
+      "description": "Rocky slopes and high altitude.",
+      "skill_buffs": ["Athletics"],
+      "skill_debuffs": ["Stealth"],
+      "combat_buffs": ["High ground (ranged)"],
+      "combat_debuffs": ["Falling", "Cold effects"]
+    },
+    {
+      "name": "Desert",
+      "description": "Hot, dry, and open.",
+      "skill_buffs": ["Survival"],
+      "skill_debuffs": ["Stealth", "Athletics"],
+      "combat_buffs": ["Fire spells"],
+      "combat_debuffs": ["Water spells", "Exhaustion"]
+    },
+    {
+      "name": "Ruins",
+      "description": "Crumbling stone, hidden dangers, and echoes.",
+      "skill_buffs": ["Investigation", "Stealth"],
+      "skill_debuffs": ["Athletics"],
+      "combat_buffs": ["Ambush", "Cover"],
+      "combat_debuffs": ["Area spells"]
+    }
   ],
   "backgrounds": [
     {"name": "Acolyte", "desc": "Raised in temples, devoted to faith."},
