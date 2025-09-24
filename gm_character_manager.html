@@ -218,8 +218,9 @@
             </div>
             <div>
               <label for="race">Race:</label>
-              <select id="race" name="race" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:6px;">
-                <option value="" id="race-current-option"></option>
+              <div style="color:#aaa;font-size:0.97em;margin-bottom:2px;">Current: <span id="race-current-text"></span></div>
+              <select id="race" name="race" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:2px;">
+                <option value="">-- Select Race --</option>
                 <option value="Human">Human</option>
                 <option value="Elf">Elf</option>
                 <option value="Dwarf">Dwarf</option>
@@ -234,8 +235,9 @@
             </div>
             <div>
               <label for="class">Class:</label>
-              <select id="class" name="class" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:6px;">
-                <option value="" id="class-current-option"></option>
+              <div style="color:#aaa;font-size:0.97em;margin-bottom:2px;">Current: <span id="class-current-text"></span></div>
+              <select id="class" name="class" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:2px;">
+                <option value="">-- Select Class --</option>
                 <option value="Fighter">Fighter</option>
                 <option value="Wizard">Wizard</option>
                 <option value="Cleric">Cleric</option>
@@ -254,8 +256,9 @@
             </div>
             <div>
               <label for="background">Background:</label>
-              <select id="background" name="background" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:6px;">
-                <option value="" id="background-current-option"></option>
+              <div style="color:#aaa;font-size:0.97em;margin-bottom:2px;">Current: <span id="background-current-text"></span></div>
+              <select id="background" name="background" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:2px;">
+                <option value="">-- Select Background --</option>
                 <option value="Acolyte">Acolyte</option>
                 <option value="Charlatan">Charlatan</option>
                 <option value="Criminal">Criminal</option>
@@ -542,10 +545,9 @@
       // Race dropdown and custom
       const raceSel = document.getElementById('race');
       const raceOther = document.getElementById('race-other');
-      const raceCurrentOption = document.getElementById('race-current-option');
-      if (raceSel && raceOther && raceCurrentOption) {
-        let currentRace = selectedChar.race || 'None';
-        raceCurrentOption.textContent = '(Current: ' + currentRace + ')';
+      const raceCurrentText = document.getElementById('race-current-text');
+      if (raceSel && raceOther && raceCurrentText) {
+        raceCurrentText.textContent = selectedChar.race || '';
         if (raceSel.querySelector(`option[value="${selectedChar.race}"]`)) {
           raceSel.value = selectedChar.race;
           raceOther.style.display = 'none';
@@ -563,10 +565,9 @@
       // Class dropdown and custom
       const classSel = document.getElementById('class');
       const classOther = document.getElementById('class-other');
-      const classCurrentOption = document.getElementById('class-current-option');
-      if (classSel && classOther && classCurrentOption) {
-        let currentClass = selectedChar.class || 'None';
-        classCurrentOption.textContent = '(Current: ' + currentClass + ')';
+      const classCurrentText = document.getElementById('class-current-text');
+      if (classSel && classOther && classCurrentText) {
+        classCurrentText.textContent = selectedChar.class || '';
         if (classSel.querySelector(`option[value="${selectedChar.class}"]`)) {
           classSel.value = selectedChar.class;
           classOther.style.display = 'none';
@@ -584,10 +585,9 @@
       // Background dropdown and custom
       const backgroundSel = document.getElementById('background');
       const backgroundOther = document.getElementById('background-other');
-      const backgroundCurrentOption = document.getElementById('background-current-option');
-      if (backgroundSel && backgroundOther && backgroundCurrentOption) {
-        let currentBackground = selectedChar.background || 'None';
-        backgroundCurrentOption.textContent = '(Current: ' + currentBackground + ')';
+      const backgroundCurrentText = document.getElementById('background-current-text');
+      if (backgroundSel && backgroundOther && backgroundCurrentText) {
+        backgroundCurrentText.textContent = selectedChar.background || '';
         if (backgroundSel.querySelector(`option[value="${selectedChar.background}"]`)) {
           backgroundSel.value = selectedChar.background;
           backgroundOther.style.display = 'none';
