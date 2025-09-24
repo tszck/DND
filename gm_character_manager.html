@@ -219,7 +219,7 @@
             <div>
               <label for="race">Race:</label>
               <select id="race" name="race" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:6px;">
-                <option value="">(Current: <span id="race-current"></span>)</option>
+                <option value="" id="race-current-option"></option>
                 <option value="Human">Human</option>
                 <option value="Elf">Elf</option>
                 <option value="Dwarf">Dwarf</option>
@@ -235,7 +235,7 @@
             <div>
               <label for="class">Class:</label>
               <select id="class" name="class" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:6px;">
-                <option value="">(Current: <span id="class-current"></span>)</option>
+                <option value="" id="class-current-option"></option>
                 <option value="Fighter">Fighter</option>
                 <option value="Wizard">Wizard</option>
                 <option value="Cleric">Cleric</option>
@@ -255,7 +255,7 @@
             <div>
               <label for="background">Background:</label>
               <select id="background" name="background" style="width:100%;padding:10px;border-radius:6px;background:#2c2f33;color:#fff;font-size:1em;margin-top:6px;">
-                <option value="">(Current: <span id="background-current"></span>)</option>
+                <option value="" id="background-current-option"></option>
                 <option value="Acolyte">Acolyte</option>
                 <option value="Charlatan">Charlatan</option>
                 <option value="Criminal">Criminal</option>
@@ -542,8 +542,10 @@
       // Race dropdown and custom
       const raceSel = document.getElementById('race');
       const raceOther = document.getElementById('race-other');
-      const raceCurrent = document.getElementById('race-current');
-      if (raceSel && raceOther) {
+      const raceCurrentOption = document.getElementById('race-current-option');
+      if (raceSel && raceOther && raceCurrentOption) {
+        let currentRace = selectedChar.race || 'None';
+        raceCurrentOption.textContent = '(Current: ' + currentRace + ')';
         if (raceSel.querySelector(`option[value="${selectedChar.race}"]`)) {
           raceSel.value = selectedChar.race;
           raceOther.style.display = 'none';
@@ -557,13 +559,14 @@
           raceOther.style.display = 'none';
           raceOther.value = '';
         }
-        if (raceCurrent) raceCurrent.textContent = selectedChar.race || 'None';
       }
       // Class dropdown and custom
       const classSel = document.getElementById('class');
       const classOther = document.getElementById('class-other');
-      const classCurrent = document.getElementById('class-current');
-      if (classSel && classOther) {
+      const classCurrentOption = document.getElementById('class-current-option');
+      if (classSel && classOther && classCurrentOption) {
+        let currentClass = selectedChar.class || 'None';
+        classCurrentOption.textContent = '(Current: ' + currentClass + ')';
         if (classSel.querySelector(`option[value="${selectedChar.class}"]`)) {
           classSel.value = selectedChar.class;
           classOther.style.display = 'none';
@@ -577,13 +580,14 @@
           classOther.style.display = 'none';
           classOther.value = '';
         }
-        if (classCurrent) classCurrent.textContent = selectedChar.class || 'None';
       }
       // Background dropdown and custom
       const backgroundSel = document.getElementById('background');
       const backgroundOther = document.getElementById('background-other');
-      const backgroundCurrent = document.getElementById('background-current');
-      if (backgroundSel && backgroundOther) {
+      const backgroundCurrentOption = document.getElementById('background-current-option');
+      if (backgroundSel && backgroundOther && backgroundCurrentOption) {
+        let currentBackground = selectedChar.background || 'None';
+        backgroundCurrentOption.textContent = '(Current: ' + currentBackground + ')';
         if (backgroundSel.querySelector(`option[value="${selectedChar.background}"]`)) {
           backgroundSel.value = selectedChar.background;
           backgroundOther.style.display = 'none';
@@ -597,7 +601,6 @@
           backgroundOther.style.display = 'none';
           backgroundOther.value = '';
         }
-        if (backgroundCurrent) backgroundCurrent.textContent = selectedChar.background || 'None';
       }
       document.getElementById('level').value = selectedChar.level || 1;
       document.getElementById('xp').value = selectedChar.xp || 0;
