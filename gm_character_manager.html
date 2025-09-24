@@ -532,6 +532,47 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
     }
 
     function loadCharacter(idx) {
+      // Attach chip tooltips for skills/spells
+      setTimeout(function() {
+        let tooltip = document.getElementById('tooltip');
+        if (!tooltip) {
+          tooltip = document.createElement('div');
+          tooltip.id = 'tooltip';
+          tooltip.className = 'tooltip';
+          tooltip.style.position = 'absolute';
+          tooltip.style.background = '#23272a';
+          tooltip.style.color = '#fff';
+          tooltip.style.border = '1px solid #7289da';
+          tooltip.style.borderRadius = '6px';
+          tooltip.style.padding = '8px 12px';
+          tooltip.style.fontSize = '0.95em';
+          tooltip.style.zIndex = '1000';
+          tooltip.style.pointerEvents = 'none';
+          tooltip.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+          tooltip.style.maxWidth = '320px';
+          tooltip.style.display = 'none';
+          document.body.appendChild(tooltip);
+        }
+        function showTooltip(e) {
+          if (!e.target.title) return;
+          tooltip.textContent = e.target.title;
+          tooltip.style.display = 'block';
+          tooltip.style.left = (e.pageX + 12) + 'px';
+          tooltip.style.top = (e.pageY + 12) + 'px';
+        }
+        function moveTooltip(e) {
+          tooltip.style.left = (e.pageX + 12) + 'px';
+          tooltip.style.top = (e.pageY + 12) + 'px';
+        }
+        function hideTooltip() {
+          tooltip.style.display = 'none';
+        }
+        document.querySelectorAll('.skill-chip, .spell-chip').forEach(chip => {
+          chip.addEventListener('mouseenter', showTooltip);
+          chip.addEventListener('mousemove', moveTooltip);
+          chip.addEventListener('mouseleave', hideTooltip);
+        });
+      }, 0);
       selectedChar = characters[idx];
       if (!selectedChar) return;
       const avatarImg = document.getElementById('avatar-preview');
@@ -581,71 +622,88 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
       renderStatusEffectsList(selectedChar.status_effects);
       updateStatusEffectSelect();
       showStatusEffectDesc();
-      // --- Skills & Spells Table with Buff/Debuff Indicators ---
+      // --- Skills & Spells as Chips with Buff/Debuff and Tooltips ---
       const gmSkillsDiv = document.getElementById('gm-skills-list');
       const gmSpellsDiv = document.getElementById('gm-spells-list');
+      // Add chip style if not present
+      (function addSkillSpellChipStyle() {
+        if (document.getElementById('skill-spell-chip-style')) return;
+        const style = document.createElement('style');
+        style.id = 'skill-spell-chip-style';
+        style.textContent = `.skill-chip, .spell-chip { display:inline-block;background:#444;color:#fff;padding:4px 10px;margin:2px 4px 2px 0;border-radius:8px;font-size:0.98em;cursor:help;transition:background 0.2s; }
+        .skill-chip:hover, .spell-chip:hover { background:#7289da;color:#fff; }
+        .buff-indicator { margin-left:4px; color:#43b581; font-size:1.1em; cursor:help; }
+        .debuff-indicator { margin-left:4px; color:#f04747; font-size:1.1em; cursor:help; }`;
+        document.head.appendChild(style);
+      })();
+      // Skills
       if (gmSkillsDiv) {
         gmSkillsDiv.innerHTML = '';
-        const table = document.createElement('table');
-        table.style.width = '100%';
-        table.innerHTML = '<tr><th style="width:100%;">Skill</th></tr>';
         const activeEffects = Array.isArray(selectedChar.status_effects) ? selectedChar.status_effects.map(e => e.name) : [];
         (Array.isArray(selectedChar.skills) ? selectedChar.skills : []).forEach(skill => {
           if ((skill.count ?? 0) > 0) {
-            const row = document.createElement('tr');
-            const nameCell = document.createElement('td');
-            // Find skill data in dndData
             let skillData = (dndData && dndData.skills) ? dndData.skills.find(s => s.name === skill.name) : null;
             let buffs = skillData && skillData.buffs ? skillData.buffs.filter(b => activeEffects.includes(b)) : [];
             let debuffs = skillData && skillData.debuffs ? skillData.debuffs.filter(d => activeEffects.includes(d)) : [];
-            let display = skill.name;
-            if (buffs.length > 0) display += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
-            if (debuffs.length > 0) display += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
+            let label = skill.name;
+            let bracket = '';
+            // Show bonus in brackets if present
+            let bonus = 0;
+            let sources = [];
+            // Class bonus
+            if (selectedChar.class && dndData && dndData.classInfo && dndData.classInfo[selectedChar.class] && dndData.classInfo[selectedChar.class].skill === skill.name) {
+              bonus += 2;
+              sources.push('Class +2');
+            }
+            // Background bonus
+            if (selectedChar.background && dndData && dndData.backgroundInfo && dndData.backgroundInfo[selectedChar.background] && dndData.backgroundInfo[selectedChar.background].skills && dndData.backgroundInfo[selectedChar.background].skills.includes(skill.name)) {
+              bonus += 2;
+              sources.push('Background +2');
+            }
+            if (bonus > 0) bracket = ` [${sources.join(', ')}]`;
+            if (buffs.length > 0) label += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
+            if (debuffs.length > 0) label += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
             // Tooltip: show description and buff/debuff info
             let tooltip = '';
             if (skillData && skillData.description) tooltip += skillData.description;
             if (buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Buffed by: ' + buffs.join(', ');
             if (debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Debuffed by: ' + debuffs.join(', ');
-            nameCell.innerHTML = display;
-            if (tooltip) nameCell.title = tooltip;
-            row.appendChild(nameCell);
-            table.appendChild(row);
+            const chip = document.createElement('span');
+            chip.className = 'skill-chip';
+            chip.innerHTML = label + bracket;
+            if (tooltip) chip.title = tooltip;
+            gmSkillsDiv.appendChild(chip);
           }
         });
-        gmSkillsDiv.appendChild(table);
       }
+      // Spells
       if (gmSpellsDiv) {
         gmSpellsDiv.innerHTML = '';
-        const table = document.createElement('table');
-        table.style.width = '100%';
-        table.innerHTML = '<tr><th style="width:70%;">Spell</th><th style="width:30%;">Level</th></tr>';
         const activeEffects = Array.isArray(selectedChar.status_effects) ? selectedChar.status_effects.map(e => e.name) : [];
         (Array.isArray(selectedChar.spells) ? selectedChar.spells : []).forEach(spell => {
           if ((spell.count ?? 0) > 0) {
-            const row = document.createElement('tr');
-            const nameCell = document.createElement('td');
-            // Find spell data in dndData
             let spellData = (dndData && dndData.spells) ? dndData.spells.find(s => s.name === spell.name) : null;
             let buffs = spellData && spellData.buffs ? spellData.buffs.filter(b => activeEffects.includes(b)) : [];
             let debuffs = spellData && spellData.debuffs ? spellData.debuffs.filter(d => activeEffects.includes(d)) : [];
-            let display = spell.name;
-            if (buffs.length > 0) display += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
-            if (debuffs.length > 0) display += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
+            let label = spell.name;
+            let bracket = '';
+            // Show level in brackets if present
+            let level = spellData && spellData.level ? spellData.level : (spell.level ?? '');
+            if (level) bracket = ` [Level ${level}]`;
+            if (buffs.length > 0) label += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
+            if (debuffs.length > 0) label += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
             // Tooltip: show description and buff/debuff info
             let tooltip = '';
             if (spellData && spellData.description) tooltip += spellData.description;
             if (buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Buffed by: ' + buffs.join(', ');
             if (debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Debuffed by: ' + debuffs.join(', ');
-            nameCell.innerHTML = display;
-            if (tooltip) nameCell.title = tooltip;
-            const lvlCell = document.createElement('td');
-            lvlCell.textContent = spellData && spellData.level ? spellData.level : (spell.level ?? '');
-            row.appendChild(nameCell);
-            row.appendChild(lvlCell);
-            table.appendChild(row);
+            const chip = document.createElement('span');
+            chip.className = 'spell-chip';
+            chip.innerHTML = label + bracket;
+            if (tooltip) chip.title = tooltip;
+            gmSpellsDiv.appendChild(chip);
           }
         });
-        gmSpellsDiv.appendChild(table);
       }
     }
     // Status Effects UI logic
