@@ -663,9 +663,10 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
             if (bonus > 0) bracket = ` [${sources.join(', ')}]`;
             if (buffs.length > 0) label += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
             if (debuffs.length > 0) label += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
-            // Tooltip: show description and buff/debuff info
+            // Tooltip: show description, bonuses, buffs, debuffs
             let tooltip = '';
             if (skillData && skillData.description) tooltip += skillData.description;
+            if (bonus > 0) tooltip += (tooltip ? '\n' : '') + 'Bonuses: ' + sources.join(', ');
             if (buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Buffed by: ' + buffs.join(', ');
             if (debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Debuffed by: ' + debuffs.join(', ');
             const chip = document.createElement('span');
@@ -687,14 +688,14 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
             let debuffs = spellData && spellData.debuffs ? spellData.debuffs.filter(d => activeEffects.includes(d)) : [];
             let label = spell.name;
             let bracket = '';
-            // Show level in brackets if present
             let level = spellData && spellData.level ? spellData.level : (spell.level ?? '');
             if (level) bracket = ` [Level ${level}]`;
             if (buffs.length > 0) label += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
             if (debuffs.length > 0) label += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
-            // Tooltip: show description and buff/debuff info
+            // Tooltip: show description, level, buffs, debuffs
             let tooltip = '';
             if (spellData && spellData.description) tooltip += spellData.description;
+            if (level) tooltip += (tooltip ? '\n' : '') + 'Level: ' + level;
             if (buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Buffed by: ' + buffs.join(', ');
             if (debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Debuffed by: ' + debuffs.join(', ');
             const chip = document.createElement('span');
