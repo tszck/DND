@@ -728,6 +728,49 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
           }
         });
       }
+        // Weapons, Armors, Items as Chips
+        function renderAssetChips(assetType, containerId, chipClass, dndKey) {
+          const div = document.getElementById(containerId);
+          if (!div) return;
+          div.innerHTML = '';
+          const activeEffects = Array.isArray(selectedChar.status_effects) ? selectedChar.status_effects.map(e => e.name) : [];
+          (Array.isArray(selectedChar[assetType]) ? selectedChar[assetType] : []).forEach(asset => {
+            if ((asset.count ?? 0) > 0 || asset.name) {
+              let assetData = (dndData && dndData[dndKey]) ? dndData[dndKey].find(a => a.name === asset.name) : null;
+              let buffs = assetData && assetData.buffs ? assetData.buffs.filter(b => activeEffects.includes(b)) : [];
+              let debuffs = assetData && assetData.debuffs ? assetData.debuffs.filter(d => activeEffects.includes(d)) : [];
+              let label = asset.name;
+              let bracket = '';
+              // Show bonus in brackets if present
+              let bonus = 0;
+              let sources = [];
+              if (assetData && assetData.bonus) {
+                bonus += assetData.bonus;
+                sources.push('Bonus +' + assetData.bonus);
+              }
+              if (bonus > 0) bracket = ` [${sources.join(', ')}]`;
+              if (buffs.length > 0) label += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
+              if (debuffs.length > 0) label += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
+              // Tooltip: use dndData for description, bonuses, buffs, debuffs
+              let tooltip = '';
+              if (assetData && assetData.description) tooltip += assetData.description;
+              if (bonus > 0) tooltip += (tooltip ? '\n' : '') + 'Bonuses: ' + sources.join(', ');
+              if (assetData && assetData.buffs && assetData.buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Possible Buffs: ' + assetData.buffs.join(', ');
+              if (assetData && assetData.debuffs && assetData.debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Possible Debuffs: ' + assetData.debuffs.join(', ');
+              if (buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Buffed by: ' + buffs.join(', ');
+              if (debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Debuffed by: ' + debuffs.join(', ');
+              const chip = document.createElement('span');
+              chip.className = chipClass;
+              chip.innerHTML = label + bracket;
+              if (tooltip) chip.title = tooltip;
+              div.appendChild(chip);
+            }
+          });
+        }
+        // Render weapons, armors, items
+        renderAssetChips('weapons', 'gm-weapons-list', 'weapon-chip', 'weapons');
+        renderAssetChips('armors', 'gm-armors-list', 'armor-chip', 'armors');
+        renderAssetChips('items', 'gm-items-list', 'item-chip', 'items');
     }
     // Status Effects UI logic
     document.addEventListener('DOMContentLoaded', function() {
@@ -770,9 +813,16 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
               selectedChar = freshChar;
               renderStatusEffectsList(selectedChar.status_effects || []);
               addSessionLog(`Added status effect: ${eff.name}`, selectedChar);
+              // Re-render asset chips after status effect change
+              renderAssetChips('weapons', 'gm-weapons-list', 'weapon-chip', 'weapons');
+              renderAssetChips('armors', 'gm-armors-list', 'armor-chip', 'armors');
+              renderAssetChips('items', 'gm-items-list', 'item-chip', 'items');
             } else {
               renderStatusEffectsList(effects);
               addSessionLog(`Added status effect: ${eff.name}`, selectedChar);
+              renderAssetChips('weapons', 'gm-weapons-list', 'weapon-chip', 'weapons');
+              renderAssetChips('armors', 'gm-armors-list', 'armor-chip', 'armors');
+              renderAssetChips('items', 'gm-items-list', 'item-chip', 'items');
             }
           }
         });
@@ -797,9 +847,15 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
               selectedChar = freshChar;
               renderStatusEffectsList(selectedChar.status_effects || []);
               addSessionLog(`Removed status effect: ${effName}`, selectedChar);
+              renderAssetChips('weapons', 'gm-weapons-list', 'weapon-chip', 'weapons');
+              renderAssetChips('armors', 'gm-armors-list', 'armor-chip', 'armors');
+              renderAssetChips('items', 'gm-items-list', 'item-chip', 'items');
             } else {
               renderStatusEffectsList(effects);
               addSessionLog(`Removed status effect: ${effName}`, selectedChar);
+              renderAssetChips('weapons', 'gm-weapons-list', 'weapon-chip', 'weapons');
+              renderAssetChips('armors', 'gm-armors-list', 'armor-chip', 'armors');
+              renderAssetChips('items', 'gm-items-list', 'item-chip', 'items');
             }
           }
         });

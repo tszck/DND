@@ -618,46 +618,39 @@
         sheetSuggestions.items = (data.items || []).map(i => i.name);
         sheetSuggestions.equipment = (data.equipment || []).map(e => e.name);
         sheetSuggestions.skills = (data.skills || []).map(s => s.name);
-    if (entry.type) html += `<i>Type:</i> ${entry.type}<br>`;
-    if (entry.damage) html += `<i>Damage:</i> ${entry.damage}<br>`;
-    if (entry.ac) html += `<i>AC:</i> ${entry.ac}<br>`;
-    if (entry.ac_bonus) html += `<i>AC Bonus:</i> ${entry.ac_bonus}<br>`;
-    if (entry.dex_bonus) html += `<i>Dex Bonus:</i> Yes<br>`;
-    if (entry.strength_req) html += `<i>Strength Req:</i> ${entry.strength_req}<br>`;
-    if (entry.stealth_disadvantage) html += `<i>Stealth Disadvantage:</i> Yes<br>`;
-    if (entry.effect) html += `<i>Effect:</i> ${entry.effect}<br>`;
-    if (entry.properties) html += `<i>Properties:</i> ${entry.properties.join(', ')}<br>`;
-
+        // Add more suggestion types if needed
+      } catch (err) {
+        console.error('Failed to load suggestions:', err);
+      }
+    }
+    
+    // The following code was misplaced inside loadSuggestions and should be outside as utility/helper/event logic
+    
     // Attach manual avatar URL save handler (fallback when storage bucket not available)
     document.addEventListener('DOMContentLoaded', function() {
-    if (Array.isArray(entry.effects)) {
-      html += `<b>Buffs/Debuffs:</b><br>`;
-      entry.effects.forEach(eff => {
-        let color = eff.type === 'buff' ? '#43b581' : '#f04747';
-        let effectText = eff.effect_type === 'advantage' ? 'Advantage (roll twice, take higher)' :
-          eff.effect_type === 'disadvantage' ? 'Disadvantage (roll twice, take lower)' :
-          (eff.effect_type === 'modifier' ? (eff.value > 0 ? `+${eff.value}` : `${eff.value}`) : '');
-        html += `<span style='color:${color}'>${eff.source}: ${effectText}</span><br>`;
-      });
-    }
-      avatarUrlSave.addEventListener('click', async function() {
-        const url = (avatarUrlInput.value || '').trim();
-        if (!url) return alert('Please enter a valid image URL.');
-        if (!url.startsWith('http')) return alert('Please enter a valid absolute URL (http/https).');
-        if (!currentUsername) return alert('No current user found. Please reload the page while logged in.');
-        try {
-          const res = await updateCharacter(currentUsername, { avatar_url: url });
-          if (!res) return;
-          currentCharacter = res;
-          const avatarImg = document.getElementById('avatar-img');
-          if (avatarImg) avatarImg.src = url;
-          if (fallback) fallback.style.display = 'none';
-          alert('Avatar URL saved.');
-        } catch (err) {
-          console.error('Failed to save avatar URL', err);
-          alert('Failed to save avatar URL. See console for details.');
-        }
-      });
+      const avatarUrlSave = document.getElementById('avatar-url-save');
+      const avatarUrlInput = document.getElementById('avatar-url-input');
+      const fallback = document.getElementById('avatar-fallback');
+      if (avatarUrlSave && avatarUrlInput) {
+        avatarUrlSave.addEventListener('click', async function() {
+          const url = (avatarUrlInput.value || '').trim();
+          if (!url) return alert('Please enter a valid image URL.');
+          if (!url.startsWith('http')) return alert('Please enter a valid absolute URL (http/https).');
+          if (!currentUsername) return alert('No current user found. Please reload the page while logged in.');
+          try {
+            const res = await updateCharacter(currentUsername, { avatar_url: url });
+            if (!res) return;
+            currentCharacter = res;
+            const avatarImg = document.getElementById('avatar-img');
+            if (avatarImg) avatarImg.src = url;
+            if (fallback) fallback.style.display = 'none';
+            alert('Avatar URL saved.');
+          } catch (err) {
+            console.error('Failed to save avatar URL', err);
+            alert('Failed to save avatar URL. See console for details.');
+          }
+        });
+      }
       // Proactive check: does the 'avatars' bucket exist? If not, show instructions early
       (async function checkAvatarsBucket() {
         try {
@@ -1387,6 +1380,7 @@ if (typeof attachTooltipListeners !== 'function') {
         });
       }
       attachTooltipListeners();
+    }
     // Tooltip logic
     function getTooltipContent(type, name) {
       if (!dndData) return '';
@@ -1441,6 +1435,7 @@ if (typeof attachTooltipListeners !== 'function') {
       }
       return html;
     }
+  // ...existing code...
   </script>
 </body>
 </html>
