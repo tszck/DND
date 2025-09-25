@@ -168,21 +168,16 @@
   <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="handleAvatarError(this)">
     <script>
     function handleAvatarError(img) {
-      // Try local fallback first
+      // Try Supabase default avatar
       if (!img.src.includes('avatar.jpg')) {
         img.onerror = function() {
-          // Try Supabase default avatar
-          img.onerror = function() {
-            // If all fail, show blank and set title
-            img.onerror = null;
-            img.src = '';
-            img.title = 'No avatar image found.';
-          };
-          img.src = 'https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg';
-          img.title = 'Avatar could not be loaded. Showing default avatar.';
+          // If all fail, show blank and set title
+          img.onerror = null;
+          img.src = '';
+          img.title = 'No avatar image found.';
         };
-        img.src = 'avatar.jpg';
-        img.title = 'Avatar could not be loaded. Trying local fallback.';
+        img.src = 'https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg';
+        img.title = 'Avatar could not be loaded. Showing default avatar.';
       }
     }
     </script>
@@ -1510,10 +1505,10 @@ if (typeof attachTooltipListeners !== 'function') {
     // Render assets (items, weapons, armor) as chips with tooltips
     function renderAssetChips(assetType, containerId, chipClass, dndKey) {
       const div = document.getElementById(containerId);
-      if (!div) return;
+      if (!div || !currentCharacter) return;
       div.innerHTML = '';
-      const activeEffects = Array.isArray(character.status_effects) ? character.status_effects.map(e => e.name) : [];
-      (Array.isArray(character[assetType]) ? character[assetType] : []).forEach(asset => {
+      const activeEffects = Array.isArray(currentCharacter.status_effects) ? currentCharacter.status_effects.map(e => e.name) : [];
+      (Array.isArray(currentCharacter[assetType]) ? currentCharacter[assetType] : []).forEach(asset => {
         if ((asset.count ?? 0) > 0 || asset.name) {
           let assetData = (dndData && dndData[dndKey]) ? dndData[dndKey].find(a => a.name === asset.name) : null;
           let buffs = assetData && assetData.buffs ? assetData.buffs.filter(b => activeEffects.includes(b)) : [];
