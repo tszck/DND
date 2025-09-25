@@ -165,7 +165,27 @@
   <div class="dashboard">
     <div class="top-row">
       <div class="profile">
-        <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="this.onerror=null;this.src='avatar.jpg';">
+  <img id="avatar-img" src="https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg" alt="Character Avatar" onerror="handleAvatarError(this)">
+    <script>
+    function handleAvatarError(img) {
+      // Try local fallback first
+      if (!img.src.includes('avatar.jpg')) {
+        img.onerror = function() {
+          // Try Supabase default avatar
+          img.onerror = function() {
+            // If all fail, show blank and set title
+            img.onerror = null;
+            img.src = '';
+            img.title = 'No avatar image found.';
+          };
+          img.src = 'https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar.jpg';
+          img.title = 'Avatar could not be loaded. Showing default avatar.';
+        };
+        img.src = 'avatar.jpg';
+        img.title = 'Avatar could not be loaded. Trying local fallback.';
+      }
+    }
+    </script>
         <input type="file" id="avatar-upload" accept="image/png, image/jpeg" style="margin-top:10px;">
         <div id="avatar-fallback" style="display:none;margin-top:10px;padding:8px;border-radius:6px;background:#2b2f33;color:#ffd166;">
           <div style="margin-bottom:6px;"><strong>Avatar upload failed because the storage bucket appears to be missing.</strong></div>
