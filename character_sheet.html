@@ -234,11 +234,11 @@
       </div>
       <div class="inventory">
         <div class="section-title" style="text-align:left;">Weapons</div>
-        <table id="weapons-table" style="width:100%;margin-bottom:12px;"></table>
+        <div id="weapons-list" style="margin-bottom:16px;min-height:24px;"></div>
         <div class="section-title">Armor</div>
-        <table id="armor-table" style="width:100%;margin-bottom:12px;"></table>
+        <div id="armors-list" style="margin-bottom:16px;min-height:24px;"></div>
         <div class="section-title">Items</div>
-        <table id="items-table" style="width:100%;margin-bottom:12px;"></table>
+        <div id="items-list" style="margin-bottom:16px;min-height:24px;"></div>
       </div>
       <div class="abilities">
         <div class="section-title" style="text-align:left;">Skills</div>
@@ -1240,83 +1240,108 @@ if (typeof attachTooltipListeners !== 'function') {
         row.appendChild(tdBreakdown);
         statsTable.appendChild(row);
       });
-      // Weapons, Armor, Items tables
-      const weaponsTable = document.getElementById('weapons-table');
-      const armorTable = document.getElementById('armor-table');
-      const itemsTable = document.getElementById('items-table');
-      weaponsTable.innerHTML = '<tr><th style="width:40%;">Name</th><th style="width:25%;">Type</th><th style="width:20%;">Damage</th><th style="width:15%;">Quantity</th></tr>';
-      armorTable.innerHTML = '<tr><th style="width:40%;">Name</th><th style="width:25%;">Type</th><th style="width:20%;">AC</th><th style="width:15%;">Quantity</th></tr>';
-      itemsTable.innerHTML = '<tr><th style="width:70%;">Name</th><th style="width:30%;">Quantity</th></tr>';
-      // Items
-      (Array.isArray(character.items) ? character.items : []).forEach(item => {
-        if ((item.count ?? 0) > 0) {
-          const row = document.createElement('tr');
-          const nameCell = document.createElement('td');
-          nameCell.textContent = item.name;
-          nameCell.setAttribute('data-type', 'items');
-          nameCell.setAttribute('data-name', item.name);
-          const qtyCell = document.createElement('td');
-          qtyCell.textContent = item.count ?? 0;
-          row.appendChild(nameCell);
-          row.appendChild(qtyCell);
-          itemsTable.appendChild(row);
-        }
-      });
-      // Equipment split
+      // Weapons, Armor, Items as chips with tooltips
+      // Render items as chips (using the general function)
+      renderAssetChips('items', 'items-list', 'item-chip', 'items');
+      
+      // Create separate weapon and armor arrays from equipment
+      let weapons = [];
+      let armors = [];
+      let miscEquipment = [];
       (Array.isArray(character.equipment) ? character.equipment : []).forEach(eq => {
         if ((eq.count ?? 0) > 0 && dndData) {
           const eqData = (dndData.equipment || []).find(e => e.name === eq.name);
           if (eqData && eqData.type && eqData.type.toLowerCase().includes('weapon')) {
-            // Weapon
-            const row = document.createElement('tr');
-            const nameCell = document.createElement('td');
-            nameCell.textContent = eq.name;
-            nameCell.setAttribute('data-type', 'equipment');
-            nameCell.setAttribute('data-name', eq.name);
-            const typeCell = document.createElement('td');
-            typeCell.textContent = eqData.type;
-            const dmgCell = document.createElement('td');
-            dmgCell.textContent = eqData.damage || '';
-            const qtyCell = document.createElement('td');
-            qtyCell.textContent = eq.count ?? 0;
-            row.appendChild(nameCell);
-            row.appendChild(typeCell);
-            row.appendChild(dmgCell);
-            row.appendChild(qtyCell);
-            weaponsTable.appendChild(row);
+            weapons.push(eq);
           } else if (eqData && eqData.type && eqData.type.toLowerCase().includes('armor')) {
-            // Armor
-            const row = document.createElement('tr');
-            const nameCell = document.createElement('td');
-            nameCell.textContent = eq.name;
-            nameCell.setAttribute('data-type', 'equipment');
-            nameCell.setAttribute('data-name', eq.name);
-            const typeCell = document.createElement('td');
-            typeCell.textContent = eqData.type;
-            const acCell = document.createElement('td');
-            acCell.textContent = eqData.ac || '';
-            const qtyCell = document.createElement('td');
-            qtyCell.textContent = eq.count ?? 0;
-            row.appendChild(nameCell);
-            row.appendChild(typeCell);
-            row.appendChild(acCell);
-            row.appendChild(qtyCell);
-            armorTable.appendChild(row);
+            armors.push(eq);
           } else {
-            // If not weapon/armor, treat as item
-            const row = document.createElement('tr');
-            const nameCell = document.createElement('td');
-            nameCell.textContent = eq.name;
-            nameCell.setAttribute('data-type', 'equipment');
-            nameCell.setAttribute('data-name', eq.name);
-            const qtyCell = document.createElement('td');
-            qtyCell.textContent = eq.count ?? 0;
-            row.appendChild(nameCell);
-            row.appendChild(qtyCell);
-            itemsTable.appendChild(row);
+            miscEquipment.push(eq);
           }
         }
       });
+      
+      // Render weapon and armor chips
+      const weaponsList = document.getElementById('weapons-list');
+      const armorsList = document.getElementById('armors-list');
+      const itemsList = document.getElementById('items-list');
+      
+      if (weaponsList) {
+        weaponsList.innerHTML = '';
+        const activeEffects = Array.isArray(character.status_effects) ? character.status_effects.map(e => e.name) : [];
+        weapons.forEach(weapon => {
+          let weaponData = (dndData && dndData.equipment) ? dndData.equipment.find(w => w.name === weapon.name) : null;
+          let buffs = weaponData && weaponData.buffs ? weaponData.buffs.filter(b => activeEffects.includes(b)) : [];
+          let debuffs = weaponData && weaponData.debuffs ? weaponData.debuffs.filter(d => activeEffects.includes(d)) : [];
+          let label = weapon.name;
+          let bracket = '';
+          if ((weapon.count ?? 0) > 1) bracket = ` (${weapon.count})`;
+          if (buffs.length > 0) label += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
+          if (debuffs.length > 0) label += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
+          let tooltip = '';
+          if (weaponData && weaponData.description) tooltip += weaponData.description;
+          if (weaponData && weaponData.type) tooltip += (tooltip ? '\n' : '') + 'Type: ' + weaponData.type;
+          if (weaponData && weaponData.damage) tooltip += (tooltip ? '\n' : '') + 'Damage: ' + weaponData.damage;
+          if (weaponData && weaponData.properties) tooltip += (tooltip ? '\n' : '') + 'Properties: ' + weaponData.properties.join(', ');
+          if (buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Buffed by: ' + buffs.join(', ');
+          if (debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Debuffed by: ' + debuffs.join(', ');
+          const chip = document.createElement('span');
+          chip.className = 'weapon-chip';
+          chip.innerHTML = label + bracket;
+          if (tooltip) chip.title = tooltip;
+          weaponsList.appendChild(chip);
+        });
+        if (weapons.length === 0) weaponsList.innerHTML = '<span style="color:#888;">No weapons</span>';
+      }
+      
+      if (armorsList) {
+        armorsList.innerHTML = '';
+        const activeEffects = Array.isArray(character.status_effects) ? character.status_effects.map(e => e.name) : [];
+        armors.forEach(armor => {
+          let armorData = (dndData && dndData.equipment) ? dndData.equipment.find(a => a.name === armor.name) : null;
+          let buffs = armorData && armorData.buffs ? armorData.buffs.filter(b => activeEffects.includes(b)) : [];
+          let debuffs = armorData && armorData.debuffs ? armorData.debuffs.filter(d => activeEffects.includes(d)) : [];
+          let label = armor.name;
+          let bracket = '';
+          if ((armor.count ?? 0) > 1) bracket = ` (${armor.count})`;
+          if (buffs.length > 0) label += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
+          if (debuffs.length > 0) label += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
+          let tooltip = '';
+          if (armorData && armorData.description) tooltip += armorData.description;
+          if (armorData && armorData.type) tooltip += (tooltip ? '\n' : '') + 'Type: ' + armorData.type;
+          if (armorData && armorData.ac) tooltip += (tooltip ? '\n' : '') + 'AC: ' + armorData.ac;
+          if (armorData && armorData.ac_bonus) tooltip += (tooltip ? '\n' : '') + 'AC Bonus: ' + armorData.ac_bonus;
+          if (armorData && armorData.dex_bonus !== undefined) tooltip += (tooltip ? '\n' : '') + 'Dex Bonus: ' + (armorData.dex_bonus ? 'Yes' : 'No');
+          if (armorData && armorData.strength_req) tooltip += (tooltip ? '\n' : '') + 'Strength Req: ' + armorData.strength_req;
+          if (armorData && armorData.stealth_disadvantage) tooltip += (tooltip ? '\n' : '') + 'Stealth Disadvantage: Yes';
+          if (buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Buffed by: ' + buffs.join(', ');
+          if (debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Debuffed by: ' + debuffs.join(', ');
+          const chip = document.createElement('span');
+          chip.className = 'armor-chip';
+          chip.innerHTML = label + bracket;
+          if (tooltip) chip.title = tooltip;
+          armorsList.appendChild(chip);
+        });
+        if (armors.length === 0) armorsList.innerHTML = '<span style="color:#888;">No armor</span>';
+      }
+      
+      // Add misc equipment to items display
+      if (miscEquipment.length > 0 && itemsList) {
+        miscEquipment.forEach(eq => {
+          let eqData = (dndData && dndData.equipment) ? dndData.equipment.find(e => e.name === eq.name) : null;
+          let label = eq.name;
+          let bracket = '';
+          if ((eq.count ?? 0) > 1) bracket = ` (${eq.count})`;
+          let tooltip = '';
+          if (eqData && eqData.description) tooltip += eqData.description;
+          if (eqData && eqData.type) tooltip += (tooltip ? '\n' : '') + 'Type: ' + eqData.type;
+          const chip = document.createElement('span');
+          chip.className = 'equipment-chip';
+          chip.innerHTML = label + bracket;
+          if (tooltip) chip.title = tooltip;
+          itemsList.appendChild(chip);
+        });
+      }
       // --- Skills & Spells as Chips with Buff/Debuff and Tooltips ---
       const skillsTable = document.getElementById('skills-table');
       const spellsTable = document.getElementById('spells-table');
@@ -1325,8 +1350,8 @@ if (typeof attachTooltipListeners !== 'function') {
         if (document.getElementById('skill-spell-chip-style')) return;
         const style = document.createElement('style');
         style.id = 'skill-spell-chip-style';
-        style.textContent = `.skill-chip, .spell-chip { display:inline-block;background:#444;color:#fff;padding:4px 10px;margin:2px 4px 2px 0;border-radius:8px;font-size:0.98em;cursor:help;transition:background 0.2s; }
-        .skill-chip:hover, .spell-chip:hover { background:#7289da;color:#fff; }
+        style.textContent = `.skill-chip, .spell-chip, .weapon-chip, .armor-chip, .item-chip, .equipment-chip { display:inline-block;background:#444;color:#fff;padding:4px 10px;margin:2px 4px 2px 0;border-radius:8px;font-size:0.98em;cursor:help;transition:background 0.2s; }
+        .skill-chip:hover, .spell-chip:hover, .weapon-chip:hover, .armor-chip:hover, .item-chip:hover, .equipment-chip:hover { background:#7289da;color:#fff; }
         .buff-indicator { margin-left:4px; color:#43b581; font-size:1.1em; cursor:help; }
         .debuff-indicator { margin-left:4px; color:#f04747; font-size:1.1em; cursor:help; }`;
         document.head.appendChild(style);
@@ -1456,6 +1481,49 @@ if (typeof attachTooltipListeners !== 'function') {
       }
       return html;
     }
+
+    // Render assets (items, weapons, armor) as chips with tooltips
+    function renderAssetChips(assetType, containerId, chipClass, dndKey) {
+      const div = document.getElementById(containerId);
+      if (!div) return;
+      div.innerHTML = '';
+      const activeEffects = Array.isArray(character.status_effects) ? character.status_effects.map(e => e.name) : [];
+      (Array.isArray(character[assetType]) ? character[assetType] : []).forEach(asset => {
+        if ((asset.count ?? 0) > 0 || asset.name) {
+          let assetData = (dndData && dndData[dndKey]) ? dndData[dndKey].find(a => a.name === asset.name) : null;
+          let buffs = assetData && assetData.buffs ? assetData.buffs.filter(b => activeEffects.includes(b)) : [];
+          let debuffs = assetData && assetData.debuffs ? assetData.debuffs.filter(d => activeEffects.includes(d)) : [];
+          let label = asset.name;
+          let bracket = '';
+          // Show count in brackets if > 1
+          if ((asset.count ?? 0) > 1) bracket = ` (${asset.count})`;
+          // Show bonus in brackets if present
+          let bonus = 0;
+          let sources = [];
+          if (assetData && assetData.bonus) {
+            bonus += assetData.bonus;
+            sources.push('Bonus +' + assetData.bonus);
+          }
+          if (bonus > 0) bracket += ` [${sources.join(', ')}]`;
+          if (buffs.length > 0) label += ` <span class='buff-indicator' title='Buffed by: ${buffs.join(', ')}'>🟢</span>`;
+          if (debuffs.length > 0) label += ` <span class='debuff-indicator' title='Debuffed by: ${debuffs.join(', ')}'>🔴</span>`;
+          // Tooltip: use dndData for description, bonuses, buffs, debuffs
+          let tooltip = '';
+          if (assetData && assetData.description) tooltip += assetData.description;
+          if (bonus > 0) tooltip += (tooltip ? '\n' : '') + 'Bonuses: ' + sources.join(', ');
+          if (assetData && assetData.buffs && assetData.buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Possible Buffs: ' + assetData.buffs.join(', ');
+          if (assetData && assetData.debuffs && assetData.debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Possible Debuffs: ' + assetData.debuffs.join(', ');
+          if (buffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Buffed by: ' + buffs.join(', ');
+          if (debuffs.length > 0) tooltip += (tooltip ? '\n' : '') + 'Debuffed by: ' + debuffs.join(', ');
+          const chip = document.createElement('span');
+          chip.className = chipClass;
+          chip.innerHTML = label + bracket;
+          if (tooltip) chip.title = tooltip;
+          div.appendChild(chip);
+        }
+      });
+    }
+
   // ...existing code...
   </script>
 </body>

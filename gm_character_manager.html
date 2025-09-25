@@ -645,8 +645,8 @@ window.addEventListener('DOMContentLoaded', function() { loadDndData(); });
         if (document.getElementById('skill-spell-chip-style')) return;
         const style = document.createElement('style');
         style.id = 'skill-spell-chip-style';
-        style.textContent = `.skill-chip, .spell-chip { display:inline-block;background:#444;color:#fff;padding:4px 10px;margin:2px 4px 2px 0;border-radius:8px;font-size:0.98em;cursor:help;transition:background 0.2s; }
-        .skill-chip:hover, .spell-chip:hover { background:#7289da;color:#fff; }
+        style.textContent = `.skill-chip, .spell-chip, .weapon-chip, .armor-chip, .item-chip, .equipment-chip { display:inline-block;background:#444;color:#fff;padding:4px 10px;margin:2px 4px 2px 0;border-radius:8px;font-size:0.98em;cursor:help;transition:background 0.2s; }
+        .skill-chip:hover, .spell-chip:hover, .weapon-chip:hover, .armor-chip:hover, .item-chip:hover, .equipment-chip:hover { background:#7289da;color:#fff; }
         .buff-indicator { margin-left:4px; color:#43b581; font-size:1.1em; cursor:help; }
         .debuff-indicator { margin-left:4px; color:#f04747; font-size:1.1em; cursor:help; }`;
         document.head.appendChild(style);
