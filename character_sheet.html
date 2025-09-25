@@ -947,8 +947,6 @@
   // Show status effects as chips with tooltip
   const effects = Array.isArray(character.status_effects) ? character.status_effects : [];
   if (effects.length === 0) {
-    statusDiv.innerHTML = '<span style="color:#888;">No status effects</span>';
-  } else {
     statusDiv.innerHTML = effects.map(eff => {
       // Find effect in dndData if possible
       let effData = null;
@@ -964,7 +962,8 @@
       if (buff) tooltip += (tooltip ? '\n' : '') + 'Buff: ' + buff;
       if (debuff) tooltip += (tooltip ? '\n' : '') + 'Debuff: ' + debuff;
       if (notes) tooltip += (tooltip ? '\n' : '') + 'Notes: ' + notes;
-      return `<span class="status-chip" title="${tooltip.replace(/"/g,'&quot;')}">${eff.name}${eff.duration ? ` <span style='color:#faa61a;font-size:0.9em;'>(sustained)</span>` : ''}</span>`;
+      let sustainedBracket = eff.duration ? ` <span style='color:#faa61a;font-size:0.9em;'>(Sustained - DC required)</span>` : '';
+      return `<span class="status-chip" title="${tooltip.replace(/"/g,'&quot;')}">${eff.name}${sustainedBracket}</span>`;
     }).join('');
   }
   // Add style for status chips
