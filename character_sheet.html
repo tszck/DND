@@ -962,7 +962,7 @@
       if (buff) tooltip += (tooltip ? '\n' : '') + 'Buff: ' + buff;
       if (debuff) tooltip += (tooltip ? '\n' : '') + 'Debuff: ' + debuff;
       if (notes) tooltip += (tooltip ? '\n' : '') + 'Notes: ' + notes;
-      let sustainedBracket = eff.duration ? ` <span style='color:#faa61a;font-size:0.9em;'>(sustained)</span>` : '';
+      let sustainedBracket = eff.duration ? ` <span style='color:#faa61a;font-size:0.9em;'>(Sustained - DC required)</span>` : '';
       return `<span class="status-chip" title="${tooltip.replace(/"/g,'&quot;')}">${eff.name}${sustainedBracket}</span>`;
     }).join('') + `</div>`;
   }
