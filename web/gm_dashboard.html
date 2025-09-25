@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GM Dashboard - D&D Campaign Manager</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">D&D Campaign Manager</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="character_sheet.html">Character Sheet</a></li>
+                <li><a href="gm_dashboard.html">GM Dashboard</a></li>
+                <li><a href="player_handbook.html">Player Handbook</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="hero">
+            <h1 class="hero-title">Game Master Dashboard</h1>
+            <p class="hero-description">Manage your campaign, characters, and adventures</p>
+        </div>
+
+        <!-- Quick Actions -->
+        <section class="card mb-xl">
+            <div class="card-header">
+                <h2 class="card-title">Quick Actions</h2>
+            </div>
+            <div class="grid grid-4">
+                <button onclick="showCreateCharacterForm()" class="btn btn-primary btn-large">
+                    <span class="btn-icon">👤</span>
+                    Create Character
+                </button>
+                <button onclick="showCombatTools()" class="btn btn-secondary btn-large">
+                    <span class="btn-icon">⚔️</span>
+                    Combat Tools
+                </button>
+                <button onclick="showReferenceData()" class="btn btn-info btn-large">
+                    <span class="btn-icon">📚</span>
+                    Reference Data
+                </button>
+                <button onclick="showCampaignNotes()" class="btn btn-accent btn-large">
+                    <span class="btn-icon">📝</span>
+                    Campaign Notes
+                </button>
+            </div>
+        </section>
+
+        <!-- Character Management -->
+        <section class="card mb-xl">
+            <div class="card-header">
+                <h2 class="card-title">Character Management</h2>
+                <div class="card-actions">
+                    <button onclick="refreshCharacterList()" class="btn btn-outline">
+                        <span class="btn-icon">🔄</span>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <div class="characters-grid" id="charactersGrid">
+                <div class="loading-placeholder">
+                    <div class="loading"></div>
+                    <p>Loading characters...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modals and Forms -->
+        
+        <!-- Character Creation Modal -->
+        <div id="createCharacterModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Create New Character</h3>
+                    <button onclick="hideCreateCharacterForm()" class="modal-close">×</button>
+                </div>
+                <form id="createCharacterForm" onsubmit="createCharacter(event)">
+                    <div class="form-group">
+                        <label for="charName" class="form-label">Character Name *</label>
+                        <input type="text" id="charName" name="character_name" class="form-control" required>
+                    </div>
+                    
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label for="charRace" class="form-label">Race *</label>
+                            <select id="charRace" name="race" class="form-control form-select" required>
+                                <option value="">Select Race</option>
+                                <option value="Human">Human</option>
+                                <option value="Elf">Elf</option>
+                                <option value="Dwarf">Dwarf</option>
+                                <option value="Halfling">Halfling</option>
+                                <option value="Dragonborn">Dragonborn</option>
+                                <option value="Gnome">Gnome</option>
+                                <option value="Half-Elf">Half-Elf</option>
+                                <option value="Half-Orc">Half-Orc</option>
+                                <option value="Tiefling">Tiefling</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="charClass" class="form-label">Class *</label>
+                            <select id="charClass" name="class" class="form-control form-select" required>
+                                <option value="">Select Class</option>
+                                <option value="Barbarian">Barbarian</option>
+                                <option value="Bard">Bard</option>
+                                <option value="Cleric">Cleric</option>
+                                <option value="Druid">Druid</option>
+                                <option value="Fighter">Fighter</option>
+                                <option value="Monk">Monk</option>
+                                <option value="Paladin">Paladin</option>
+                                <option value="Ranger">Ranger</option>
+                                <option value="Rogue">Rogue</option>
+                                <option value="Sorcerer">Sorcerer</option>
+                                <option value="Warlock">Warlock</option>
+                                <option value="Wizard">Wizard</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-3">
+                        <div class="form-group">
+                            <label for="charLevel" class="form-label">Level *</label>
+                            <input type="number" id="charLevel" name="level" class="form-control" min="1" max="20" value="1" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="charBackground" class="form-label">Background</label>
+                            <input type="text" id="charBackground" name="background" class="form-control" placeholder="e.g. Acolyte, Criminal">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="charAlignment" class="form-label">Alignment</label>
+                            <select id="charAlignment" name="alignment" class="form-control form-select">
+                                <option value="">Select Alignment</option>
+                                <option value="Lawful Good">Lawful Good</option>
+                                <option value="Neutral Good">Neutral Good</option>
+                                <option value="Chaotic Good">Chaotic Good</option>
+                                <option value="Lawful Neutral">Lawful Neutral</option>
+                                <option value="True Neutral">True Neutral</option>
+                                <option value="Chaotic Neutral">Chaotic Neutral</option>
+                                <option value="Lawful Evil">Lawful Evil</option>
+                                <option value="Neutral Evil">Neutral Evil</option>
+                                <option value="Chaotic Evil">Chaotic Evil</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Ability Scores -->
+                    <div class="form-group">
+                        <label class="form-label">Ability Scores *</label>
+                        <div class="grid grid-3">
+                            <div class="form-group">
+                                <label for="str" class="form-label">Strength</label>
+                                <input type="number" id="str" name="strength" class="form-control" min="1" max="20" value="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dex" class="form-label">Dexterity</label>
+                                <input type="number" id="dex" name="dexterity" class="form-control" min="1" max="20" value="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="con" class="form-label">Constitution</label>
+                                <input type="number" id="con" name="constitution" class="form-control" min="1" max="20" value="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="int" class="form-label">Intelligence</label>
+                                <input type="number" id="int" name="intelligence" class="form-control" min="1" max="20" value="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="wis" class="form-label">Wisdom</label>
+                                <input type="number" id="wis" name="wisdom" class="form-control" min="1" max="20" value="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cha" class="form-label">Charisma</label>
+                                <input type="number" id="cha" name="charisma" class="form-control" min="1" max="20" value="10" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="charUser" class="form-label">Username/Player</label>
+                        <input type="text" id="charUser" name="username" class="form-control" placeholder="Player's username">
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" onclick="hideCreateCharacterForm()" class="btn btn-outline">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Character</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Character Edit Modal -->
+        <div id="editCharacterModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Edit Character</h3>
+                    <button onclick="hideEditCharacterForm()" class="modal-close">×</button>
+                </div>
+                <div id="editCharacterForm">
+                    <!-- Form will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Combat Tools Modal -->
+        <div id="combatToolsModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Combat Tools</h3>
+                    <button onclick="hideCombatTools()" class="modal-close">×</button>
+                </div>
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Initiative Tracker</h4>
+                        </div>
+                        <div id="initiativeTracker">
+                            <div class="form-group">
+                                <input type="text" id="combatantName" class="form-control" placeholder="Combatant name">
+                                <input type="number" id="combatantInitiative" class="form-control" placeholder="Initiative" style="width: 100px; margin-left: 10px;">
+                                <button onclick="addCombatant()" class="btn btn-sm btn-primary ml-sm">Add</button>
+                            </div>
+                            <div id="initiativeList" class="mt-md">
+                                <!-- Initiative list will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Dice Roller</h4>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <input type="text" id="diceExpression" class="form-control" placeholder="e.g. 1d20+3, 2d6" value="1d20">
+                                <button onclick="rollDice()" class="btn btn-primary ml-sm">Roll</button>
+                            </div>
+                            <div id="diceResult" class="mt-md"></div>
+                            
+                            <div class="grid grid-3 mt-md">
+                                <button onclick="quickRoll('1d4')" class="btn btn-sm btn-outline">d4</button>
+                                <button onclick="quickRoll('1d6')" class="btn btn-sm btn-outline">d6</button>
+                                <button onclick="quickRoll('1d8')" class="btn btn-sm btn-outline">d8</button>
+                                <button onclick="quickRoll('1d10')" class="btn btn-sm btn-outline">d10</button>
+                                <button onclick="quickRoll('1d12')" class="btn btn-sm btn-outline">d12</button>
+                                <button onclick="quickRoll('1d20')" class="btn btn-sm btn-outline">d20</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reference Data Modal -->
+        <div id="referenceDataModal" class="modal" style="display: none;">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h3>Reference Data</h3>
+                    <button onclick="hideReferenceData()" class="modal-close">×</button>
+                </div>
+                <div class="tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-button active" onclick="showReferenceTab('items')">Items</button>
+                        <button class="tab-button" onclick="showReferenceTab('weapons')">Weapons</button>
+                        <button class="tab-button" onclick="showReferenceTab('armor')">Armor</button>
+                        <button class="tab-button" onclick="showReferenceTab('spells')">Spells</button>
+                        <button class="tab-button" onclick="showReferenceTab('skills')">Skills</button>
+                    </div>
+                    
+                    <div id="referenceContent">
+                        <!-- Reference content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaign Notes Modal -->
+        <div id="campaignNotesModal" class="modal" style="display: none;">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h3>Campaign Notes</h3>
+                    <button onclick="hideCampaignNotes()" class="modal-close">×</button>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label for="campaignNotes" class="form-label">Notes</label>
+                        <textarea id="campaignNotes" class="form-control" rows="15" placeholder="Write your campaign notes here..."></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button onclick="saveCampaignNotes()" class="btn btn-primary">Save Notes</button>
+                        <button onclick="hideCampaignNotes()" class="btn btn-outline">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/database.js"></script>
+    <script>
+        let characters = [];
+        let combatants = [];
+        let currentRound = 1;
+        let currentTurn = 0;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCharacters();
+            loadCampaignNotes();
+        });
+
+        // Character Management
+        async function loadCharacters() {
+            try {
+                characters = await db.getAllCharacters();
+                displayCharacters();
+            } catch (error) {
+                console.error('Error loading characters:', error);
+                showError('Failed to load characters');
+            }
+        }
+
+        function displayCharacters() {
+            const grid = document.getElementById('charactersGrid');
+            
+            if (characters.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <p>No characters found</p>
+                        <button onclick="showCreateCharacterForm()" class="btn btn-primary">Create First Character</button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = characters.map(character => `
+                <div class="character-card">
+                    <div class="character-card-header">
+                        <h4 class="character-card-name">${character.character_name}</h4>
+                        <div class="character-card-actions">
+                            <button onclick="viewCharacter('${character.character_id}')" class="btn btn-sm btn-outline" title="View">👁️</button>
+                            <button onclick="editCharacter('${character.character_id}')" class="btn btn-sm btn-info" title="Edit">✏️</button>
+                            <button onclick="deleteCharacter('${character.character_id}', '${character.character_name}')" class="btn btn-sm btn-danger" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="character-card-details">
+                        <p><strong>Race:</strong> ${character.race}</p>
+                        <p><strong>Class:</strong> ${character.class}</p>
+                        <p><strong>Level:</strong> ${character.level}</p>
+                        <p><strong>HP:</strong> ${character.current_hp}/${character.max_hp}</p>
+                        <p><strong>AC:</strong> ${character.armor_class}</p>
+                        ${character.username ? `<p><strong>Player:</strong> ${character.username}</p>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function refreshCharacterList() {
+            await loadCharacters();
+            showSuccess('Character list refreshed');
+        }
+
+        // Character CRUD Operations
+        function showCreateCharacterForm() {
+            document.getElementById('createCharacterModal').style.display = 'block';
+        }
+
+        function hideCreateCharacterForm() {
+            document.getElementById('createCharacterModal').style.display = 'none';
+            document.getElementById('createCharacterForm').reset();
+        }
+
+        async function createCharacter(event) {
+            event.preventDefault();
+            
+            try {
+                const formData = new FormData(event.target);
+                const characterData = {
+                    character_name: formData.get('character_name'),
+                    race: formData.get('race'),
+                    class: formData.get('class'),
+                    level: parseInt(formData.get('level')),
+                    background: formData.get('background') || null,
+                    alignment: formData.get('alignment') || null,
+                    strength: parseInt(formData.get('strength')),
+                    dexterity: parseInt(formData.get('dexterity')),
+                    constitution: parseInt(formData.get('constitution')),
+                    intelligence: parseInt(formData.get('intelligence')),
+                    wisdom: parseInt(formData.get('wisdom')),
+                    charisma: parseInt(formData.get('charisma')),
+                    username: formData.get('username') || null
+                };
+
+                // Calculate derived stats
+                const conModifier = Math.floor((characterData.constitution - 10) / 2);
+                const dexModifier = Math.floor((characterData.dexterity - 10) / 2);
+                
+                characterData.max_hp = Math.max(1, 10 + conModifier); // Assuming d10 hit die
+                characterData.current_hp = characterData.max_hp;
+                characterData.armor_class = 10 + dexModifier;
+                characterData.initiative_bonus = dexModifier;
+
+                await db.createCharacter(characterData);
+                await loadCharacters();
+                hideCreateCharacterForm();
+                showSuccess('Character created successfully!');
+                
+            } catch (error) {
+                console.error('Error creating character:', error);
+                showError('Failed to create character: ' + error.message);
+            }
+        }
+
+        function viewCharacter(characterId) {
+            window.open(`character_sheet.html?character=${characterId}`, '_blank');
+        }
+
+        async function editCharacter(characterId) {
+            try {
+                const character = await db.getCharacter(characterId);
+                if (!character) {
+                    showError('Character not found');
+                    return;
+                }
+
+                // Populate edit form
+                const form = document.getElementById('editCharacterForm');
+                form.innerHTML = `
+                    <form onsubmit="updateCharacter(event, '${characterId}')">
+                        <div class="form-group">
+                            <label class="form-label">Character Name</label>
+                            <input type="text" name="character_name" class="form-control" value="${character.character_name}" required>
+                        </div>
+                        
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Level</label>
+                                <input type="number" name="level" class="form-control" min="1" max="20" value="${character.level}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Background</label>
+                                <input type="text" name="background" class="form-control" value="${character.background || ''}">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Max HP</label>
+                                <input type="number" name="max_hp" class="form-control" min="1" value="${character.max_hp}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Current HP</label>
+                                <input type="number" name="current_hp" class="form-control" min="0" value="${character.current_hp}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Armor Class</label>
+                                <input type="number" name="armor_class" class="form-control" min="1" value="${character.armor_class}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Initiative Bonus</label>
+                                <input type="number" name="initiative_bonus" class="form-control" value="${character.initiative_bonus}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Username/Player</label>
+                            <input type="text" name="username" class="form-control" value="${character.username || ''}">
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" onclick="hideEditCharacterForm()" class="btn btn-outline">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Character</button>
+                        </div>
+                    </form>
+                `;
+
+                document.getElementById('editCharacterModal').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading character for editing:', error);
+                showError('Failed to load character');
+            }
+        }
+
+        function hideEditCharacterForm() {
+            document.getElementById('editCharacterModal').style.display = 'none';
+        }
+
+        async function updateCharacter(event, characterId) {
+            event.preventDefault();
+            
+            try {
+                const formData = new FormData(event.target);
+                const updates = {
+                    character_name: formData.get('character_name'),
+                    level: parseInt(formData.get('level')),
+                    background: formData.get('background') || null,
+                    max_hp: parseInt(formData.get('max_hp')),
+                    current_hp: parseInt(formData.get('current_hp')),
+                    armor_class: parseInt(formData.get('armor_class')),
+                    initiative_bonus: parseInt(formData.get('initiative_bonus')),
+                    username: formData.get('username') || null
+                };
+
+                await db.updateCharacter(characterId, updates);
+                await loadCharacters();
+                hideEditCharacterForm();
+                showSuccess('Character updated successfully!');
+                
+            } catch (error) {
+                console.error('Error updating character:', error);
+                showError('Failed to update character: ' + error.message);
+            }
+        }
+
+        async function deleteCharacter(characterId, characterName) {
+            if (!confirm(`Are you sure you want to delete ${characterName}? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                await db.deleteCharacter(characterId);
+                await loadCharacters();
+                showSuccess('Character deleted successfully');
+            } catch (error) {
+                console.error('Error deleting character:', error);
+                showError('Failed to delete character: ' + error.message);
+            }
+        }
+
+        // Combat Tools
+        function showCombatTools() {
+            document.getElementById('combatToolsModal').style.display = 'block';
+        }
+
+        function hideCombatTools() {
+            document.getElementById('combatToolsModal').style.display = 'none';
+        }
+
+        function addCombatant() {
+            const name = document.getElementById('combatantName').value.trim();
+            const initiative = parseInt(document.getElementById('combatantInitiative').value);
+            
+            if (!name || isNaN(initiative)) {
+                alert('Please enter both name and initiative');
+                return;
+            }
+
+            combatants.push({ name, initiative });
+            combatants.sort((a, b) => b.initiative - a.initiative);
+            
+            updateInitiativeDisplay();
+            document.getElementById('combatantName').value = '';
+            document.getElementById('combatantInitiative').value = '';
+        }
+
+        function updateInitiativeDisplay() {
+            const list = document.getElementById('initiativeList');
+            if (combatants.length === 0) {
+                list.innerHTML = '<p>No combatants added</p>';
+                return;
+            }
+
+            list.innerHTML = `
+                <div class="mb-md">
+                    <button onclick="nextTurn()" class="btn btn-sm btn-primary">Next Turn</button>
+                    <button onclick="clearCombat()" class="btn btn-sm btn-outline ml-sm">Clear All</button>
+                    <span class="ml-md"><strong>Round:</strong> ${currentRound}</span>
+                </div>
+                ${combatants.map((combatant, index) => `
+                    <div class="initiative-item ${index === currentTurn ? 'current-turn' : ''}">
+                        <span>${combatant.name}</span>
+                        <span>Initiative: ${combatant.initiative}</span>
+                        <button onclick="removeCombatant(${index})" class="btn btn-sm btn-danger">Remove</button>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function nextTurn() {
+            currentTurn++;
+            if (currentTurn >= combatants.length) {
+                currentTurn = 0;
+                currentRound++;
+            }
+            updateInitiativeDisplay();
+        }
+
+        function removeCombatant(index) {
+            combatants.splice(index, 1);
+            if (currentTurn >= combatants.length) {
+                currentTurn = 0;
+            }
+            updateInitiativeDisplay();
+        }
+
+        function clearCombat() {
+            combatants = [];
+            currentRound = 1;
+            currentTurn = 0;
+            updateInitiativeDisplay();
+        }
+
+        // Dice Rolling
+        function rollDice() {
+            const expression = document.getElementById('diceExpression').value.trim();
+            const result = parseDiceExpression(expression);
+            
+            const resultDiv = document.getElementById('diceResult');
+            resultDiv.innerHTML = `
+                <div class="dice-result">
+                    <strong>Result:</strong> ${result.total}
+                    ${result.breakdown ? `<br><small>Breakdown: ${result.breakdown}</small>` : ''}
+                </div>
+            `;
+        }
+
+        function quickRoll(dice) {
+            document.getElementById('diceExpression').value = dice;
+            rollDice();
+        }
+
+        function parseDiceExpression(expression) {
+            try {
+                // Simple dice parser (supports XdY+Z format)
+                const match = expression.match(/(\d+)d(\d+)(?:([+-])(\d+))?/i);
+                if (!match) {
+                    throw new Error('Invalid dice expression');
+                }
+
+                const numDice = parseInt(match[1]);
+                const dieSize = parseInt(match[2]);
+                const modifier = match[3] && match[4] ? parseInt(match[3] + match[4]) : 0;
+
+                let total = 0;
+                let rolls = [];
+                
+                for (let i = 0; i < numDice; i++) {
+                    const roll = Math.floor(Math.random() * dieSize) + 1;
+                    rolls.push(roll);
+                    total += roll;
+                }
+                
+                total += modifier;
+                
+                return {
+                    total: total,
+                    breakdown: `${rolls.join(' + ')}${modifier !== 0 ? ` ${modifier >= 0 ? '+' : ''}${modifier}` : ''} = ${total}`
+                };
+            } catch (error) {
+                return { total: 'Error', breakdown: 'Invalid expression' };
+            }
+        }
+
+        // Reference Data
+        async function showReferenceData() {
+            document.getElementById('referenceDataModal').style.display = 'block';
+            showReferenceTab('items');
+        }
+
+        function hideReferenceData() {
+            document.getElementById('referenceDataModal').style.display = 'none';
+        }
+
+        async function showReferenceTab(type) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const content = document.getElementById('referenceContent');
+            content.innerHTML = '<div class="loading"></div>';
+
+            try {
+                let data;
+                switch (type) {
+                    case 'items':
+                        data = await db.getAllItems();
+                        displayReferenceItems(data);
+                        break;
+                    case 'weapons':
+                        data = await db.getAllWeapons();
+                        displayReferenceWeapons(data);
+                        break;
+                    case 'armor':
+                        data = await db.getAllArmor();
+                        displayReferenceArmor(data);
+                        break;
+                    case 'spells':
+                        data = await db.getAllSpells();
+                        displayReferenceSpells(data);
+                        break;
+                    case 'skills':
+                        data = await db.getAllSkills();
+                        displayReferenceSkills(data);
+                        break;
+                }
+            } catch (error) {
+                content.innerHTML = `<p style="color: var(--danger);">Error loading ${type}: ${error.message}</p>`;
+            }
+        }
+
+        function displayReferenceItems(items) {
+            const content = document.getElementById('referenceContent');
+            content.innerHTML = `
+                <div class="reference-grid">
+                    ${items.map(item => `
+                        <div class="reference-item">
+                            <h4>${item.name}</h4>
+                            <p><strong>Category:</strong> ${item.category}</p>
+                            <p><strong>Weight:</strong> ${item.weight} lbs</p>
+                            <p><strong>Cost:</strong> ${item.value_gp ? `${item.value_gp} gp` : 'N/A'}</p>
+                            ${item.description ? `<p>${item.description}</p>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function displayReferenceWeapons(weapons) {
+            const content = document.getElementById('referenceContent');
+            content.innerHTML = `
+                <div class="reference-grid">
+                    ${weapons.map(weapon => `
+                        <div class="reference-item">
+                            <h4>${weapon.name}</h4>
+                            <p><strong>Damage:</strong> ${weapon.damage_dice} ${weapon.damage_type}</p>
+                            <p><strong>Category:</strong> ${weapon.category}</p>
+                            <p><strong>Weight:</strong> ${weapon.weight} lbs</p>
+                            <p><strong>Cost:</strong> ${weapon.value_gp ? `${weapon.value_gp} gp` : 'N/A'}</p>
+                            ${weapon.properties && weapon.properties.length > 0 ? `<p><strong>Properties:</strong> ${weapon.properties.join(', ')}</p>` : ''}
+                            ${weapon.description ? `<p>${weapon.description}</p>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function displayReferenceArmor(armor) {
+            const content = document.getElementById('referenceContent');
+            content.innerHTML = `
+                <div class="reference-grid">
+                    ${armor.map(item => `
+                        <div class="reference-item">
+                            <h4>${item.name}</h4>
+                            <p><strong>AC:</strong> ${item.base_ac}</p>
+                            <p><strong>Category:</strong> ${item.category}</p>
+                            <p><strong>Weight:</strong> ${item.weight} lbs</p>
+                            <p><strong>Cost:</strong> ${item.value_gp ? `${item.value_gp} gp` : 'N/A'}</p>
+                            ${item.description ? `<p>${item.description}</p>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function displayReferenceSpells(spells) {
+            const content = document.getElementById('referenceContent');
+            
+            // Group by level
+            const spellsByLevel = {};
+            spells.forEach(spell => {
+                if (!spellsByLevel[spell.level]) {
+                    spellsByLevel[spell.level] = [];
+                }
+                spellsByLevel[spell.level].push(spell);
+            });
+
+            content.innerHTML = Object.keys(spellsByLevel).sort((a, b) => parseInt(a) - parseInt(b)).map(level => `
+                <div class="spell-level-section">
+                    <h3>${level == 0 ? 'Cantrips' : `Level ${level} Spells`}</h3>
+                    <div class="reference-grid">
+                        ${spellsByLevel[level].map(spell => `
+                            <div class="reference-item">
+                                <h4>${spell.name}</h4>
+                                <p><strong>School:</strong> ${spell.school}</p>
+                                <p><strong>Casting Time:</strong> ${spell.casting_time}</p>
+                                <p><strong>Range:</strong> ${spell.range}</p>
+                                <p><strong>Duration:</strong> ${spell.duration}</p>
+                                <p>${spell.description}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayReferenceSkills(skills) {
+            const content = document.getElementById('referenceContent');
+            content.innerHTML = `
+                <div class="reference-grid">
+                    ${skills.map(skill => `
+                        <div class="reference-item">
+                            <h4>${skill.name}</h4>
+                            <p><strong>Ability:</strong> ${skill.ability_modifier}</p>
+                            <p>${skill.description}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Campaign Notes
+        function showCampaignNotes() {
+            document.getElementById('campaignNotesModal').style.display = 'block';
+        }
+
+        function hideCampaignNotes() {
+            document.getElementById('campaignNotesModal').style.display = 'none';
+        }
+
+        function loadCampaignNotes() {
+            const notes = localStorage.getItem('campaignNotes') || '';
+            document.getElementById('campaignNotes').value = notes;
+        }
+
+        function saveCampaignNotes() {
+            const notes = document.getElementById('campaignNotes').value;
+            localStorage.setItem('campaignNotes', notes);
+            showSuccess('Campaign notes saved!');
+        }
+
+        // Utility functions (assuming they exist in main.css or need to be added here)
+        function showSuccess(message) {
+            // Create and show success notification
+            const notification = document.createElement('div');
+            notification.className = 'notification success';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function showError(message) {
+            // Create and show error notification
+            const notification = document.createElement('div');
+            notification.className = 'notification error';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

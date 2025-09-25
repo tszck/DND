@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Campaign Manager</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">D&D Campaign Manager</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="character_sheet.html">Character Sheet</a></li>
+                <li><a href="gm_dashboard.html">GM Dashboard</a></li>
+                <li><a href="player_handbook.html">Player Handbook</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="character-header text-center mb-xl">
+            <h1 class="character-name">Welcome to Your D&D Campaign</h1>
+            <p class="character-detail-value">Manage characters, track adventures, and explore the rules</p>
+        </section>
+
+        <!-- Quick Actions Grid -->
+        <section class="grid grid-3 mb-xl">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Character Management</h3>
+                    <p class="card-subtitle">View and manage character sheets</p>
+                </div>
+                <p>Access detailed character information, manage equipment, spells, and track character progression.</p>
+                <div class="mt-lg">
+                    <a href="character_sheet.html" class="btn btn-primary">View Character Sheet</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Gamemaster Tools</h3>
+                    <p class="card-subtitle">Comprehensive campaign management</p>
+                </div>
+                <p>Oversee all player characters, manage campaigns, and access powerful GM tools for running sessions.</p>
+                <div class="mt-lg">
+                    <a href="gm_dashboard.html" class="btn btn-primary">Open GM Dashboard</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Rules Reference</h3>
+                    <p class="card-subtitle">Complete player handbook</p>
+                </div>
+                <p>Access rules, mechanics, spell descriptions, and gameplay guidance for D&D 5th Edition.</p>
+                <div class="mt-lg">
+                    <a href="player_handbook.html" class="btn btn-primary">Browse Handbook</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="mb-xl">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2 class="card-title">Campaign Manager Features</h2>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div>
+                        <h4>🎭 Character Management</h4>
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li>✅ Complete character sheets with all D&D 5e stats</li>
+                            <li>✅ Equipment and inventory tracking</li>
+                            <li>✅ Spell management with preparation tracking</li>
+                            <li>✅ Skills and proficiency management</li>
+                            <li>✅ Status effects and conditions</li>
+                            <li>✅ Real-time updates and saves</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4>🎲 Gamemaster Tools</h4>
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li>✅ Multi-character campaign oversight</li>
+                            <li>✅ Edit any character or stat</li>
+                            <li>✅ Add/remove equipment and spells</li>
+                            <li>✅ Manage party composition</li>
+                            <li>✅ Export and backup character data</li>
+                            <li>✅ Campaign progress tracking</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Database Features -->
+        <section class="mb-xl">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2 class="card-title">Normalized Database Benefits</h2>
+                </div>
+                
+                <div class="grid grid-3">
+                    <div class="text-center">
+                        <h4>🔧 Easy Editing</h4>
+                        <p>Change item stats once and it updates for all characters. No more duplicate data entry or inconsistencies.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <h4>⚡ Fast Performance</h4>
+                        <p>Optimized database structure with proper indexing ensures quick loading and responsive interactions.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <h4>🎯 Data Integrity</h4>
+                        <p>Reference tables ensure consistent item names, descriptions, and stats across your entire campaign.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Getting Started -->
+        <section class="mb-xl">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2 class="card-title">Getting Started</h2>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div>
+                        <h4>📋 Setup Instructions</h4>
+                        <ol style="padding-left: var(--spacing-lg);">
+                            <li><strong>Database Setup:</strong> Run the SQL files in your Supabase project:
+                                <ul style="margin: var(--spacing-sm) 0; padding-left: var(--spacing-lg);">
+                                    <li>1. <code>dnd_normalized_schema.sql</code></li>
+                                    <li>2. <code>dnd_reference_data.sql</code></li>
+                                    <li>3. <code>dnd_sample_characters_normalized.sql</code></li>
+                                </ul>
+                            </li>
+                            <li><strong>Configuration:</strong> Update the Supabase URL and API key in <code>js/database.js</code></li>
+                            <li><strong>Characters:</strong> Start with the sample characters or create your own</li>
+                            <li><strong>Campaign:</strong> Begin your adventure with fully tracked characters!</li>
+                        </ol>
+                    </div>
+                    
+                    <div>
+                        <h4>🎮 Quick Actions</h4>
+                        <div class="grid">
+                            <a href="character_sheet.html?character=sample_fighter" class="btn btn-secondary btn-sm">
+                                View Sample Fighter
+                            </a>
+                            <a href="character_sheet.html?character=sample_wizard" class="btn btn-secondary btn-sm">
+                                View Sample Wizard
+                            </a>
+                            <a href="character_sheet.html?character=sample_rogue" class="btn btn-secondary btn-sm">
+                                View Sample Rogue
+                            </a>
+                            <a href="gm_dashboard.html" class="btn btn-warning btn-sm">
+                                Create New Character
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Status -->
+        <section class="mb-xl">
+            <div class="card" id="systemStatus">
+                <div class="card-header">
+                    <h3 class="card-title">System Status</h3>
+                </div>
+                <div id="statusContent">
+                    <div class="loading"></div> Checking database connection...
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--dark-gray); color: var(--white); text-align: center; padding: var(--spacing-xl); margin-top: var(--spacing-xxl);">
+        <p>&copy; 2025 D&D Campaign Manager. Built with modern web technologies and normalized database architecture.</p>
+        <p style="margin-top: var(--spacing-sm); font-size: var(--font-size-sm); opacity: 0.8;">
+            Powered by Supabase • PostgreSQL • Modern JavaScript
+        </p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/database.js"></script>
+    <script>
+        // System status check
+        document.addEventListener('DOMContentLoaded', async function() {
+            const statusContent = document.getElementById('statusContent');
+            
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not configured');
+                }
+                
+                // Test database connection
+                const { data, error } = await supabase
+                    .from('characters')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                statusContent.innerHTML = `
+                    <div style="color: var(--success); font-weight: 600;">
+                        ✅ Database Connected Successfully
+                    </div>
+                    <p style="margin-top: var(--spacing-sm); font-size: var(--font-size-sm);">
+                        Ready to manage your D&D campaign!
+                    </p>
+                `;
+                
+            } catch (error) {
+                statusContent.innerHTML = `
+                    <div style="color: var(--danger); font-weight: 600;">
+                        ❌ Database Connection Error
+                    </div>
+                    <p style="margin-top: var(--spacing-sm); font-size: var(--font-size-sm);">
+                        Please check your Supabase configuration in <code>js/database.js</code>
+                    </p>
+                    <details style="margin-top: var(--spacing-sm);">
+                        <summary>Error Details</summary>
+                        <pre style="background: var(--light-gray); padding: var(--spacing-sm); border-radius: var(--border-radius-sm); font-size: var(--font-size-xs); margin-top: var(--spacing-sm);">${error.message}</pre>
+                    </details>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

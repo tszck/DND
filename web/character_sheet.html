@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Sheet - D&D Campaign Manager</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">D&D Campaign Manager</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="character_sheet.html">Character Sheet</a></li>
+                <li><a href="gm_dashboard.html">GM Dashboard</a></li>
+                <li><a href="player_handbook.html">Player Handbook</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Character Selection -->
+        <section class="card mb-xl">
+            <div class="card-header">
+                <h2 class="card-title">Select Character</h2>
+            </div>
+            <div class="form-group">
+                <label for="characterSelect" class="form-label">Choose a character to view:</label>
+                <select id="characterSelect" class="form-control form-select">
+                    <option value="">Loading characters...</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Character Sheet Content -->
+        <div id="characterSheet" style="display: none;">
+            <!-- Character Header -->
+            <section class="character-header" id="characterHeader">
+                <div class="character-name" id="characterName">Loading...</div>
+                <div class="character-details" id="characterDetails">
+                    <!-- Character details will be populated here -->
+                </div>
+            </section>
+
+            <!-- Ability Scores -->
+            <section class="card mb-xl">
+                <div class="card-header">
+                    <h3 class="card-title">Ability Scores</h3>
+                </div>
+                <div class="ability-scores" id="abilityScores">
+                    <!-- Ability scores will be populated here -->
+                </div>
+            </section>
+
+            <!-- Combat Stats -->
+            <section class="grid grid-3 mb-xl">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Hit Points</h4>
+                    </div>
+                    <div class="text-center">
+                        <div class="character-detail-value" id="hitPoints">0/0</div>
+                        <div class="character-detail-label">Current / Maximum</div>
+                        <div class="mt-md">
+                            <input type="number" id="currentHp" class="form-control" style="width: 80px; display: inline-block; text-align: center;" min="0">
+                            <button onclick="updateHitPoints()" class="btn btn-sm btn-success ml-sm">Update</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Armor Class</h4>
+                    </div>
+                    <div class="text-center">
+                        <div class="character-detail-value" id="armorClass">10</div>
+                        <div class="character-detail-label">AC</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Initiative</h4>
+                    </div>
+                    <div class="text-center">
+                        <div class="character-detail-value" id="initiative">+0</div>
+                        <div class="character-detail-label">Initiative Bonus</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Status Effects -->
+            <section class="card mb-xl" id="statusEffectsSection" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">Active Status Effects</h3>
+                </div>
+                <div class="status-effects" id="statusEffects">
+                    <!-- Status effects will be populated here -->
+                </div>
+            </section>
+
+            <!-- Equipment Grid -->
+            <section class="equipment-grid mb-xl">
+                <!-- Weapons -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Weapons</h4>
+                    </div>
+                    <div class="equipment-list" id="weaponsList">
+                        <!-- Weapons will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Armor -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Armor</h4>
+                    </div>
+                    <div class="equipment-list" id="armorList">
+                        <!-- Armor will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Items -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Items & Equipment</h4>
+                    </div>
+                    <div class="equipment-list" id="itemsList" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Items will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Skills -->
+            <section class="card mb-xl">
+                <div class="card-header">
+                    <h3 class="card-title">Skills</h3>
+                </div>
+                <div class="skills-grid" id="skillsList">
+                    <!-- Skills will be populated here -->
+                </div>
+            </section>
+
+            <!-- Spells -->
+            <section class="card mb-xl" id="spellsSection" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">Spells</h3>
+                </div>
+                <div id="spellsContent">
+                    <!-- Spells will be populated here -->
+                </div>
+            </section>
+
+            <!-- Character Details -->
+            <section class="grid grid-2 mb-xl">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Personality</h4>
+                    </div>
+                    <div id="personalityTraits">
+                        <p><strong>Traits:</strong> <span id="traits">-</span></p>
+                        <p><strong>Ideals:</strong> <span id="ideals">-</span></p>
+                        <p><strong>Bonds:</strong> <span id="bonds">-</span></p>
+                        <p><strong>Flaws:</strong> <span id="flaws">-</span></p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Biography</h4>
+                    </div>
+                    <div id="biography">
+                        <p id="bioText">-</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center">
+            <div class="loading" style="width: 50px; height: 50px;"></div>
+            <p class="mt-md">Loading character data...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="card" style="display: none;">
+            <div class="card-header">
+                <h3 class="card-title" style="color: var(--danger);">Error Loading Character</h3>
+            </div>
+            <div id="errorMessage">
+                <!-- Error message will be populated here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/database.js"></script>
+    <script>
+        let currentCharacter = null;
+        let allCharacters = [];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadCharacterList();
+            
+            // Check for character parameter in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const characterParam = urlParams.get('character');
+            
+            if (characterParam) {
+                // Find character by username or name
+                const character = allCharacters.find(c => 
+                    c.username === characterParam || 
+                    c.character_name.toLowerCase().replace(/\s+/g, '_') === characterParam
+                );
+                
+                if (character) {
+                    document.getElementById('characterSelect').value = character.character_id;
+                    await loadCharacter(character.character_id);
+                }
+            }
+        });
+
+        // Load character list for dropdown
+        async function loadCharacterList() {
+            try {
+                allCharacters = await db.getAllCharacters();
+                const select = document.getElementById('characterSelect');
+                
+                select.innerHTML = '<option value="">Select a character...</option>';
+                
+                allCharacters.forEach(character => {
+                    const option = document.createElement('option');
+                    option.value = character.character_id;
+                    option.textContent = `${character.character_name} (${character.class} ${character.level})`;
+                    select.appendChild(option);
+                });
+                
+                select.addEventListener('change', function() {
+                    if (this.value) {
+                        loadCharacter(this.value);
+                    } else {
+                        document.getElementById('characterSheet').style.display = 'none';
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error loading characters:', error);
+                showError('Failed to load character list', document.getElementById('characterSelect').parentElement);
+            }
+        }
+
+        // Load and display character
+        async function loadCharacter(characterId) {
+            try {
+                document.getElementById('loadingState').style.display = 'block';
+                document.getElementById('characterSheet').style.display = 'none';
+                document.getElementById('errorState').style.display = 'none';
+
+                currentCharacter = await db.getCharacterComplete(characterId);
+                
+                if (!currentCharacter) {
+                    throw new Error('Character not found');
+                }
+
+                displayCharacter(currentCharacter);
+                
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('characterSheet').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading character:', error);
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorMessage').innerHTML = `
+                    <p>Failed to load character data: ${error.message}</p>
+                    <button onclick="location.reload()" class="btn btn-primary">Retry</button>
+                `;
+            }
+        }
+
+        // Display character data
+        function displayCharacter(character) {
+            // Character header
+            document.getElementById('characterName').textContent = character.character_name;
+            
+            document.getElementById('characterDetails').innerHTML = `
+                <div class="character-detail">
+                    <div class="character-detail-label">Race</div>
+                    <div class="character-detail-value">${character.race}</div>
+                </div>
+                <div class="character-detail">
+                    <div class="character-detail-label">Class</div>
+                    <div class="character-detail-value">${character.class}</div>
+                </div>
+                <div class="character-detail">
+                    <div class="character-detail-label">Level</div>
+                    <div class="character-detail-value">${character.level}</div>
+                </div>
+                <div class="character-detail">
+                    <div class="character-detail-label">Background</div>
+                    <div class="character-detail-value">${character.background}</div>
+                </div>
+                <div class="character-detail">
+                    <div class="character-detail-label">Alignment</div>
+                    <div class="character-detail-value">${character.alignment}</div>
+                </div>
+            `;
+
+            // Ability scores
+            const abilities = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+            document.getElementById('abilityScores').innerHTML = abilities.map(ability => {
+                const score = character[ability];
+                const modifier = getAbilityModifier(score);
+                return `
+                    <div class="ability-score">
+                        <div class="ability-name">${ability.substring(0, 3).toUpperCase()}</div>
+                        <div class="ability-value">${score}</div>
+                        <div class="ability-modifier">${formatModifier(modifier)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Combat stats
+            document.getElementById('hitPoints').textContent = `${character.current_hp}/${character.max_hp}`;
+            document.getElementById('currentHp').value = character.current_hp;
+            document.getElementById('armorClass').textContent = character.armor_class;
+            document.getElementById('initiative').textContent = formatModifier(character.initiative_bonus);
+
+            // Status effects
+            if (character.status_effects && character.status_effects.length > 0) {
+                document.getElementById('statusEffectsSection').style.display = 'block';
+                document.getElementById('statusEffects').innerHTML = character.status_effects.map(effect => `
+                    <div class="status-effect ${effect.type}">
+                        ${effect.name}
+                    </div>
+                `).join('');
+            }
+
+            // Equipment
+            displayWeapons(character.weapons || []);
+            displayArmor(character.armor || []);
+            displayItems(character.items || []);
+
+            // Skills
+            displaySkills(character.skills || []);
+
+            // Spells
+            if (character.spells && character.spells.length > 0) {
+                document.getElementById('spellsSection').style.display = 'block';
+                displaySpells(character.spells);
+            }
+
+            // Personality and bio
+            document.getElementById('traits').textContent = character.personality_traits || '-';
+            document.getElementById('ideals').textContent = character.ideals || '-';
+            document.getElementById('bonds').textContent = character.bonds || '-';
+            document.getElementById('flaws').textContent = character.flaws || '-';
+            document.getElementById('bioText').textContent = character.bio || '-';
+        }
+
+        function displayWeapons(weapons) {
+            const container = document.getElementById('weaponsList');
+            if (weapons.length === 0) {
+                container.innerHTML = '<p>No weapons</p>';
+                return;
+            }
+
+            container.innerHTML = weapons.map(weapon => `
+                <div class="equipment-item">
+                    <div>
+                        <div class="equipment-name">${weapon.name}</div>
+                        <div class="equipment-details">
+                            ${weapon.damage_dice} ${weapon.damage_type}
+                            ${weapon.properties ? ` • ${weapon.properties.join(', ')}` : ''}
+                        </div>
+                    </div>
+                    <div>
+                        ${weapon.equipped ? '<span class="equipment-equipped">Equipped</span>' : ''}
+                        ${weapon.quantity > 1 ? `<span class="equipment-details">×${weapon.quantity}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayArmor(armor) {
+            const container = document.getElementById('armorList');
+            if (armor.length === 0) {
+                container.innerHTML = '<p>No armor</p>';
+                return;
+            }
+
+            container.innerHTML = armor.map(item => `
+                <div class="equipment-item">
+                    <div>
+                        <div class="equipment-name">${item.name}</div>
+                        <div class="equipment-details">
+                            AC ${item.base_ac}${item.enchantment ? ` +${item.enchantment}` : ''}
+                            • ${item.category}
+                        </div>
+                    </div>
+                    <div>
+                        ${item.equipped ? '<span class="equipment-equipped">Equipped</span>' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayItems(items) {
+            const container = document.getElementById('itemsList');
+            if (items.length === 0) {
+                container.innerHTML = '<p>No items</p>';
+                return;
+            }
+
+            container.innerHTML = items.map(item => `
+                <div class="equipment-item">
+                    <div>
+                        <div class="equipment-name">${item.name}</div>
+                        <div class="equipment-details">${item.category}</div>
+                    </div>
+                    <div>
+                        <span class="equipment-details">×${item.quantity}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displaySkills(skills) {
+            const container = document.getElementById('skillsList');
+            if (skills.length === 0) {
+                container.innerHTML = '<p>No skills data</p>';
+                return;
+            }
+
+            container.innerHTML = skills.map(skill => {
+                const profClass = skill.expertise ? 'expertise' : skill.proficient ? 'proficient' : '';
+                return `
+                    <div class="skill-item ${profClass}">
+                        <span class="skill-name">${skill.name}</span>
+                        <span class="skill-bonus">${formatModifier(skill.bonus)}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displaySpells(spells) {
+            const container = document.getElementById('spellsContent');
+            
+            // Group spells by level
+            const spellsByLevel = {};
+            spells.forEach(spell => {
+                const level = spell.level;
+                if (!spellsByLevel[level]) {
+                    spellsByLevel[level] = [];
+                }
+                spellsByLevel[level].push(spell);
+            });
+
+            container.innerHTML = Object.keys(spellsByLevel).sort((a, b) => parseInt(a) - parseInt(b)).map(level => `
+                <div class="spell-level">
+                    <div class="spell-level-title">
+                        ${level == 0 ? 'Cantrips' : `Level ${level} Spells`}
+                    </div>
+                    <div class="spell-list">
+                        ${spellsByLevel[level].map(spell => `
+                            <div class="spell-item ${spell.prepared ? 'prepared' : ''}">
+                                <div class="spell-name">${spell.name}</div>
+                                <div class="spell-school">${spell.school}</div>
+                                <div class="equipment-details mt-sm">${spell.description}</div>
+                                ${spell.prepared ? '<span class="equipment-equipped" style="margin-top: var(--spacing-sm);">Prepared</span>' : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Utility functions
+        function showSuccess(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification success';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success);
+                color: white;
+                padding: var(--spacing-md);
+                border-radius: var(--border-radius);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Update hit points
+        async function updateHitPoints() {
+            if (!currentCharacter) return;
+            
+            const newHp = parseInt(document.getElementById('currentHp').value);
+            if (isNaN(newHp) || newHp < 0 || newHp > currentCharacter.max_hp) {
+                alert('Invalid hit points value');
+                return;
+            }
+
+            try {
+                await db.updateCharacter(currentCharacter.character_id, {
+                    current_hp: newHp
+                });
+                
+                currentCharacter.current_hp = newHp;
+                document.getElementById('hitPoints').textContent = `${newHp}/${currentCharacter.max_hp}`;
+                
+                showSuccess('Hit points updated successfully!');
+            } catch (error) {
+                console.error('Error updating hit points:', error);
+                alert('Failed to update hit points');
+            }
+        }
+    </script>
+</body>
+</html>
