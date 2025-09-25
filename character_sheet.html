@@ -985,15 +985,15 @@
       avatarUrl = `https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_${character.username || character.name || currentUsername}.jpg`;
     }
     avatarImg.onerror = function() {
-      // Only fallback if not already on avatar.jpg
-      if (!this.src.endsWith('avatar.jpg')) {
+      // Only fallback if not already on default supabase avatar
+      if (!this.src.includes('avatar_.jpg')) {
         this.onerror = function() {
-          // If avatar.jpg is also missing, show blank and set title
+          // If fallback also fails, show blank and set title
           this.onerror = null;
           this.src = '';
           this.title = 'No avatar image found.';
         };
-        this.src = 'avatar.jpg';
+        this.src = 'https://oitwwvjgkmzffsdsodzm.supabase.co/storage/v1/object/public/avatars/avatar_.jpg';
         this.title = 'Avatar could not be loaded. Showing default avatar.';
       }
     };
