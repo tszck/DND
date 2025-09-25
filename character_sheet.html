@@ -417,6 +417,30 @@
         return total;
       }
 
+      // Print skills as a list with bonuses only (no 'Level X')
+      function getSkillPrintList(character) {
+        const skills = Array.isArray(character.skills) ? character.skills : [];
+        let out = [];
+        for (const skill of skills) {
+          let bonus = 0;
+          let sources = [];
+          if (character.class && classInfo[character.class] && classInfo[character.class].skill === skill.name) {
+            bonus += 2;
+            sources.push('Class +2');
+          }
+          if (character.background && backgroundInfo[character.background] && backgroundInfo[character.background].skills && backgroundInfo[character.background].skills.includes(skill.name)) {
+            bonus += 2;
+            sources.push('Background +2');
+          }
+          if ((skill.count ?? 0) > 0 || bonus > 0) {
+            let display = skill.name;
+            if (sources.length > 0) display += ` (${sources.join(', ')})`;
+            out.push(display);
+          }
+        }
+        return out;
+      }
+
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
@@ -558,14 +582,19 @@
             </div>
           </div>
           <div class="section">
-            <div class="section-title">Skills & Spells</div>
+            <div class="section-title">Skills</div>
             <div class="equipment-list">
-              ${character.skills ? character.skills.filter(skill => skill.count > 0).map(skill => 
-                `<div class="equipment-item">${skill.name} (Level ${skill.count})</div>`
+              ${getSkillPrintList(character).length > 0 ? getSkillPrintList(character).map(skill => 
+                `<div class="equipment-item">${skill}</div>`
               ).join('') : '<div>No skills</div>'}
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-title">Spells</div>
+            <div class="equipment-list">
               ${character.spells ? character.spells.filter(spell => spell.count > 0).map(spell => 
                 `<div class="equipment-item">${spell.name}</div>`
-              ).join('') : ''}
+              ).join('') : '<div>No spells</div>'}
             </div>
           </div>
           <div class="section">
@@ -589,22 +618,28 @@
         sheetSuggestions.items = (data.items || []).map(i => i.name);
         sheetSuggestions.equipment = (data.equipment || []).map(e => e.name);
         sheetSuggestions.skills = (data.skills || []).map(s => s.name);
-        sheetSuggestions.spells = (data.spells || []).map(sp => sp.name);
-        updateSuggestionsList('items');
-      } catch (err) {
-        console.error('Failed to load suggestions:', err);
-      }
-    }
-    window.addEventListener('DOMContentLoaded', function() {
-      loadSuggestions();
-    });
+    if (entry.type) html += `<i>Type:</i> ${entry.type}<br>`;
+    if (entry.damage) html += `<i>Damage:</i> ${entry.damage}<br>`;
+    if (entry.ac) html += `<i>AC:</i> ${entry.ac}<br>`;
+    if (entry.ac_bonus) html += `<i>AC Bonus:</i> ${entry.ac_bonus}<br>`;
+    if (entry.dex_bonus) html += `<i>Dex Bonus:</i> Yes<br>`;
+    if (entry.strength_req) html += `<i>Strength Req:</i> ${entry.strength_req}<br>`;
+    if (entry.stealth_disadvantage) html += `<i>Stealth Disadvantage:</i> Yes<br>`;
+    if (entry.effect) html += `<i>Effect:</i> ${entry.effect}<br>`;
+    if (entry.properties) html += `<i>Properties:</i> ${entry.properties.join(', ')}<br>`;
 
     // Attach manual avatar URL save handler (fallback when storage bucket not available)
     document.addEventListener('DOMContentLoaded', function() {
-      const avatarUrlSave = document.getElementById('avatar-url-save');
-      const avatarUrlInput = document.getElementById('avatar-url-input');
-      const fallback = document.getElementById('avatar-fallback');
-      if (!avatarUrlSave || !avatarUrlInput) return;
+    if (Array.isArray(entry.effects)) {
+      html += `<b>Buffs/Debuffs:</b><br>`;
+      entry.effects.forEach(eff => {
+        let color = eff.type === 'buff' ? '#43b581' : '#f04747';
+        let effectText = eff.effect_type === 'advantage' ? 'Advantage (roll twice, take higher)' :
+          eff.effect_type === 'disadvantage' ? 'Disadvantage (roll twice, take lower)' :
+          (eff.effect_type === 'modifier' ? (eff.value > 0 ? `+${eff.value}` : `${eff.value}`) : '');
+        html += `<span style='color:${color}'>${eff.source}: ${effectText}</span><br>`;
+      });
+    }
       avatarUrlSave.addEventListener('click', async function() {
         const url = (avatarUrlInput.value || '').trim();
         if (!url) return alert('Please enter a valid image URL.');
@@ -788,7 +823,6 @@
           renderCharacterSheet(currentCharacter);
           return;
         }
-        // ...existing code...
         let items = [];
         if (type === 'items') items = currentCharacter.items || [];
         else if (type === 'equipment') items = currentCharacter.equipment || [];
@@ -1360,300 +1394,52 @@ if (typeof attachTooltipListeners !== 'function') {
       if (type === 'items') entry = (dndData.items || []).find(i => i.name === name);
       else if (type === 'equipment') entry = (dndData.equipment || []).find(e => e.name === name);
       else if (type === 'skills') entry = (dndData.skills || []).find(s => s.name === name);
-      // Print Character Sheet logic
-      document.addEventListener('DOMContentLoaded', function() {
-        const printBtn = document.getElementById('printSheetBtn');
-        if (printBtn) {
-          printBtn.addEventListener('click', function() {
-            if (currentCharacter) openPrintableCharacterSheet(currentCharacter);
+      else if (type === 'spells') entry = (dndData.spells || []).find(sp => sp.name === name);
+      if (!entry) return '';
+      let html = `<b>${entry.name}</b><br>`;
+      if (type === 'items' || type === 'equipment') {
+        if (entry.type) html += `<i>Type:</i> ${entry.type}<br>`;
+        if (entry.damage) html += `<i>Damage:</i> ${entry.damage}<br>`;
+        if (entry.ac) html += `<i>AC:</i> ${entry.ac}<br>`;
+        if (entry.ac_bonus) html += `<i>AC Bonus:</i> ${entry.ac_bonus}<br>`;
+        if (entry.dex_bonus) html += `<i>Dex Bonus:</i> Yes<br>`;
+        if (entry.strength_req) html += `<i>Strength Req:</i> ${entry.strength_req}<br>`;
+        if (entry.stealth_disadvantage) html += `<i>Stealth Disadvantage:</i> Yes<br>`;
+        if (entry.effect) html += `<i>Effect:</i> ${entry.effect}<br>`;
+        if (entry.properties) html += `<i>Properties:</i> ${entry.properties.join(', ')}<br>`;
+      }
+      if (type === 'skills') {
+        if (entry.ability) html += `<i>Ability:</i> ${entry.ability}<br>`;
+        if (Array.isArray(entry.effects)) {
+          html += `<b>Buffs/Debuffs:</b><br>`;
+          entry.effects.forEach(eff => {
+            let color = eff.type === 'buff' ? '#43b581' : '#f04747';
+            let effectText = eff.effect_type === 'advantage' ? 'Advantage (roll twice, take higher)' :
+              eff.effect_type === 'disadvantage' ? 'Disadvantage (roll twice, take lower)' :
+              (eff.effect_type === 'modifier' ? (eff.value > 0 ? `+${eff.value}` : `${eff.value}`) : '');
+            html += `<span style='color:${color}'>${eff.source}: ${effectText}</span><br>`;
           });
         }
-      });
-
-    function openPrintableCharacterSheet(character) {
-      const printWindow = window.open('', '_blank', 'width=800,height=1000,scrollbars=yes');
-      // Stat bonus logic
-      const raceInfo = {
-        "Human": { bonus: { strength: 1, dexterity: 1, constitution: 1 } },
-        "Elf": { bonus: { dexterity: 2, intelligence: 1 } },
-        "Dwarf": { bonus: { constitution: 2, strength: 1 } },
-        "Halfling": { bonus: { dexterity: 2, charisma: 1 } },
-        "Dragonborn": { bonus: { strength: 2, charisma: 1 } },
-        "Gnome": { bonus: { intelligence: 2, constitution: 1 } },
-        "Half-Elf": { bonus: { charisma: 2, dexterity: 1 } },
-        "Half-Orc": { bonus: { strength: 2, constitution: 1 } },
-        "Tiefling": { bonus: { charisma: 2, intelligence: 1 } }
-      };
-      const classInfo = {
-        "Fighter": { bonus: { strength: 2 }, skill: "Athletics" },
-        "Rogue": { bonus: { dexterity: 2 }, skill: "Stealth" },
-        "Wizard": { bonus: { intelligence: 2 }, skill: "Arcana" },
-        "Cleric": { bonus: { wisdom: 2 }, skill: "Religion" },
-        "Barbarian": { bonus: { strength: 1, constitution: 1 }, skill: "Athletics" },
-        "Bard": { bonus: { charisma: 2 }, skill: "Performance" },
-        "Druid": { bonus: { wisdom: 1, constitution: 1 }, skill: "Nature" },
-        "Monk": { bonus: { dexterity: 1, wisdom: 1 }, skill: "Acrobatics" },
-        "Paladin": { bonus: { strength: 1, charisma: 1 }, skill: "Persuasion" },
-        "Ranger": { bonus: { dexterity: 1, wisdom: 1 }, skill: "Survival" },
-        "Sorcerer": { bonus: { charisma: 1, constitution: 1 }, skill: "Arcana" },
-        "Warlock": { bonus: { charisma: 1, intelligence: 1 }, skill: "Intimidation" }
-      };
-      const backgroundInfo = {
-        "Acolyte": { skills: ["Insight", "Religion"], bonus: { wisdom: 1 } },
-        "Charlatan": { skills: ["Deception", "Sleight of Hand"], bonus: { charisma: 1 } },
-        "Criminal": { skills: ["Deception", "Stealth"], bonus: { dexterity: 1 } },
-        "Entertainer": { skills: ["Acrobatics", "Performance"], bonus: { charisma: 1 } },
-        "Folk Hero": { skills: ["Animal Handling", "Survival"], bonus: { constitution: 1 } },
-        "Guild Artisan": { skills: ["Insight", "Persuasion"], bonus: { intelligence: 1 } },
-        "Hermit": { skills: ["Medicine", "Religion"], bonus: { wisdom: 1 } },
-        "Noble": { skills: ["History", "Persuasion"], bonus: { charisma: 1 } },
-        "Outlander": { skills: ["Athletics", "Survival"], bonus: { constitution: 1 } },
-        "Sage": { skills: ["Arcana", "History"], bonus: { intelligence: 1 } },
-        "Sailor": { skills: ["Athletics", "Perception"], bonus: { strength: 1 } },
-        "Soldier": { skills: ["Athletics", "Intimidation"], bonus: { strength: 1 } },
-        "Urchin": { skills: ["Sleight of Hand", "Stealth"], bonus: { dexterity: 1 } }
-      };
-
-      function getTotalStat(character, stat) {
-        let total = character[stat] || 0;
-        if (raceInfo[character.race] && raceInfo[character.race].bonus && raceInfo[character.race].bonus[stat]) {
-          total += raceInfo[character.race].bonus[stat];
+      }
+      if (type === 'spells') {
+        if (entry.level) html += `<i>Level:</i> ${entry.level}<br>`;
+        if (entry.school) html += `<i>School:</i> ${entry.school}<br>`;
+        if (entry.description) html += `<i>Description:</i> ${entry.description}<br>`;
+        if (Array.isArray(entry.buffs_granted) && entry.buffs_granted.length) {
+          html += `<b>Buffs Granted:</b> ${entry.buffs_granted.join(', ')}<br>`;
         }
-        if (classInfo[character.class] && classInfo[character.class].bonus && classInfo[character.class].bonus[stat]) {
-          total += classInfo[character.class].bonus[stat];
+        if (Array.isArray(entry.debuffs_granted) && entry.debuffs_granted.length) {
+          html += `<b>Debuffs Granted:</b> ${entry.debuffs_granted.join(', ')}<br>`;
         }
-        if (backgroundInfo[character.background] && backgroundInfo[character.background].bonus && backgroundInfo[character.background].bonus[stat]) {
-          total += backgroundInfo[character.background].bonus[stat];
+        if (Array.isArray(entry.buffs_removed) && entry.buffs_removed.length) {
+          html += `<b>Buffs Removed:</b> ${entry.buffs_removed.join(', ')}<br>`;
         }
-        return total;
-      }
-
-      // Print skills as a list with bonuses only (no 'Level X')
-      function getSkillPrintList(character) {
-        const skills = Array.isArray(character.skills) ? character.skills : [];
-        let out = [];
-        for (const skill of skills) {
-          let bonus = 0;
-          let sources = [];
-          if (character.class && classInfo[character.class] && classInfo[character.class].skill === skill.name) {
-            bonus += 2;
-            sources.push('Class +2');
-          }
-          if (character.background && backgroundInfo[character.background] && backgroundInfo[character.background].skills && backgroundInfo[character.background].skills.includes(skill.name)) {
-            bonus += 2;
-            sources.push('Background +2');
-          }
-          if ((skill.count ?? 0) > 0 || bonus > 0) {
-            let display = skill.name;
-            if (sources.length > 0) display += ` (${sources.join(', ')})`;
-            out.push(display);
-          }
+        if (Array.isArray(entry.debuffs_removed) && entry.debuffs_removed.length) {
+          html += `<b>Debuffs Removed:</b> ${entry.debuffs_removed.join(', ')}<br>`;
         }
-        return out;
+        if (entry.hp_change) html += `<b>HP Change:</b> ${entry.hp_change}<br>`;
       }
-
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>${character.name || character.username} - Character Sheet</title>
-          <style>
-            @media print {
-              body { margin: 0; }
-              .no-print { display: none; }
-            }
-            body { 
-              font-family: 'Times New Roman', serif; 
-              margin: 20px; 
-              background: white; 
-              color: black; 
-              line-height: 1.4;
-            }
-            .header { 
-              text-align: center; 
-              border-bottom: 3px solid #000; 
-              padding-bottom: 10px; 
-              margin-bottom: 20px; 
-            }
-            .character-name { 
-              font-size: 28px; 
-              font-weight: bold; 
-              margin: 0; 
-            }
-            .character-details { 
-              font-size: 16px; 
-              margin: 5px 0; 
-            }
-            .section { 
-              margin-bottom: 20px; 
-              border: 2px solid #000; 
-              padding: 10px; 
-            }
-            .section-title { 
-              font-size: 18px; 
-              font-weight: bold; 
-              border-bottom: 1px solid #000; 
-              margin-bottom: 10px; 
-              padding-bottom: 5px; 
-            }
-            .stats-grid { 
-              display: grid; 
-              grid-template-columns: repeat(3, 1fr); 
-              gap: 10px; 
-            }
-            .stat-box { 
-              border: 1px solid #000; 
-              padding: 8px; 
-              text-align: center; 
-            }
-            .stat-name { 
-              font-weight: bold; 
-              font-size: 12px; 
-            }
-            .stat-value { 
-              font-size: 20px; 
-              font-weight: bold; 
-            }
-            .equipment-list { 
-              columns: 2; 
-              column-gap: 20px; 
-            }
-            .equipment-item { 
-              break-inside: avoid; 
-              margin-bottom: 5px; 
-            }
-            .no-print { 
-              position: fixed; 
-              top: 10px; 
-              right: 10px; 
-            }
-            button { 
-              padding: 10px 20px; 
-              font-size: 16px; 
-              cursor: pointer; 
-            }
-          </style>
-        </head>
-        <body>
-          <button class="no-print" onclick="window.print()">Print Character Sheet</button>
-          <div class="header">
-            <h1 class="character-name">${character.name || character.username}</h1>
-            <div class="character-details">
-              Level ${character.level} ${character.race} ${character.class}
-            </div>
-            <div class="character-details">
-              Background: ${character.background} | Username: ${character.username}
-            </div>
-          </div>
-          <div class="section">
-            <div class="section-title">Ability Scores</div>
-            <div class="stats-grid">
-              <div class="stat-box">
-                <div class="stat-name">STRENGTH</div>
-                <div class="stat-value">${getTotalStat(character, 'strength')}</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-name">DEXTERITY</div>
-                <div class="stat-value">${getTotalStat(character, 'dexterity')}</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-name">CONSTITUTION</div>
-                <div class="stat-value">${getTotalStat(character, 'constitution')}</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-name">INTELLIGENCE</div>
-                <div class="stat-value">${getTotalStat(character, 'intelligence')}</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-name">WISDOM</div>
-                <div class="stat-value">${getTotalStat(character, 'wisdom')}</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-name">CHARISMA</div>
-                <div class="stat-value">${getTotalStat(character, 'charisma')}</div>
-              </div>
-            </div>
-          </div>
-          <div class="section">
-            <div class="section-title">Character Progress</div>
-            <p><strong>Level:</strong> ${character.level}</p>
-            <p><strong>Experience Points:</strong> ${character.xp || 0}</p>
-            <p><strong>XP to Next Level:</strong> ${(100 * (character.level + 1)) - (character.xp || 0)}</p>
-            <p><strong>Free Stat Points:</strong> ${character.free_stat_points || 0}</p>
-          </div>
-          <div class="section">
-            <div class="section-title">Equipment & Items</div>
-            <div class="equipment-list">
-              ${character.equipment ? character.equipment.filter(eq => eq.count > 0).map(eq => 
-                `<div class="equipment-item">${eq.name} (${eq.count})</div>`
-              ).join('') : '<div>No equipment</div>'}
-              ${character.items ? character.items.filter(item => item.count > 0).map(item => 
-                `<div class="equipment-item">${item.name} (${item.count})</div>`
-              ).join('') : ''}
-            </div>
-          </div>
-          <div class="section">
-            <div class="section-title">Skills</div>
-            <div class="equipment-list">
-              ${getSkillPrintList(character).length > 0 ? getSkillPrintList(character).map(skill => 
-                `<div class="equipment-item">${skill}</div>`
-              ).join('') : '<div>No skills</div>'}
-            </div>
-          </div>
-          <div class="section">
-            <div class="section-title">Spells</div>
-            <div class="equipment-list">
-              ${character.spells ? character.spells.filter(spell => spell.count > 0).map(spell => 
-                `<div class="equipment-item">${spell.name}</div>`
-              ).join('') : '<div>No spells</div>'}
-            </div>
-          </div>
-          <div class="section">
-            <div class="section-title">Notes</div>
-            <div style="height: 150px; border: 1px solid #ccc; padding: 10px;">
-              ${character.bio || 'The tale of this adventurer is yet to be written...'}
-            </div>
-          </div>
-        </body>
-        </html>
-      `);
-      printWindow.document.close();
-    }
-        return;
-      }
-      // res should be the updated character row
-      if (res) {
-        currentCharacter = res;
-        renderCharacterSheet(currentCharacter);
-        if (leveledUp) {
-          alert(`Congratulations! You've reached level ${currentLevel} and earned ${statPoints} free stat points!`);
-        }
-      }
-    }
-
-    // Remove XP (can cause level down if XP goes negative)
-    async function removeXPFromCharacter(xpAmount) {
-      if (!currentCharacter || !currentUsername) return;
-      let currentXP = currentCharacter.xp || 0;
-      let currentLevel = currentCharacter.level || 1;
-      let statPoints = currentCharacter.free_stat_points || 0;
-      // Remove XP
-      currentXP = Math.max(0, currentXP - xpAmount);
-      // Check for level downs if we go below 0 XP for current level
-      while (currentLevel > 1 && currentXP < 0) {
-        currentLevel--;
-        currentXP += (100 * (currentLevel + 1));
-        statPoints = Math.max(0, statPoints - 2);
-      }
-      // Make sure XP doesn't go negative
-      currentXP = Math.max(0, currentXP);
-      const res = await updateCharacter(currentUsername, { xp: currentXP, level: currentLevel, free_stat_points: statPoints });
-      if (!res) {
-        console.warn('removeXPFromCharacter: updateCharacter returned null');
-        return;
-      }
-      currentCharacter = res;
-      renderCharacterSheet(currentCharacter);
+      return html;
     }
   </script>
 </body>

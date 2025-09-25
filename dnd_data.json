@@ -43,24 +43,105 @@
     {"name": "Healer's Kit", "type": "Tool"}
   ],
   "skills": [
-    {"name": "Acrobatics", "ability": "Dexterity", "buffs": ["Inspired", "Blessed"], "debuffs": ["Cursed", "Stunned", "Paralyzed"]},
-    {"name": "Animal Handling", "ability": "Wisdom", "buffs": ["Inspired"], "debuffs": ["Frightened"]},
-    {"name": "Arcana", "ability": "Intelligence", "buffs": ["Inspired"], "debuffs": ["Cursed"]},
-    {"name": "Athletics", "ability": "Strength", "buffs": ["Inspired", "Blessed"], "debuffs": ["Bleeding", "Cursed", "Paralyzed"]},
-    {"name": "Deception", "ability": "Charisma", "buffs": ["Inspired", "Charmed"], "debuffs": ["Cursed"]},
-    {"name": "History", "ability": "Intelligence", "buffs": ["Inspired"], "debuffs": ["Cursed"]},
-    {"name": "Insight", "ability": "Wisdom", "buffs": ["Inspired"], "debuffs": ["Cursed", "Frightened"]},
-    {"name": "Intimidation", "ability": "Charisma", "buffs": ["Inspired", "Charmed"], "debuffs": ["Cursed", "Frightened"]},
-    {"name": "Investigation", "ability": "Intelligence", "buffs": ["Inspired"], "debuffs": ["Cursed"]},
-    {"name": "Medicine", "ability": "Wisdom", "buffs": ["Blessed"], "debuffs": ["Poisoned"]},
-    {"name": "Nature", "ability": "Intelligence", "buffs": ["Inspired"], "debuffs": ["Cursed"]},
-    {"name": "Perception", "ability": "Wisdom", "buffs": ["Inspired", "Blessed"], "debuffs": ["Blinded", "Cursed", "Invisible"]},
-    {"name": "Performance", "ability": "Charisma", "buffs": ["Inspired", "Blessed", "Charmed"], "debuffs": ["Cursed", "Frightened"]},
-    {"name": "Persuasion", "ability": "Charisma", "buffs": ["Inspired", "Blessed", "Charmed"], "debuffs": ["Cursed", "Frightened"]},
-    {"name": "Religion", "ability": "Intelligence", "buffs": ["Inspired", "Blessed"], "debuffs": ["Cursed"]},
-    {"name": "Sleight of Hand", "ability": "Dexterity", "buffs": ["Inspired"], "debuffs": ["Cursed", "Stunned"]},
-    {"name": "Stealth", "ability": "Dexterity", "buffs": ["Blessed", "Invisible", "Inspired"], "debuffs": ["Cursed", "Poisoned", "Stunned"]},
-    {"name": "Survival", "ability": "Wisdom", "buffs": ["Inspired", "Blessed"], "debuffs": ["Cursed", "Frightened"]}
+    {"name": "Acrobatics", "ability": "Dexterity", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "buff", "source": "Blessed", "effect_type": "modifier", "value": 2},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Stunned", "effect_type": "modifier", "value": -2},
+      {"type": "debuff", "source": "Paralyzed", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Animal Handling", "ability": "Wisdom", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "debuff", "source": "Frightened", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Arcana", "ability": "Intelligence", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Athletics", "ability": "Strength", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "buff", "source": "Blessed", "effect_type": "modifier", "value": 2},
+      {"type": "debuff", "source": "Bleeding", "effect_type": "modifier", "value": -2},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Paralyzed", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Deception", "ability": "Charisma", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "buff", "source": "Charmed", "effect_type": "modifier", "value": 2},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"}
+    ]},
+    {"name": "History", "ability": "Intelligence", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Insight", "ability": "Wisdom", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Frightened", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Intimidation", "ability": "Charisma", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "buff", "source": "Charmed", "effect_type": "modifier", "value": 2},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Frightened", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Investigation", "ability": "Intelligence", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Medicine", "ability": "Wisdom", "effects": [
+      {"type": "buff", "source": "Blessed", "effect_type": "modifier", "value": 2},
+      {"type": "debuff", "source": "Poisoned", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Nature", "ability": "Intelligence", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Perception", "ability": "Wisdom", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "buff", "source": "Blessed", "effect_type": "modifier", "value": 2},
+      {"type": "debuff", "source": "Blinded", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Invisible", "effect_type": "modifier", "value": -2}
+    ]},
+    {"name": "Performance", "ability": "Charisma", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "buff", "source": "Blessed", "effect_type": "modifier", "value": 2},
+      {"type": "buff", "source": "Charmed", "effect_type": "modifier", "value": 2},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Frightened", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Persuasion", "ability": "Charisma", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "buff", "source": "Blessed", "effect_type": "modifier", "value": 2},
+      {"type": "buff", "source": "Charmed", "effect_type": "modifier", "value": 2},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Frightened", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Religion", "ability": "Intelligence", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "buff", "source": "Blessed", "effect_type": "modifier", "value": 2},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"}
+    ]},
+    {"name": "Sleight of Hand", "ability": "Dexterity", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Stunned", "effect_type": "modifier", "value": -2}
+    ]},
+    {"name": "Stealth", "ability": "Dexterity", "effects": [
+      {"type": "buff", "source": "Blessed", "effect_type": "modifier", "value": 2},
+      {"type": "buff", "source": "Invisible", "effect_type": "advantage"},
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Poisoned", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Stunned", "effect_type": "modifier", "value": -2}
+    ]},
+    {"name": "Survival", "ability": "Wisdom", "effects": [
+      {"type": "buff", "source": "Inspired", "effect_type": "advantage"},
+      {"type": "buff", "source": "Blessed", "effect_type": "modifier", "value": 2},
+      {"type": "debuff", "source": "Cursed", "effect_type": "disadvantage"},
+      {"type": "debuff", "source": "Frightened", "effect_type": "disadvantage"}
+    ]}
   ],
   "spells": [
   {"name": "Fireball", "level": 3, "school": "Evocation", "description": "A bright streak flashes from your pointing finger to a point you choose, then blossoms with a low roar into an explosion of flame. Effects: Grants debuff(s): Burning (1d6 fire damage per round). Removes debuff(s): Frozen. HP change: 1d6 per round if Burning.", "buffs": ["Inspired"], "debuffs": ["Cursed"], "buffs_granted": [], "debuffs_granted": ["Burning"], "buffs_removed": [], "debuffs_removed": ["Frozen"], "hp_change": "1d6/round (Burning)"},
@@ -91,42 +172,72 @@
     {
       "name": "Forest",
       "description": "Dense trees, undergrowth, and uneven ground.",
-      "skill_buffs": ["Stealth", "Survival"],
-      "skill_debuffs": ["Perception", "Athletics"],
-      "combat_buffs": ["Ranged attacks (cover)", "Ambush"],
-      "combat_debuffs": ["Movement (difficult terrain)"]
+      "skill_effects": [
+        {"skill": "Stealth", "effect_type": "advantage"},
+        {"skill": "Survival", "effect_type": "modifier", "value": 2},
+        {"skill": "Perception", "effect_type": "disadvantage"},
+        {"skill": "Athletics", "effect_type": "modifier", "value": -2}
+      ],
+      "combat_effects": [
+        {"type": "Ranged attacks", "effect_type": "advantage"},
+        {"type": "Ambush", "effect_type": "advantage"},
+        {"type": "Movement", "effect_type": "disadvantage"}
+      ]
     },
     {
       "name": "Swamp",
       "description": "Wet, muddy, and full of hazards.",
-      "skill_buffs": ["Survival"],
-      "skill_debuffs": ["Athletics", "Stealth"],
-      "combat_buffs": ["Poison effects"],
-      "combat_debuffs": ["Movement", "Fire spells"]
+      "skill_effects": [
+        {"skill": "Survival", "effect_type": "advantage"},
+        {"skill": "Athletics", "effect_type": "disadvantage"},
+        {"skill": "Stealth", "effect_type": "disadvantage"}
+      ],
+      "combat_effects": [
+        {"type": "Poison effects", "effect_type": "advantage"},
+        {"type": "Movement", "effect_type": "disadvantage"},
+        {"type": "Fire spells", "effect_type": "disadvantage"}
+      ]
     },
     {
       "name": "Mountain Pass",
       "description": "Rocky slopes and high altitude.",
-      "skill_buffs": ["Athletics"],
-      "skill_debuffs": ["Stealth"],
-      "combat_buffs": ["High ground (ranged)"],
-      "combat_debuffs": ["Falling", "Cold effects"]
+      "skill_effects": [
+        {"skill": "Athletics", "effect_type": "advantage"},
+        {"skill": "Stealth", "effect_type": "disadvantage"}
+      ],
+      "combat_effects": [
+        {"type": "High ground (ranged)", "effect_type": "advantage"},
+        {"type": "Falling", "effect_type": "disadvantage"},
+        {"type": "Cold effects", "effect_type": "disadvantage"}
+      ]
     },
     {
       "name": "Desert",
       "description": "Hot, dry, and open.",
-      "skill_buffs": ["Survival"],
-      "skill_debuffs": ["Stealth", "Athletics"],
-      "combat_buffs": ["Fire spells"],
-      "combat_debuffs": ["Water spells", "Exhaustion"]
+      "skill_effects": [
+        {"skill": "Survival", "effect_type": "advantage"},
+        {"skill": "Stealth", "effect_type": "disadvantage"},
+        {"skill": "Athletics", "effect_type": "disadvantage"}
+      ],
+      "combat_effects": [
+        {"type": "Fire spells", "effect_type": "advantage"},
+        {"type": "Water spells", "effect_type": "disadvantage"},
+        {"type": "Exhaustion", "effect_type": "disadvantage"}
+      ]
     },
     {
       "name": "Ruins",
       "description": "Crumbling stone, hidden dangers, and echoes.",
-      "skill_buffs": ["Investigation", "Stealth"],
-      "skill_debuffs": ["Athletics"],
-      "combat_buffs": ["Ambush", "Cover"],
-      "combat_debuffs": ["Area spells"]
+      "skill_effects": [
+        {"skill": "Investigation", "effect_type": "advantage"},
+        {"skill": "Stealth", "effect_type": "advantage"},
+        {"skill": "Athletics", "effect_type": "disadvantage"}
+      ],
+      "combat_effects": [
+        {"type": "Ambush", "effect_type": "advantage"},
+        {"type": "Cover", "effect_type": "advantage"},
+        {"type": "Area spells", "effect_type": "disadvantage"}
+      ]
     }
   ],
   "backgrounds": [

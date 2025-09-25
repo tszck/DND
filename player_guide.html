@@ -110,6 +110,7 @@
     <option value="resting">Resting</option>
     <option value="leveling">Leveling</option>
     <option value="status">Status Effects</option>
+    <option value="buffs-debuffs-system">Buffs, Debuffs, and Terrain Effects</option>
   </select>
 </div>
 <main class="guide-container">
@@ -256,6 +257,24 @@
       </tbody>
     </table>
     <p style="font-size:0.97em;color:#b9bbbe;margin-top:8px;">This is not a complete list. Many skills and spells can be affected by multiple status effects. See your character sheet for real-time indicators.</p>
+  </section>
+  <section class="guide-section" id="buffs-debuffs-system">
+    <h2>Buffs, Debuffs, and Terrain Effects</h2>
+    <p>All buffs, debuffs, and terrain effects use one of three systems:</p>
+    <ul>
+      <li><b>Advantage:</b> Roll twice, take the higher result.</li>
+      <li><b>Disadvantage:</b> Roll twice, take the lower result.</li>
+      <li><b>Modifier:</b> Add or subtract a fixed number to your roll (e.g., +2, -2).</li>
+    </ul>
+    <p>Skills, spells, items, and terrain now show their effects in tooltips and breakdowns using this system. For example:</p>
+    <ul>
+      <li><span style="color:#43b581">Inspired: Advantage (roll twice, take higher)</span></li>
+      <li><span style="color:#f04747">Cursed: Disadvantage (roll twice, take lower)</span></li>
+      <li><span style="color:#43b581">Blessed: +2 modifier</span></li>
+      <li><span style="color:#f04747">Poisoned: -2 modifier</span></li>
+    </ul>
+    <p>Terrain effects also use this system. For example, Forest terrain may give <span style="color:#43b581">Advantage</span> to Stealth, but <span style="color:#f04747">Disadvantage</span> to Athletics.</p>
+    <p>See your character sheet and tooltips for real-time breakdowns.</p>
   </section>
 </main>
 <script>

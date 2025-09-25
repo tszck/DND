@@ -209,7 +209,7 @@
       } else if (!value && !avatarBlob) {
         // Reset to default avatar when username is empty
         const avatarPreview = document.getElementById('avatar-preview');
-        avatarPreview.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiM3Mjg5ZGEiLz4KPHN2ZyB4PSIyNCIgeT0iMjAiIHdpZHRoPSI0OCIgaGVpZ2h0PSI1NiI+CjxjaXJjbGUgY3g9IjI0IiBjeT0iMjAiIHI9IjEyIiBmaWxsPSIjZmZmIi8+CjxwYXRoIGQ9Im0gMTIgNDAgYyAwIC04IDggLTE2IDE2IC0xNiBzIDE2IDggMTYgMTYgdiA4IGMgMCA0IC00IDggLTggOCBoIC0xNiBjIC00IDAgLTggLTQgLTggLTggdiAtOCIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4KPC9zdmc+";
+        avatarPreview.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiM3Mjg5ZGEiLz4KPHN2ZyB4PSIyNCIgeT0iMjAiIHdpZHRoPSI0OCIgaGVpZ2h0PSI1NiI+CjxjaXJjbGUgY3g9IjI0IiBjeT0iMjAiIHI9IjEyIiBmaWxsPSIjZmZmIi8+CjxwYXRoIGQ9Im0gMTIgNDAgYyAwIC04IDggLTE2IDE2IC0xNiBzIDE2IDggMTYgMTYgdiA4IGMgMCA0IC00IDggLTggOCBoIC0xNiBjIC00IDAgLTggLTQgLTggLTggdiAtOCIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4KPC9zdmc+";
       }
     });
 
@@ -631,6 +631,59 @@
       
       printWindow.document.close();
     }
+    function getTooltipContent(type, name) {
+  if (!dndData) return '';
+  let entry = null;
+  if (type === 'items') entry = (dndData.items || []).find(i => i.name === name);
+  else if (type === 'equipment') entry = (dndData.equipment || []).find(e => e.name === name);
+  else if (type === 'skills') entry = (dndData.skills || []).find(s => s.name === name);
+  else if (type === 'spells') entry = (dndData.spells || []).find(sp => sp.name === name);
+  if (!entry) return '';
+  let html = `<b>${entry.name}</b><br>`;
+  if (type === 'items' || type === 'equipment') {
+    if (entry.type) html += `<i>Type:</i> ${entry.type}<br>`;
+    if (entry.damage) html += `<i>Damage:</i> ${entry.damage}<br>`;
+    if (entry.ac) html += `<i>AC:</i> ${entry.ac}<br>`;
+    if (entry.ac_bonus) html += `<i>AC Bonus:</i> ${entry.ac_bonus}<br>`;
+    if (entry.dex_bonus) html += `<i>Dex Bonus:</i> Yes<br>`;
+    if (entry.strength_req) html += `<i>Strength Req:</i> ${entry.strength_req}<br>`;
+    if (entry.stealth_disadvantage) html += `<i>Stealth Disadvantage:</i> Yes<br>`;
+    if (entry.effect) html += `<i>Effect:</i> ${entry.effect}<br>`;
+    if (entry.properties) html += `<i>Properties:</i> ${entry.properties.join(', ')}<br>`;
+  }
+  if (type === 'skills') {
+    if (entry.ability) html += `<i>Ability:</i> ${entry.ability}<br>`;
+    if (Array.isArray(entry.effects)) {
+      html += `<b>Buffs/Debuffs:</b><br>`;
+      entry.effects.forEach(eff => {
+        let color = eff.type === 'buff' ? '#43b581' : '#f04747';
+        let effectText = eff.effect_type === 'advantage' ? 'Advantage (roll twice, take higher)' :
+          eff.effect_type === 'disadvantage' ? 'Disadvantage (roll twice, take lower)' :
+          (eff.effect_type === 'modifier' ? (eff.value > 0 ? `+${eff.value}` : `${eff.value}`) : '');
+        html += `<span style='color:${color}'>${eff.source}: ${effectText}</span><br>`;
+      });
+    }
+  }
+  if (type === 'spells') {
+    if (entry.level) html += `<i>Level:</i> ${entry.level}<br>`;
+    if (entry.school) html += `<i>School:</i> ${entry.school}<br>`;
+    if (entry.description) html += `<i>Description:</i> ${entry.description}<br>`;
+    if (Array.isArray(entry.buffs_granted) && entry.buffs_granted.length) {
+      html += `<b>Buffs Granted:</b> ${entry.buffs_granted.join(', ')}<br>`;
+    }
+    if (Array.isArray(entry.debuffs_granted) && entry.debuffs_granted.length) {
+      html += `<b>Debuffs Granted:</b> ${entry.debuffs_granted.join(', ')}<br>`;
+    }
+    if (Array.isArray(entry.buffs_removed) && entry.buffs_removed.length) {
+      html += `<b>Buffs Removed:</b> ${entry.buffs_removed.join(', ')}<br>`;
+    }
+    if (Array.isArray(entry.debuffs_removed) && entry.debuffs_removed.length) {
+      html += `<b>Debuffs Removed:</b> ${entry.debuffs_removed.join(', ')}<br>`;
+    }
+    if (entry.hp_change) html += `<b>HP Change:</b> ${entry.hp_change}<br>`;
+  }
+  return html;
+}
   </script>
 </body>
 </html>
