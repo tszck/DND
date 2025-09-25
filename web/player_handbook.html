@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Handbook - D&D Campaign Manager</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">D&D Campaign Manager</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="character_sheet.html">Character Sheet</a></li>
+                <li><a href="gm_dashboard.html">GM Dashboard</a></li>
+                <li><a href="player_handbook.html">Player Handbook</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="hero">
+            <h1 class="hero-title">Player's Handbook</h1>
+            <p class="hero-description">Your guide to the world of Dungeons & Dragons 5th Edition</p>
+        </div>
+
+        <!-- Quick Reference -->
+        <section class="card mb-xl">
+            <div class="card-header">
+                <h2 class="card-title">Quick Reference</h2>
+            </div>
+            <div class="grid grid-4">
+                <div class="quick-ref-item">
+                    <h4>Ability Check</h4>
+                    <p>d20 + Ability Modifier + Proficiency Bonus (if proficient)</p>
+                </div>
+                <div class="quick-ref-item">
+                    <h4>Attack Roll</h4>
+                    <p>d20 + Ability Modifier + Proficiency Bonus</p>
+                </div>
+                <div class="quick-ref-item">
+                    <h4>Damage Roll</h4>
+                    <p>Weapon die + Ability Modifier</p>
+                </div>
+                <div class="quick-ref-item">
+                    <h4>Saving Throw</h4>
+                    <p>d20 + Ability Modifier + Proficiency Bonus (if proficient)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Handbook Sections -->
+        <div class="tabs">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="showSection('basics')">Basics</button>
+                <button class="tab-button" onclick="showSection('combat')">Combat</button>
+                <button class="tab-button" onclick="showSection('spellcasting')">Spellcasting</button>
+                <button class="tab-button" onclick="showSection('conditions')">Conditions</button>
+                <button class="tab-button" onclick="showSection('equipment')">Equipment</button>
+                <button class="tab-button" onclick="showSection('reference')">Reference Tables</button>
+            </div>
+
+            <!-- Basics Section -->
+            <div id="basicsSection" class="tab-content active">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Ability Scores</h3>
+                        </div>
+                        <div class="ability-descriptions">
+                            <div class="ability-desc">
+                                <h4>Strength (STR)</h4>
+                                <p>Measures physical power. Used for melee attacks, jumping, climbing, and carrying capacity.</p>
+                            </div>
+                            <div class="ability-desc">
+                                <h4>Dexterity (DEX)</h4>
+                                <p>Measures agility and reflexes. Used for ranged attacks, initiative, stealth, and AC.</p>
+                            </div>
+                            <div class="ability-desc">
+                                <h4>Constitution (CON)</h4>
+                                <p>Measures health and stamina. Affects hit points and concentration saves.</p>
+                            </div>
+                            <div class="ability-desc">
+                                <h4>Intelligence (INT)</h4>
+                                <p>Measures reasoning and memory. Used for investigation, history, and wizard spells.</p>
+                            </div>
+                            <div class="ability-desc">
+                                <h4>Wisdom (WIS)</h4>
+                                <p>Measures awareness and intuition. Used for perception, survival, and cleric spells.</p>
+                            </div>
+                            <div class="ability-desc">
+                                <h4>Charisma (CHA)</h4>
+                                <p>Measures force of personality. Used for persuasion, deception, and sorcerer spells.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Proficiency Bonus</h3>
+                        </div>
+                        <table class="reference-table">
+                            <thead>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Proficiency Bonus</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1-4</td><td>+2</td></tr>
+                                <tr><td>5-8</td><td>+3</td></tr>
+                                <tr><td>9-12</td><td>+4</td></tr>
+                                <tr><td>13-16</td><td>+5</td></tr>
+                                <tr><td>17-20</td><td>+6</td></tr>
+                            </tbody>
+                        </table>
+
+                        <div class="mt-md">
+                            <h4>Difficulty Classes</h4>
+                            <table class="reference-table">
+                                <thead>
+                                    <tr><th>Task Difficulty</th><th>DC</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Very Easy</td><td>5</td></tr>
+                                    <tr><td>Easy</td><td>10</td></tr>
+                                    <tr><td>Medium</td><td>15</td></tr>
+                                    <tr><td>Hard</td><td>20</td></tr>
+                                    <tr><td>Very Hard</td><td>25</td></tr>
+                                    <tr><td>Nearly Impossible</td><td>30</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-xl">
+                    <div class="card-header">
+                        <h3 class="card-title">Skills</h3>
+                    </div>
+                    <div class="skills-reference">
+                        <div class="grid grid-3">
+                            <div>
+                                <h4>Strength</h4>
+                                <ul>
+                                    <li>Athletics (STR)</li>
+                                </ul>
+                                
+                                <h4>Dexterity</h4>
+                                <ul>
+                                    <li>Acrobatics (DEX)</li>
+                                    <li>Sleight of Hand (DEX)</li>
+                                    <li>Stealth (DEX)</li>
+                                </ul>
+
+                                <h4>Intelligence</h4>
+                                <ul>
+                                    <li>Arcana (INT)</li>
+                                    <li>History (INT)</li>
+                                    <li>Investigation (INT)</li>
+                                    <li>Nature (INT)</li>
+                                    <li>Religion (INT)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4>Wisdom</h4>
+                                <ul>
+                                    <li>Animal Handling (WIS)</li>
+                                    <li>Insight (WIS)</li>
+                                    <li>Medicine (WIS)</li>
+                                    <li>Perception (WIS)</li>
+                                    <li>Survival (WIS)</li>
+                                </ul>
+
+                                <h4>Charisma</h4>
+                                <ul>
+                                    <li>Deception (CHA)</li>
+                                    <li>Intimidation (CHA)</li>
+                                    <li>Performance (CHA)</li>
+                                    <li>Persuasion (CHA)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4>Advantage/Disadvantage</h4>
+                                <p><strong>Advantage:</strong> Roll 2d20, take the higher</p>
+                                <p><strong>Disadvantage:</strong> Roll 2d20, take the lower</p>
+                                <p><strong>Note:</strong> Advantage and disadvantage cancel each other out</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Combat Section -->
+            <div id="combatSection" class="tab-content">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Combat Sequence</h3>
+                        </div>
+                        <ol>
+                            <li><strong>Determine Surprise</strong> - DM determines if anyone is surprised</li>
+                            <li><strong>Establish Positions</strong> - DM establishes where characters and monsters are</li>
+                            <li><strong>Roll Initiative</strong> - Everyone rolls d20 + Dex modifier</li>
+                            <li><strong>Take Turns</strong> - Act in initiative order, highest to lowest</li>
+                            <li><strong>Begin Next Round</strong> - When everyone has taken a turn</li>
+                        </ol>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Actions in Combat</h3>
+                        </div>
+                        <div class="action-types">
+                            <div class="action-type">
+                                <h4>Action</h4>
+                                <ul>
+                                    <li>Attack</li>
+                                    <li>Cast a Spell</li>
+                                    <li>Dash (double movement)</li>
+                                    <li>Disengage (avoid opportunity attacks)</li>
+                                    <li>Dodge (attackers have disadvantage)</li>
+                                    <li>Help (give ally advantage)</li>
+                                    <li>Hide</li>
+                                    <li>Ready (prepare action for trigger)</li>
+                                    <li>Search</li>
+                                    <li>Use an Object</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="action-type">
+                                <h4>Bonus Action</h4>
+                                <ul>
+                                    <li>Specific spells/abilities only</li>
+                                    <li>Two-weapon fighting off-hand attack</li>
+                                    <li>Class features that specify bonus action</li>
+                                </ul>
+                            </div>
+
+                            <div class="action-type">
+                                <h4>Reaction</h4>
+                                <ul>
+                                    <li>Opportunity Attack</li>
+                                    <li>Specific spells (e.g., Counterspell)</li>
+                                    <li>Class features that specify reaction</li>
+                                </ul>
+                            </div>
+
+                            <div class="action-type">
+                                <h4>Free Actions</h4>
+                                <ul>
+                                    <li>Move up to your speed</li>
+                                    <li>Draw/sheathe weapon</li>
+                                    <li>Open a door</li>
+                                    <li>Short communication</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-xl">
+                    <div class="card-header">
+                        <h3 class="card-title">Attack & Damage</h3>
+                    </div>
+                    <div class="grid grid-2">
+                        <div>
+                            <h4>Making an Attack</h4>
+                            <ol>
+                                <li><strong>Choose Target:</strong> Pick a target within range</li>
+                                <li><strong>Determine Modifiers:</strong> Cover, advantage/disadvantage</li>
+                                <li><strong>Resolve Attack:</strong> Roll d20 + ability modifier + proficiency bonus</li>
+                                <li><strong>Compare to AC:</strong> If attack equals or exceeds AC, it hits</li>
+                            </ol>
+                            
+                            <h4>Critical Hits</h4>
+                            <p>Natural 20 on attack roll = critical hit. Roll all damage dice twice.</p>
+                            
+                            <h4>Cover</h4>
+                            <ul>
+                                <li><strong>Half Cover:</strong> +2 AC</li>
+                                <li><strong>Three-Quarters Cover:</strong> +5 AC</li>
+                                <li><strong>Total Cover:</strong> Can't be targeted</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4>Damage & Healing</h4>
+                            <p><strong>Damage:</strong> Roll weapon/spell damage dice + ability modifier</p>
+                            <p><strong>Healing:</strong> Regain hit points, cannot exceed maximum</p>
+                            
+                            <h4>Death & Dying</h4>
+                            <ul>
+                                <li><strong>0 HP:</strong> Unconscious and making death saves</li>
+                                <li><strong>Death Saves:</strong> Roll d20 each turn</li>
+                                <li><strong>10+:</strong> Success (need 3 to stabilize)</li>
+                                <li><strong>1-9:</strong> Failure (3 failures = death)</li>
+                                <li><strong>Natural 1:</strong> Counts as 2 failures</li>
+                                <li><strong>Natural 20:</strong> Regain 1 HP immediately</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spellcasting Section -->
+            <div id="spellcastingSection" class="tab-content">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Spellcasting Basics</h3>
+                        </div>
+                        <div>
+                            <h4>Spell Attack Rolls</h4>
+                            <p>d20 + spellcasting ability modifier + proficiency bonus</p>
+                            
+                            <h4>Spell Save DC</h4>
+                            <p>8 + spellcasting ability modifier + proficiency bonus</p>
+                            
+                            <h4>Spellcasting Ability</h4>
+                            <ul>
+                                <li><strong>Bard, Paladin, Sorcerer, Warlock:</strong> Charisma</li>
+                                <li><strong>Cleric, Druid, Ranger:</strong> Wisdom</li>
+                                <li><strong>Wizard, Eldritch Knight, Arcane Trickster:</strong> Intelligence</li>
+                            </ul>
+                            
+                            <h4>Concentration</h4>
+                            <p>Some spells require concentration. You lose concentration if:</p>
+                            <ul>
+                                <li>You cast another concentration spell</li>
+                                <li>You take damage and fail a Constitution save (DC 10 or half damage, whichever is higher)</li>
+                                <li>You're incapacitated or die</li>
+                                <li>The DM determines environmental factors break it</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Spell Components</h3>
+                        </div>
+                        <div>
+                            <h4>Verbal (V)</h4>
+                            <p>Incantations, words of power. Must be able to speak clearly.</p>
+                            
+                            <h4>Somatic (S)</h4>
+                            <p>Hand gestures and movements. Need at least one free hand.</p>
+                            
+                            <h4>Material (M)</h4>
+                            <p>Physical components. Can use:</p>
+                            <ul>
+                                <li>Spellcasting focus (wand, crystal, etc.)</li>
+                                <li>Component pouch</li>
+                                <li>Actual material components</li>
+                            </ul>
+                            
+                            <h4>Costly Materials</h4>
+                            <p>Some spells require materials with a specific cost. These are consumed unless the spell says otherwise.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-xl">
+                    <div class="card-header">
+                        <h3 class="card-title">Spell Schools</h3>
+                    </div>
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="spell-school">
+                                <h4>Abjuration</h4>
+                                <p>Protective spells, wards, and barriers</p>
+                            </div>
+                            <div class="spell-school">
+                                <h4>Conjuration</h4>
+                                <p>Summoning creatures and objects, teleportation</p>
+                            </div>
+                            <div class="spell-school">
+                                <h4>Divination</h4>
+                                <p>Information gathering, scrying, detection</p>
+                            </div>
+                            <div class="spell-school">
+                                <h4>Enchantment</h4>
+                                <p>Mind control, charm effects, compulsions</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="spell-school">
+                                <h4>Evocation</h4>
+                                <p>Destructive energy, elemental damage</p>
+                            </div>
+                            <div class="spell-school">
+                                <h4>Illusion</h4>
+                                <p>Deception, misdirection, invisibility</p>
+                            </div>
+                            <div class="spell-school">
+                                <h4>Necromancy</h4>
+                                <p>Death, undeath, life force manipulation</p>
+                            </div>
+                            <div class="spell-school">
+                                <h4>Transmutation</h4>
+                                <p>Transformation, alteration of properties</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conditions Section -->
+            <div id="conditionsSection" class="tab-content">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Common Conditions</h3>
+                        </div>
+                        <div class="conditions-list">
+                            <div class="condition">
+                                <h4>Blinded</h4>
+                                <ul>
+                                    <li>Cannot see, automatically fails sight-based checks</li>
+                                    <li>Attack rolls have disadvantage</li>
+                                    <li>Attack rolls against you have advantage</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Charmed</h4>
+                                <ul>
+                                    <li>Cannot attack the charmer or target with harmful abilities/spells</li>
+                                    <li>Charmer has advantage on social interactions</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Deafened</h4>
+                                <ul>
+                                    <li>Cannot hear, automatically fails hearing-based checks</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Frightened</h4>
+                                <ul>
+                                    <li>Disadvantage on ability checks and attack rolls while source is in sight</li>
+                                    <li>Cannot willingly move closer to source</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Grappled</h4>
+                                <ul>
+                                    <li>Speed becomes 0, cannot benefit from speed bonuses</li>
+                                    <li>Ends if grappler is incapacitated or moved away</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Incapacitated</h4>
+                                <ul>
+                                    <li>Cannot take actions or reactions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Severe Conditions</h3>
+                        </div>
+                        <div class="conditions-list">
+                            <div class="condition">
+                                <h4>Invisible</h4>
+                                <ul>
+                                    <li>Impossible to see without magic or special senses</li>
+                                    <li>Attack rolls have advantage</li>
+                                    <li>Attack rolls against you have disadvantage</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Paralyzed</h4>
+                                <ul>
+                                    <li>Incapacitated and cannot move or speak</li>
+                                    <li>Automatically fails Strength and Dexterity saves</li>
+                                    <li>Attack rolls have advantage, hits within 5 feet are critical</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Petrified</h4>
+                                <ul>
+                                    <li>Transformed to solid inanimate substance</li>
+                                    <li>Incapacitated, cannot move or speak</li>
+                                    <li>Resistance to all damage</li>
+                                    <li>Immune to poison and disease</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Poisoned</h4>
+                                <ul>
+                                    <li>Disadvantage on attack rolls and ability checks</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Prone</h4>
+                                <ul>
+                                    <li>Can only crawl or stand up (costs half movement)</li>
+                                    <li>Disadvantage on attack rolls</li>
+                                    <li>Melee attacks have advantage, ranged have disadvantage</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Restrained</h4>
+                                <ul>
+                                    <li>Speed becomes 0</li>
+                                    <li>Disadvantage on attack rolls and Dexterity saves</li>
+                                    <li>Attack rolls against you have advantage</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Stunned</h4>
+                                <ul>
+                                    <li>Incapacitated, cannot move</li>
+                                    <li>Can speak only falteringly</li>
+                                    <li>Automatically fails Strength and Dexterity saves</li>
+                                    <li>Attack rolls against you have advantage</li>
+                                </ul>
+                            </div>
+
+                            <div class="condition">
+                                <h4>Unconscious</h4>
+                                <ul>
+                                    <li>Incapacitated, cannot move or speak</li>
+                                    <li>Unaware of surroundings</li>
+                                    <li>Drops what it's holding and falls prone</li>
+                                    <li>Automatically fails Strength and Dexterity saves</li>
+                                    <li>Attack rolls have advantage, hits within 5 feet are critical</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Equipment Section -->
+            <div id="equipmentSection" class="tab-content">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Armor Class</h3>
+                        </div>
+                        <table class="reference-table">
+                            <thead>
+                                <tr><th>Armor Type</th><th>Base AC</th><th>Dex Modifier</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>None</td><td>10</td><td>Full</td></tr>
+                                <tr><td>Light Armor</td><td>11-12</td><td>Full</td></tr>
+                                <tr><td>Medium Armor</td><td>13-15</td><td>Max +2</td></tr>
+                                <tr><td>Heavy Armor</td><td>16-18</td><td>None</td></tr>
+                                <tr><td>Shield</td><td>+2</td><td>-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Weapon Properties</h3>
+                        </div>
+                        <div class="weapon-properties">
+                            <div class="property">
+                                <h4>Ammunition</h4>
+                                <p>Requires ammunition to make ranged attacks</p>
+                            </div>
+                            <div class="property">
+                                <h4>Finesse</h4>
+                                <p>Use Strength or Dexterity for attack and damage</p>
+                            </div>
+                            <div class="property">
+                                <h4>Heavy</h4>
+                                <p>Small creatures have disadvantage on attacks</p>
+                            </div>
+                            <div class="property">
+                                <h4>Light</h4>
+                                <p>Can be used for two-weapon fighting</p>
+                            </div>
+                            <div class="property">
+                                <h4>Loading</h4>
+                                <p>Can only fire one piece of ammunition per action</p>
+                            </div>
+                            <div class="property">
+                                <h4>Range</h4>
+                                <p>Normal range/long range (disadvantage beyond normal)</p>
+                            </div>
+                            <div class="property">
+                                <h4>Reach</h4>
+                                <p>Adds 5 feet to reach when attacking</p>
+                            </div>
+                            <div class="property">
+                                <h4>Thrown</h4>
+                                <p>Can be thrown for ranged attack (normal/long range)</p>
+                            </div>
+                            <div class="property">
+                                <h4>Two-Handed</h4>
+                                <p>Requires two hands to use</p>
+                            </div>
+                            <div class="property">
+                                <h4>Versatile</h4>
+                                <p>Can be used one or two-handed (different damage dice)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-xl">
+                    <div class="card-header">
+                        <h3 class="card-title">Adventuring Gear</h3>
+                    </div>
+                    <div class="grid grid-3">
+                        <div>
+                            <h4>Exploration</h4>
+                            <ul>
+                                <li>Rope (50 feet): 10 gp</li>
+                                <li>Torch: 1 gp</li>
+                                <li>Lantern, hooded: 5 gp</li>
+                                <li>Oil (1 vial): 1 gp</li>
+                                <li>Tinderbox: 1 gp</li>
+                                <li>Grappling hook: 2 gp</li>
+                                <li>Crowbar: 2 gp</li>
+                                <li>Hammer: 1 gp</li>
+                                <li>Pitons (10): 1 gp</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>Survival</h4>
+                            <ul>
+                                <li>Bedroll: 1 gp</li>
+                                <li>Blanket: 1 gp</li>
+                                <li>Rations (1 day): 1 gp</li>
+                                <li>Waterskin: 1 gp</li>
+                                <li>Backpack: 2 gp</li>
+                                <li>Tent, two-person: 2 gp</li>
+                                <li>Fishing tackle: 1 gp</li>
+                                <li>Hunting trap: 5 gp</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>Tools & Kits</h4>
+                            <ul>
+                                <li>Thieves' tools: 25 gp</li>
+                                <li>Healer's kit: 5 gp</li>
+                                <li>Disguise kit: 25 gp</li>
+                                <li>Forgery kit: 15 gp</li>
+                                <li>Herbalism kit: 5 gp</li>
+                                <li>Poisoner's kit: 50 gp</li>
+                                <li>Artisan tools: 5-50 gp</li>
+                                <li>Musical instrument: 2-35 gp</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reference Tables Section -->
+            <div id="referenceSection" class="tab-content">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Movement & Travel</h3>
+                        </div>
+                        <h4>Movement Speeds</h4>
+                        <table class="reference-table">
+                            <thead>
+                                <tr><th>Creature Size</th><th>Base Speed</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Small/Medium (most PCs)</td><td>30 feet</td></tr>
+                                <tr><td>Dwarf, Halfling</td><td>25 feet</td></tr>
+                                <tr><td>Elf (Wood)</td><td>35 feet</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Travel Pace (Per Day)</h4>
+                        <table class="reference-table">
+                            <thead>
+                                <tr><th>Pace</th><th>Distance</th><th>Effect</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Fast</td><td>30 miles</td><td>-5 to Perception</td></tr>
+                                <tr><td>Normal</td><td>24 miles</td><td>-</td></tr>
+                                <tr><td>Slow</td><td>18 miles</td><td>Can use stealth</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Environment</h3>
+                        </div>
+                        <h4>Light</h4>
+                        <ul>
+                            <li><strong>Bright Light:</strong> Normal vision</li>
+                            <li><strong>Dim Light:</strong> Lightly obscured (disadvantage on Perception)</li>
+                            <li><strong>Darkness:</strong> Heavily obscured (effectively blinded)</li>
+                        </ul>
+
+                        <h4>Vision Types</h4>
+                        <ul>
+                            <li><strong>Darkvision:</strong> See in darkness as dim light (usually 60 feet)</li>
+                            <li><strong>Blindsight:</strong> Perceive surroundings without sight</li>
+                            <li><strong>Truesight:</strong> See all forms of deception</li>
+                        </ul>
+
+                        <h4>Cover</h4>
+                        <ul>
+                            <li><strong>Half Cover:</strong> +2 AC and Dex saves</li>
+                            <li><strong>Three-Quarters:</strong> +5 AC and Dex saves</li>
+                            <li><strong>Total Cover:</strong> Cannot be targeted directly</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mt-xl">
+                    <div class="card-header">
+                        <h3 class="card-title">Experience & Leveling</h3>
+                    </div>
+                    <div class="grid grid-2">
+                        <div>
+                            <h4>Experience Points by Level</h4>
+                            <table class="reference-table">
+                                <thead>
+                                    <tr><th>Level</th><th>XP Required</th><th>Proficiency Bonus</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>1</td><td>0</td><td>+2</td></tr>
+                                    <tr><td>2</td><td>300</td><td>+2</td></tr>
+                                    <tr><td>3</td><td>900</td><td>+2</td></tr>
+                                    <tr><td>4</td><td>2,700</td><td>+2</td></tr>
+                                    <tr><td>5</td><td>6,500</td><td>+3</td></tr>
+                                    <tr><td>6</td><td>14,000</td><td>+3</td></tr>
+                                    <tr><td>7</td><td>23,000</td><td>+3</td></tr>
+                                    <tr><td>8</td><td>34,000</td><td>+3</td></tr>
+                                    <tr><td>9</td><td>48,000</td><td>+4</td></tr>
+                                    <tr><td>10</td><td>64,000</td><td>+4</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <h4>Encounter Difficulty (for 4 characters)</h4>
+                            <table class="reference-table">
+                                <thead>
+                                    <tr><th>Level</th><th>Easy</th><th>Medium</th><th>Hard</th><th>Deadly</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>1</td><td>100</td><td>200</td><td>300</td><td>400</td></tr>
+                                    <tr><td>2</td><td>200</td><td>400</td><td>600</td><td>800</td></tr>
+                                    <tr><td>3</td><td>300</td><td>600</td><td>900</td><td>1,200</td></tr>
+                                    <tr><td>4</td><td>500</td><td>1,000</td><td>1,500</td><td>2,000</td></tr>
+                                    <tr><td>5</td><td>750</td><td>1,500</td><td>2,250</td><td>3,000</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.tab-content').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionName + 'Section').classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Add smooth scrolling for internal links
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add any initialization code here
+        });
+    </script>
+</body>
+</html>
