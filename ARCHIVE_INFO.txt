@@ -1,0 +1,10 @@
+Repository archived on September 25, 2025
+Archive created at: 09/25/2025 23:32:48
+Original path: c:\Users\chris\Documents\DND\DND\
+Archive contains all files and folders from the main DND repository as of this date.
+
+Recent changes included:
+- Fixed renderAssetChips function scope error (character variable issue)
+- Enhanced tooltip content for all character assets
+- Fixed avatar loading error handling
+- Comprehensive repository analysis and improvements
