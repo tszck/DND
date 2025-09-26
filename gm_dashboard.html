@@ -62,10 +62,13 @@
                         <span class="btn-icon">🔄</span>
                         Refresh
                     </button>
+                    <!-- Multi-select character filter -->
+                    <select id="characterFilter" class="form-select" style="margin-left:16px;" multiple size="4" onchange="filterCharacters()">
+                        <!-- Options will be populated dynamically -->
+                    </select>
                 </div>
             </div>
-            
-            <div class="characters-grid" id="charactersGrid">
+            <div class="characters-grid" id="charactersGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
                 <div class="loading-placeholder">
                     <div class="loading"></div>
                     <p>Loading characters...</p>
@@ -308,9 +311,7 @@
     <script src="js/database.js"></script>
     <script>
         let characters = [];
-        let combatants = [];
-        let currentRound = 1;
-        let currentTurn = 0;
+        let filteredCharacters = [];
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
@@ -322,6 +323,8 @@
         async function loadCharacters() {
             try {
                 characters = await db.getAllCharacters();
+                filteredCharacters = characters;
+                populateCharacterFilter();
                 displayCharacters();
             } catch (error) {
                 console.error('Error loading characters:', error);
@@ -329,10 +332,32 @@
             }
         }
 
+        function populateCharacterFilter() {
+            const filter = document.getElementById('characterFilter');
+            if (!filter) return;
+            filter.innerHTML = '';
+            characters.forEach(character => {
+                const opt = document.createElement('option');
+                opt.value = character.character_id;
+                opt.textContent = character.character_name;
+                filter.appendChild(opt);
+            });
+        }
+
+        function filterCharacters() {
+            const filter = document.getElementById('characterFilter');
+            const selectedIds = Array.from(filter.selectedOptions).map(opt => opt.value);
+            if (selectedIds.length === 0) {
+                filteredCharacters = characters;
+            } else {
+                filteredCharacters = characters.filter(c => selectedIds.includes(c.character_id));
+            }
+            displayCharacters();
+        }
+
         function displayCharacters() {
             const grid = document.getElementById('charactersGrid');
-            
-            if (characters.length === 0) {
+            if (!filteredCharacters || filteredCharacters.length === 0) {
                 grid.innerHTML = `
                     <div class="empty-state">
                         <p>No characters found</p>
@@ -341,8 +366,7 @@
                 `;
                 return;
             }
-
-            grid.innerHTML = characters.map(character => `
+            grid.innerHTML = filteredCharacters.map(character => `
                 <div class="character-card">
                     <div class="character-card-header">
                         <h4 class="character-card-name">${character.character_name}</h4>
