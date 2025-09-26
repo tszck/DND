@@ -34,7 +34,7 @@
                 <h2 class="card-title">Quick Actions</h2>
             </div>
             <div class="grid grid-4">
-                <button onclick="showCreateCharacterForm()" class="btn btn-primary btn-large">
+                <button onclick="redirectToCreateCharacter()" class="btn btn-primary btn-large">
                     <span class="btn-icon">👤</span>
                     Create Character
                 </button>
@@ -925,6 +925,10 @@
             setTimeout(() => {
                 notification.remove();
             }, 5000);
+        }
+
+        function redirectToCreateCharacter() {
+            window.location.href = 'create_character.html';
         }
     </script>
 </body>

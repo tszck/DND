@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Character - D&D Campaign Manager</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="index.html">D&D Campaign Manager</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="character_sheet.html">Character Sheet</a></li>
+            <li><a href="gm_dashboard.html">GM Dashboard</a></li>
+            <li><a href="player_handbook.html">Player Handbook</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="hero">
+            <h1 class="hero-title">Create New Character</h1>
+            <p class="hero-description">Build your D&D character from scratch</p>
+        </div>
+
+        <form id="characterForm" class="card">
+            <div class="card-header">
+                <h2 class="card-title">Character Details</h2>
+            </div>
+            <div class="card-body">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label for="characterName">Character Name *</label>
+                            <input type="text" id="characterName" name="characterName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Player Name *</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="race">Race *</label>
+                            <select id="race" name="race" required>
+                                <option value="">Select Race</option>
+                                <option value="Human">Human</option>
+                                <option value="Elf">Elf</option>
+                                <option value="Dwarf">Dwarf</option>
+                                <option value="Halfling">Halfling</option>
+                                <option value="Dragonborn">Dragonborn</option>
+                                <option value="Gnome">Gnome</option>
+                                <option value="Half-Elf">Half-Elf</option>
+                                <option value="Half-Orc">Half-Orc</option>
+                                <option value="Tiefling">Tiefling</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="class">Class *</label>
+                            <select id="class" name="class" required>
+                                <option value="">Select Class</option>
+                                <option value="Barbarian">Barbarian</option>
+                                <option value="Bard">Bard</option>
+                                <option value="Cleric">Cleric</option>
+                                <option value="Druid">Druid</option>
+                                <option value="Fighter">Fighter</option>
+                                <option value="Monk">Monk</option>
+                                <option value="Paladin">Paladin</option>
+                                <option value="Ranger">Ranger</option>
+                                <option value="Rogue">Rogue</option>
+                                <option value="Sorcerer">Sorcerer</option>
+                                <option value="Warlock">Warlock</option>
+                                <option value="Wizard">Wizard</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="background">Background</label>
+                            <input type="text" id="background" name="background" placeholder="e.g., Acolyte, Criminal, Folk Hero">
+                        </div>
+                        <div class="form-group">
+                            <label for="alignment">Alignment</label>
+                            <select id="alignment" name="alignment">
+                                <option value="">Select Alignment</option>
+                                <option value="Lawful Good">Lawful Good</option>
+                                <option value="Neutral Good">Neutral Good</option>
+                                <option value="Chaotic Good">Chaotic Good</option>
+                                <option value="Lawful Neutral">Lawful Neutral</option>
+                                <option value="True Neutral">True Neutral</option>
+                                <option value="Chaotic Neutral">Chaotic Neutral</option>
+                                <option value="Lawful Evil">Lawful Evil</option>
+                                <option value="Neutral Evil">Neutral Evil</option>
+                                <option value="Chaotic Evil">Chaotic Evil</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ability Scores -->
+                <div class="form-section">
+                    <h3>Ability Scores</h3>
+                    <div class="grid grid-3">
+                        <div class="form-group">
+                            <label for="strength">Strength</label>
+                            <input type="number" id="strength" name="strength" min="1" max="20" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="dexterity">Dexterity</label>
+                            <input type="number" id="dexterity" name="dexterity" min="1" max="20" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="constitution">Constitution</label>
+                            <input type="number" id="constitution" name="constitution" min="1" max="20" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="intelligence">Intelligence</label>
+                            <input type="number" id="intelligence" name="intelligence" min="1" max="20" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="wisdom">Wisdom</label>
+                            <input type="number" id="wisdom" name="wisdom" min="1" max="20" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="charisma">Charisma</label>
+                            <input type="number" id="charisma" name="charisma" min="1" max="20" value="10">
+                        </div>
+                    </div>
+                    <button type="button" onclick="rollAbilityScores()" class="btn btn-secondary">Roll All Ability Scores</button>
+                </div>
+
+                <!-- Combat Stats -->
+                <div class="form-section">
+                    <h3>Combat & Health</h3>
+                    <div class="grid grid-3">
+                        <div class="form-group">
+                            <label for="level">Level</label>
+                            <input type="number" id="level" name="level" min="1" max="20" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="maxHp">Max Hit Points</label>
+                            <input type="number" id="maxHp" name="maxHp" min="1" value="8">
+                        </div>
+                        <div class="form-group">
+                            <label for="armorClass">Armor Class</label>
+                            <input type="number" id="armorClass" name="armorClass" min="1" value="10">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personality -->
+                <div class="form-section">
+                    <h3>Personality (Optional)</h3>
+                    <div class="grid grid-2">
+                        <div class="form-group">
+                            <label for="personalityTraits">Personality Traits</label>
+                            <textarea id="personalityTraits" name="personalityTraits" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="ideals">Ideals</label>
+                            <textarea id="ideals" name="ideals" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="bonds">Bonds</label>
+                            <textarea id="bonds" name="bonds" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="flaws">Flaws</label>
+                            <textarea id="flaws" name="flaws" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary btn-large">Create Character</button>
+                <button type="button" onclick="window.history.back()" class="btn btn-outline">Cancel</button>
+            </div>
+        </form>
+    </main>
+
+    <script src="js/database.js"></script>
+    <script>
+        function rollAbilityScores() {
+            const abilities = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+            abilities.forEach(ability => {
+                // Roll 4d6, drop lowest (standard D&D method)
+                const rolls = [rollD6(), rollD6(), rollD6(), rollD6()];
+                rolls.sort((a, b) => b - a);
+                const score = rolls.slice(0, 3).reduce((sum, roll) => sum + roll, 0);
+                document.getElementById(ability).value = score;
+            });
+            showSuccess('Ability scores rolled!');
+        }
+
+        function rollD6() {
+            return Math.floor(Math.random() * 6) + 1;
+        }
+
+        document.getElementById('characterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(e.target);
+                const characterData = {
+                    character_name: formData.get('characterName'),
+                    username: formData.get('username'),
+                    race: formData.get('race'),
+                    class: formData.get('class'),
+                    background: formData.get('background') || null,
+                    alignment: formData.get('alignment') || null,
+                    level: parseInt(formData.get('level')),
+                    strength: parseInt(formData.get('strength')),
+                    dexterity: parseInt(formData.get('dexterity')),
+                    constitution: parseInt(formData.get('constitution')),
+                    intelligence: parseInt(formData.get('intelligence')),
+                    wisdom: parseInt(formData.get('wisdom')),
+                    charisma: parseInt(formData.get('charisma')),
+                    max_hp: parseInt(formData.get('maxHp')),
+                    current_hp: parseInt(formData.get('maxHp')), // Start at full HP
+                    armor_class: parseInt(formData.get('armorClass')),
+                    personality_traits: formData.get('personalityTraits') || null,
+                    ideals: formData.get('ideals') || null,
+                    bonds: formData.get('bonds') || null,
+                    flaws: formData.get('flaws') || null,
+                    xp: 0,
+                    gold_pieces: 0,
+                    // Initialize empty arrays for equipment
+                    weapons: [],
+                    armor: [],
+                    items: [],
+                    skills: [],
+                    spells: [],
+                    status_effects: []
+                };
+
+                const result = await db.createCharacter(characterData);
+                
+                if (result) {
+                    showSuccess('Character created successfully!');
+                    setTimeout(() => {
+                        window.location.href = `character_sheet.html?username=${encodeURIComponent(characterData.username)}`;
+                    }, 1500);
+                } else {
+                    throw new Error('Failed to create character');
+                }
+                
+            } catch (error) {
+                console.error('Error creating character:', error);
+                showError('Failed to create character: ' + error.message);
+            }
+        });
+
+        function showSuccess(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification success';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function showError(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification error';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

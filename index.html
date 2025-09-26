@@ -29,39 +29,36 @@
             <p class="character-detail-value">Manage characters, track adventures, and explore the rules</p>
         </section>
 
-        <!-- Quick Actions Grid -->
-        <section class="grid grid-3 mb-xl">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Character Management</h3>
-                    <p class="card-subtitle">View and manage character sheets</p>
-                </div>
-                <p>Access detailed character information, manage equipment, spells, and track character progression.</p>
-                <div class="mt-lg">
-                    <a href="character_sheet.html" class="btn btn-primary">View Character Sheet</a>
-                </div>
-            </div>
+        <!-- Quick Actions (kept) -->
+        <section class="mb-xl">
+            <div class="grid grid-4">
+                <a class="card" href="character_sheet.html">
+                    <div class="card-header text-center">
+                        <h3>Character Sheet</h3>
+                        <p>View player character details</p>
+                    </div>
+                </a>
 
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Gamemaster Tools</h3>
-                    <p class="card-subtitle">Comprehensive campaign management</p>
-                </div>
-                <p>Oversee all player characters, manage campaigns, and access powerful GM tools for running sessions.</p>
-                <div class="mt-lg">
-                    <a href="gm_dashboard.html" class="btn btn-primary">Open GM Dashboard</a>
-                </div>
-            </div>
+                <a class="card" href="gm_dashboard.html">
+                    <div class="card-header text-center">
+                        <h3>GM Dashboard</h3>
+                        <p>Manage, edit, and run sessions</p>
+                    </div>
+                </a>
 
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Rules Reference</h3>
-                    <p class="card-subtitle">Complete player handbook</p>
-                </div>
-                <p>Access rules, mechanics, spell descriptions, and gameplay guidance for D&D 5th Edition.</p>
-                <div class="mt-lg">
-                    <a href="player_handbook.html" class="btn btn-primary">Browse Handbook</a>
-                </div>
+                <a class="card" href="player_handbook.html">
+                    <div class="card-header text-center">
+                        <h3>Player Handbook</h3>
+                        <p>Rules, mechanics, and quick references</p>
+                    </div>
+                </a>
+
+                <a class="card" href="create_character.html">
+                    <div class="card-header text-center">
+                        <h3>Create Character</h3>
+                        <p>Build a new character</p>
+                    </div>
+                </a>
             </div>
         </section>
 
@@ -80,7 +77,7 @@
 
     <!-- Footer -->
     <footer style="background: var(--dark-gray); color: var(--white); text-align: center; padding: var(--spacing-xl); margin-top: var(--spacing-xxl);">
-        <p>&copy; 2025 D&D Campaign Manager. Built with modern web technologies and normalized database architecture.</p>
+        <!-- <p>&copy; 2025 D&D Campaign Manager. Built with modern web technologies and normalized database architecture.</p> -->
         <p style="margin-top: var(--spacing-sm); font-size: var(--font-size-sm); opacity: 0.8;">
             Powered by Supabase • PostgreSQL • Modern JavaScript
         </p>
