@@ -62,10 +62,13 @@
                         <span class="btn-icon">🔄</span>
                         Refresh
                     </button>
-                    <!-- Multi-select character filter -->
-                    <select id="characterFilter" class="form-select" style="margin-left:16px;" multiple size="4" onchange="filterCharacters()">
-                        <!-- Options will be populated dynamically -->
-                    </select>
+                    <div style="margin-left:16px; display: flex; flex-direction: column; gap: 4px;">
+                        <!-- Multi-select character filter -->
+                        <select id="characterFilter" class="form-select" multiple size="4" onchange="filterCharacters()">
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                        <small class="muted" style="font-size: 12px;">Hold Ctrl/Cmd to select multiple characters • Leave unselected to show all</small>
+                    </div>
                 </div>
             </div>
             <div class="characters-grid" id="charactersGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
@@ -738,100 +741,144 @@
         function displayReferenceItems(items) {
             const content = document.getElementById('referenceContent');
             content.innerHTML = `
-                <div class="reference-grid">
-                    ${items.map(item => `
-                        <div class="reference-item">
-                            <h4>${item.name}</h4>
-                            <p><strong>Category:</strong> ${item.category}</p>
-                            <p><strong>Weight:</strong> ${item.weight} lbs</p>
-                            <p><strong>Cost:</strong> ${item.value_gp ? `${item.value_gp} gp` : 'N/A'}</p>
-                            ${item.description ? `<p>${item.description}</p>` : ''}
-                        </div>
-                    `).join('')}
-                </div>
+                <table class="reference-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Weight</th>
+                            <th>Cost</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${items.map(item => `
+                            <tr>
+                                <td><strong>${item.name}</strong></td>
+                                <td>${item.category}</td>
+                                <td>${item.weight} lbs</td>
+                                <td>${item.value_gp ? `${item.value_gp} gp` : 'N/A'}</td>
+                                <td>${item.description || ''}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
             `;
         }
 
         function displayReferenceWeapons(weapons) {
             const content = document.getElementById('referenceContent');
             content.innerHTML = `
-                <div class="reference-grid">
-                    ${weapons.map(weapon => `
-                        <div class="reference-item">
-                            <h4>${weapon.name}</h4>
-                            <p><strong>Damage:</strong> ${weapon.damage_dice} ${weapon.damage_type}</p>
-                            <p><strong>Category:</strong> ${weapon.category}</p>
-                            <p><strong>Weight:</strong> ${weapon.weight} lbs</p>
-                            <p><strong>Cost:</strong> ${weapon.value_gp ? `${weapon.value_gp} gp` : 'N/A'}</p>
-                            ${weapon.properties && weapon.properties.length > 0 ? `<p><strong>Properties:</strong> ${weapon.properties.join(', ')}</p>` : ''}
-                            ${weapon.description ? `<p>${weapon.description}</p>` : ''}
-                        </div>
-                    `).join('')}
-                </div>
+                <table class="reference-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Damage</th>
+                            <th>Category</th>
+                            <th>Weight</th>
+                            <th>Cost</th>
+                            <th>Properties</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${weapons.map(weapon => `
+                            <tr>
+                                <td><strong>${weapon.name}</strong></td>
+                                <td>${weapon.damage_dice} ${weapon.damage_type}</td>
+                                <td>${weapon.category}</td>
+                                <td>${weapon.weight} lbs</td>
+                                <td>${weapon.value_gp ? `${weapon.value_gp} gp` : 'N/A'}</td>
+                                <td>${weapon.properties && weapon.properties.length > 0 ? weapon.properties.join(', ') : ''}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
             `;
         }
 
         function displayReferenceArmor(armor) {
             const content = document.getElementById('referenceContent');
             content.innerHTML = `
-                <div class="reference-grid">
-                    ${armor.map(item => `
-                        <div class="reference-item">
-                            <h4>${item.name}</h4>
-                            <p><strong>AC:</strong> ${item.base_ac}</p>
-                            <p><strong>Category:</strong> ${item.category}</p>
-                            <p><strong>Weight:</strong> ${item.weight} lbs</p>
-                            <p><strong>Cost:</strong> ${item.value_gp ? `${item.value_gp} gp` : 'N/A'}</p>
-                            ${item.description ? `<p>${item.description}</p>` : ''}
-                        </div>
-                    `).join('')}
-                </div>
+                <table class="reference-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>AC</th>
+                            <th>Category</th>
+                            <th>Weight</th>
+                            <th>Cost</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${armor.map(item => `
+                            <tr>
+                                <td><strong>${item.name}</strong></td>
+                                <td>${item.base_ac}</td>
+                                <td>${item.category}</td>
+                                <td>${item.weight} lbs</td>
+                                <td>${item.value_gp ? `${item.value_gp} gp` : 'N/A'}</td>
+                                <td>${item.description || ''}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
             `;
         }
 
         function displayReferenceSpells(spells) {
             const content = document.getElementById('referenceContent');
-            
-            // Group by level
-            const spellsByLevel = {};
-            spells.forEach(spell => {
-                if (!spellsByLevel[spell.level]) {
-                    spellsByLevel[spell.level] = [];
-                }
-                spellsByLevel[spell.level].push(spell);
-            });
-
-            content.innerHTML = Object.keys(spellsByLevel).sort((a, b) => parseInt(a) - parseInt(b)).map(level => `
-                <div class="spell-level-section">
-                    <h3>${level == 0 ? 'Cantrips' : `Level ${level} Spells`}</h3>
-                    <div class="reference-grid">
-                        ${spellsByLevel[level].map(spell => `
-                            <div class="reference-item">
-                                <h4>${spell.name}</h4>
-                                <p><strong>School:</strong> ${spell.school}</p>
-                                <p><strong>Casting Time:</strong> ${spell.casting_time}</p>
-                                <p><strong>Range:</strong> ${spell.range}</p>
-                                <p><strong>Duration:</strong> ${spell.duration}</p>
-                                <p>${spell.description}</p>
-                            </div>
+            content.innerHTML = `
+                <table class="reference-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Level</th>
+                            <th>School</th>
+                            <th>Casting Time</th>
+                            <th>Range</th>
+                            <th>Duration</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${spells.sort((a, b) => a.level - b.level).map(spell => `
+                            <tr>
+                                <td><strong>${spell.name}</strong></td>
+                                <td>${spell.level == 0 ? 'Cantrip' : spell.level}</td>
+                                <td>${spell.school}</td>
+                                <td>${spell.casting_time}</td>
+                                <td>${spell.range}</td>
+                                <td>${spell.duration}</td>
+                                <td>${spell.description}</td>
+                            </tr>
                         `).join('')}
-                    </div>
-                </div>
-            `).join('');
+                    </tbody>
+                </table>
+            `;
         }
 
         function displayReferenceSkills(skills) {
             const content = document.getElementById('referenceContent');
             content.innerHTML = `
-                <div class="reference-grid">
-                    ${skills.map(skill => `
-                        <div class="reference-item">
-                            <h4>${skill.name}</h4>
-                            <p><strong>Ability:</strong> ${skill.ability_modifier}</p>
-                            <p>${skill.description}</p>
-                        </div>
-                    `).join('')}
-                </div>
+                <table class="reference-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Ability</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${skills.map(skill => `
+                            <tr>
+                                <td><strong>${skill.name}</strong></td>
+                                <td>${skill.ability_modifier}</td>
+                                <td>${skill.description}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
             `;
         }
 

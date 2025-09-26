@@ -59,6 +59,10 @@
     --border-radius-sm: 4px;
     --border-radius-md: 8px;
     --border-radius-lg: 12px;
+    --border-color: #dee2e6;
+    --surface: #f8f9fa;
+    --text-primary: #343a40;
+    --accent: #c41e3a;
 }
 
 /* Import Google Fonts */
@@ -309,6 +313,52 @@ p { margin-bottom: var(--spacing-md); }
 
 .table tr:hover {
     background-color: rgba(212, 175, 55, 0.1);
+}
+
+/* Reference table styling */
+.reference-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.reference-table th,
+.reference-table td {
+    padding: 12px 8px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+    vertical-align: top;
+    height: 48px;
+    overflow-wrap: break-word;
+}
+
+.reference-table th {
+    background-color: var(--surface);
+    font-weight: 600;
+    color: var(--text-primary);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.reference-table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.reference-table tbody tr:hover {
+    background-color: rgba(114, 137, 218, 0.1);
+}
+
+.reference-table td strong {
+    color: var(--accent);
+}
+
+/* Responsive table container */
+#referenceContent {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
 }
 
 /* Character Sheet Specific Styles */
