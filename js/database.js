@@ -7,9 +7,12 @@
  * Locally, config.js is absent and relative URLs + no auth are used.
  */
 
+// window.API_CONFIG is set by js/config.js (injected at deploy time, gitignored).
+// Falls back to empty strings for local development (same-origin, no auth needed).
 const _cfg = (typeof window !== 'undefined' && window.API_CONFIG) || {};
 const API_BASE = _cfg.baseUrl || '';
 const API_KEY  = _cfg.apiKey  || '';
+
 
 const _apiHeaders = () => {
     const h = {};
