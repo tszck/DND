@@ -1,0 +1,16 @@
+{
+  "name": "dnd-campaign-manager",
+  "version": "1.0.0",
+  "description": "D&D Campaign Manager — standalone local web app",
+  "main": "server.js",
+  "scripts": {
+    "build": "node database/build.js",
+    "start": "node server.js",
+    "setup": "node database/build.js && node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.4.3",
+    "dotenv": "^17.3.1",
+    "express": "^4.18.2"
+  }
+}

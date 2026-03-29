@@ -65,8 +65,7 @@
     --accent: #c41e3a;
 }
 
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Open+Sans:wght@300;400;600;700&display=swap');
+/* Google Fonts removed for standalone deployment — using system font fallbacks (defined in :root above) */
 
 /* Base Typography */
 body {

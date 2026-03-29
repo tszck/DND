@@ -80,47 +80,36 @@
     <footer style="background: var(--dark-gray); color: var(--white); text-align: center; padding: var(--spacing-xl); margin-top: var(--spacing-xxl);">
         <!-- <p>&copy; 2025 D&D Campaign Manager. Built with modern web technologies and normalized database architecture.</p> -->
         <p style="margin-top: var(--spacing-sm); font-size: var(--font-size-sm); opacity: 0.8;">
-            Powered by Supabase • PostgreSQL • Modern JavaScript
+            Powered by SQLite • Modern JavaScript
         </p>
     </footer>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/database.js"></script>
     <script>
         // System status check
         document.addEventListener('DOMContentLoaded', async function() {
             const statusContent = document.getElementById('statusContent');
-            
             try {
-                if (!supabase) {
-                    throw new Error('Supabase not configured');
-                }
-                
-                // Test database connection
-                const { data, error } = await supabase
-                    .from('characters')
-                    .select('count')
-                    .limit(1);
-                
-                if (error) throw error;
-                
+                const cfg = (typeof window !== 'undefined' && window.API_CONFIG) || {};
+                const headers = cfg.apiKey ? { 'x-api-key': cfg.apiKey } : {};
+                const data = await fetch(`${cfg.baseUrl || ''}/api/health`, { headers }).then(r => r.json());
+                if (data.status !== 'ok') throw new Error(data.message || 'Server error');
                 statusContent.innerHTML = `
                     <div style="color: var(--success); font-weight: 600;">
                         ✅ Database Connected Successfully
                     </div>
                     <p style="margin-top: var(--spacing-sm); font-size: var(--font-size-sm);">
-                        Ready to manage your D&D campaign!
+                        Ready to manage your D&D campaign! (${data.characters} character${data.characters !== 1 ? 's' : ''} loaded)
                     </p>
                 `;
-                
             } catch (error) {
                 statusContent.innerHTML = `
                     <div style="color: var(--danger); font-weight: 600;">
                         ❌ Database Connection Error
                     </div>
                     <p style="margin-top: var(--spacing-sm); font-size: var(--font-size-sm);">
-                        Please check your Supabase configuration in <code>js/database.js</code>
+                        Make sure the server is running: <code>npm start</code>
                     </p>
                     <details style="margin-top: var(--spacing-sm);">
                         <summary>Error Details</summary>
